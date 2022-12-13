@@ -28,7 +28,7 @@ namespace MoreBuilding
         {
             new ItemCreation() { baseIndex = 546, loadIcon = true, uniqueIndex = 160546, uniqueName = "Block_Upgrade_ScrapMetal", isUpgrade = true, localization = "Replaced with scrap metal@" },
             new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160548, uniqueName = "Block_Upgrade_Metal", isUpgrade = true, localization = "Replaced with solid metal@" },
-            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 6969, uniqueName = "Block_Upgrade_Metal", isUpgrade = true, localization = "Replaced with solid metal@" },
+            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160550, uniqueName = "Block_Upgrade_Glass", isUpgrade = true, localization = "Replaced with glass@" },
             new BlockItemCreation() {
                 baseIndex = 1, uniqueIndex = 160001, uniqueName = "Block_Floor_ScrapMetal", localization = "Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
                 meshData = new MeshData[] { new[] {MeshBox.Presets.ThinPlatform(0.15f,0.1f)} },
@@ -663,13 +663,14 @@ namespace MoreBuilding
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0.9f, 0.1f, 0.9f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true })}},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
+            /* Glass Blocks */
             new BlockItemCreation() {
-                baseIndex = 2, uniqueIndex = 6971, uniqueName = "Block_Foundation_Glass", localization = "Glass Foundation@Used to expand your raft on the bottom floor",
+                baseIndex = 2, uniqueIndex = 6970, uniqueName = "Block_Foundation_Glass", localization = "Glass Foundation@Used to expand your raft on the bottom floor",
                 meshData = new MeshData[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0.75f,1), -0.05f, 1, 1 ))} },
-                upgradeItem = 160546, material = () => instance.Glass,
+                upgradeItem = 160550, material = () => instance.Glass,
                 additionEdits = x => {
                     var f = x as Block_Foundation;
                     f.meshRenderer = f.GetComponentInChildren<MeshRenderer>();
@@ -683,12 +684,12 @@ namespace MoreBuilding
                 }
             },
             new BlockItemCreation() {
-                baseIndex = 189, uniqueIndex = 6972, uniqueName = "Block_Foundation_Triangular_Glass", localization = "Triangular Glass Foundation@Used to expand your raft on the bottom floor",
+                baseIndex = 189, uniqueIndex = 6971, uniqueName = "Block_Foundation_Triangular_Glass", localization = "Triangular Glass Foundation@Used to expand your raft on the bottom floor",
                 meshData = new MeshData[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,1,0,0), new Vector2(0.75f,1), -0.05f, 1, 1 ), true, Quaternion.Euler(0,180,0))} },
-                upgradeItem = 160546, material = () => instance.Glass,
+                upgradeItem = 160550, material = () => instance.Glass,
                 additionEdits = x => {
                     var f = x as Block_Foundation;
                     f.meshRenderer = f.GetComponentInChildren<MeshRenderer>();
@@ -702,12 +703,20 @@ namespace MoreBuilding
                 }
             },
             new BlockItemCreation() {
-                baseIndex = 1, uniqueIndex = 6974, uniqueName = "Block_Floor_Glass", localization = "Glass Floor@Used to build additional floors and roof. Cannot be built in thin air",
+                baseIndex = 1, uniqueIndex = 6973, uniqueName = "Block_Floor_Glass", localization = "Glass Floor@Used to build additional floors and roof. Cannot be built in thin air",
                 meshData = new MeshData[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ))} },
-                upgradeItem = 160546, material = () => instance.Glass
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 191, uniqueIndex = 6974, uniqueName = "Block_Floor_Triangular_Glass", localization = "Triangular Glass Floor@Used to build additional floors and roof. Cannot be built in thin air",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,HalfBlockSize),
+                    new UVData(new Vector4(0.9f,1,0,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), true, Quaternion.Euler(0,180,0))} },
+                upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
                 baseIndex = 4, uniqueIndex = 6976, uniqueName = "Block_Wall_Glass", localization = "Glass Wall@Provides support for additional floors",
@@ -715,8 +724,348 @@ namespace MoreBuilding
                     new Vector3(-HalfBlockSize,-0.05f,-0.04f),
                     new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
                     new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,2), 0, 0.9f, 0.1f ))} },
-                upgradeItem = 160546, material = () => instance.Glass, modelScales = new[] { Vector3.one, diagonalScale }
-            }
+                upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, diagonalScale }
+            },
+            new BlockItemCreation() {
+                baseIndex = 144, uniqueIndex = 6977, uniqueName = "Block_HalfWall_Glass", localization = "Half Glass Wall@Provides support for additional floors",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.05f,0),
+                    new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.04f),
+                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,1), 0, 0.9f, 0.1f ))} },
+                upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, diagonalScale }
+            },
+            new BlockItemCreation() {
+                baseIndex = 152, uniqueIndex = 6978, uniqueName = "Block_Wall_Slope_Glass", localization = "Triangular Glass Wall@Fills triangular holes",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.04f,0.05f-HalfFloorHeight),
+                    new Vector3(HalfBlockSize,0,0.05f),
+                    new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90,true, DifferentEnds: true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0))} },
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 421, uniqueIndex = 6979, uniqueName = "Block_Wall_VSlope_Glass", localization = "Pyramid Glass Wall@Fills pyramid holes",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
+                    new Vector3(0,0.02f,0.05f),
+                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0), new FaceChanges() { excludeU = true }),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
+                    new Vector3(0,0.02f,0.05f),
+                    new UVData(new Vector4(0.45f,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(90,0,0), new FaceChanges() { excludeD = true }),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
+                    new Vector3(0,0.02f,0.05f),
+                    new UVData(new Vector4(0.45f,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0), new FaceChanges() { excludeN = true, excludeE = true, excludeS = true, excludeW = true, excludeD = true }),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
+                    new Vector3(0,0.02f,0.05f),
+                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(90,0,0), new FaceChanges() { excludeN = true, excludeE = true, excludeS = true, excludeW = true, excludeU = true })}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 443, uniqueIndex = 6980, uniqueName = "Block_Wall_Slope_Glass_Inverted", localization = "Triangular Glass Wall@Fills triangular holes",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(0.006f-HalfBlockSize,0,-0.051f-HalfFloorHeight),
+                    new Vector3(HalfBlockSize+0.006f,0.04f,-0.051f),
+                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, true, true), true, Quaternion.Euler(90,180,0))} },
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 148, uniqueIndex = 6983, uniqueName = "Block_Roof_Straight_Glass", localization = "Glass Roof@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(HalfBlockSize,0,BlockSize),
+                    new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => x.z > 0 ? x + Vector3.up * HalfFloorHeight : x)},
+                new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,HalfBlockSize),
+                    new UVData(new Vector4(0.9f,0,0,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Quaternion.Euler(0,135,0) * (x.x == x.z ? x + Vector3.up * HalfFloorHeight : x), true)},
+                new[] {new MeshBox(
+                    new Vector3(-BlockSize,-0.15f,-BlockSize),
+                    new Vector3(0,0,0),
+                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Quaternion.Euler(0,-45,0) * (x.x != x.z ? x + Vector3.up * HalfFloorHeight : x), true)}},
+                upgradeItem = 160550, material = () => instance.Glass, resetModelRotations = new[]{null, new[] { true }, new[] { true } }
+            },
+            new BlockItemCreation() {
+                baseIndex = 150, uniqueIndex = 6984, uniqueName = "Block_Roof_Corner_Glass", localization = "Glass Roof Corner@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,HalfBlockSize),
+                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (x.x < 0 && x.z > 0) ? x + Vector3.up * HalfFloorHeight : x)}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 160, uniqueIndex = 6985, uniqueName = "Block_Roof_InvCorner_Glass", localization = "Inverted Glass Roof Corner@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,HalfBlockSize),
+                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x < 0 || x.z > 0) ? x + Vector3.up * HalfFloorHeight : x))}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 430, uniqueIndex = 6986, uniqueName = "Block_Roof_Glass_StraightV", localization = "Glass Double Roof Corner@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,HalfBlockSize),
+                    new UVData(new Vector4(0,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Mathf.Abs(x.x) < 0.25f ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0,0.5f,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Mathf.Abs(x.x) < 0.25f ? x + Vector3.up * HalfFloorHeight * 0.5f : x)}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 502, uniqueIndex = 6987, uniqueName = "Block_Roof_Glass_LJunction", localization = "Glass L-Junction@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.45f,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, -90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0,0.5f,0.45f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, -90, 0) * ((x.x == 0 && x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.45f,1,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 && x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> (x.x == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.9f,0.5f,0.45f,1), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> (x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 488, uniqueIndex = 6988, uniqueName = "Block_Roof_Glass_TJunction", localization = "Glass T-Junction@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f || Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.9f,0.5f,0.45f,1), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> (Mathf.Abs(x.x) < 0.25f || Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.45f,0,0,1), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> (x.x == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 497, uniqueIndex = 6989, uniqueName = "Block_Roof_Glass_XJunction", localization = "Glass X-Junction@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.45f,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, -90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.45f,1,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 180, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.9f,0.5f,0.45f,1), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0,0.5f,0.45f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, -90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.45f,1,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 180, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true)}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 424, uniqueIndex = 6990, uniqueName = "Block_Roof_Glass_Endcap", localization = "Glass Roof Endcap@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0,0.5f,0.45f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.45f,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (Mathf.Abs(x.x) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
+                    new Vector3(0,0,0),
+                    new UVData(new Vector4(0.45f,0.5f,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (Mathf.Abs(x.x) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 427, uniqueIndex = 6991, uniqueName = "Block_Roof_Glass_Pyramid", localization = "Glass Roof Pyramid@Covers your head",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.45f,1,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.15f,0),
+                    new Vector3(0,0,HalfBlockSize),
+                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, -90, 0) * ((Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
+                new MeshBox(
+                    new Vector3(0,-0.15f,-HalfBlockSize),
+                    new Vector3(HalfBlockSize,0,0),
+                    new UVData(new Vector4(0.45f,1,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 84, uniqueIndex = 6992, uniqueName = "Block_Pillar_Glass", localization = "Glass Pillar@Provides support for additional floors",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-0.075f, -0.05f, -0.075f),
+                    new Vector3(0.075f,FullFloorHeight-0.05f,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
+                new MeshBox(
+                    new Vector3(-0.075f, -0.05f, -0.075f),
+                    new Vector3(0.075f,FullFloorHeight-0.05f,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true })}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 146, uniqueIndex = 6993, uniqueName = "Block_Pillar_Glass_Half", localization = "Half Glass Pillar@Provides support for additional floors",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(-0.075f, -0.05f, -0.075f),
+                    new Vector3(0.075f,HalfFloorHeight-0.05f,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
+                new MeshBox(
+                    new Vector3(-0.075f, -0.05f, -0.075f),
+                    new Vector3(0.075f,HalfFloorHeight-0.05f,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true })}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 541, uniqueIndex = 6994, uniqueName = "Block_HorizontalPillar_Glass", localization = "Horizontal Glass Pillar@Provides support for additional floors",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(0.1f, 0, -0.075f),
+                    new Vector3(0.25f,BlockSize*2,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
+                new MeshBox(
+                    new Vector3(0.1f, 0, -0.075f),
+                    new Vector3(0.25f,BlockSize*2,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0.9f, 0.1f, 0.9f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true })}},
+                upgradeItem = 160550, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
+                baseIndex = 542, uniqueIndex = 6995, uniqueName = "Block_HorizontalPillar_Glass_Half", localization = "Horizontal Half Glass Pillar@Provides support for additional floors",
+                meshData = new MeshData[] {new[] {new MeshBox(
+                    new Vector3(0.1f, 0, -0.075f),
+                    new Vector3(0.25f,BlockSize,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
+                new MeshBox(
+                    new Vector3(0.1f, 0, -0.075f),
+                    new Vector3(0.25f,BlockSize,0.075f),
+                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0.9f, 0.1f, 0.9f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true })}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
+            new BlockItemCreation() {
+                baseIndex = 88, uniqueIndex = 6996, uniqueName = "Block_Wall_Door_Glass", localization = "Glass Door@Provides support for additional floors",
+                meshData = new MeshData[] {new[] {
+                    new[] {
+                        new MeshBox(
+                            new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
+                            new UVData(new Vector4(0.9f,1,1,0), new Vector2(2 - (0.04f/HalfFloorHeight),2), 0, 0.9f, 0.1f )),
+                        new MeshBox(
+                            new Vector3(-HalfBlockSize, -0.05f, -0.04f),
+                            new Vector3(0.08f-HalfBlockSize,FullFloorHeight-0.09f,0),
+                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.9f - 0.08f / BlockSize * 0.9f, 0.08f / BlockSize * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
+                        new MeshBox(
+                            new Vector3(HalfBlockSize-0.08f, -0.05f, -0.04f),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0),
+                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.08f / BlockSize * 0.9f, 0.9f - 0.16f / BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
+                        new MeshBox(
+                            new Vector3(-HalfBlockSize, -0.05f, -0.04f),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
+                        new MeshBox(
+                            new Vector3(HalfBlockSize-0.08f, -0.05f, -0.04f),
+                            new Vector3(0.08f-HalfBlockSize,FullFloorHeight-0.09f,0),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })},
+                    new[] {
+                        new MeshBox(
+                            new Vector3(-0.001f,-0.97f,-0.01f),
+                            new Vector3(HalfBlockSize-0.081f,FullFloorHeight-1.01f,0.01f),
+                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.45f, 0.45f-0.08f/BlockSize * 0.9f, 0.1f + 0.16f/BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
+                        new MeshBox(
+                            new Vector3(-0.001f,-0.97f,-0.01f),
+                            new Vector3(HalfBlockSize-0.081f,FullFloorHeight-1.01f,0.01f),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )},
+                    new[] {
+                        new MeshBox(
+                            new Vector3(0.081f-HalfBlockSize,-0.975f,-0.01f),
+                            new Vector3(0.001f,FullFloorHeight-1.015f,0.01f),
+                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.08f/BlockSize * 0.9f, 0.45f-0.08f/BlockSize * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
+                        new MeshBox(
+                            new Vector3(0.081f-HalfBlockSize,-0.975f,-0.01f),
+                            new Vector3(0.001f,FullFloorHeight-1.015f,0.01f),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )}},
+                new[] {
+                    new[] {
+                        new MeshBox(
+                            new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f).Multiply(diagonalScale),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0).Multiply(diagonalScale),
+                            new UVData(new Vector4(0.9f,1,1,0), new Vector2(2 - (0.04f/HalfFloorHeight),2), 0, 0.9f, 0.1f )),
+                        new MeshBox(
+                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(diagonalScale),
+                            new Vector3(0.08f-HalfBlockSize * diagonalMagnitude,FullFloorHeight-0.09f,0),
+                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.9f - 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
+                        new MeshBox(
+                            new Vector3(HalfBlockSize * diagonalMagnitude-0.08f, -0.05f, -0.04f),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(diagonalScale),
+                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.9f - 0.16f / BlockSize / diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
+                        new MeshBox(
+                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(diagonalScale),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(diagonalScale),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
+                        new MeshBox(
+                            new Vector3(HalfBlockSize * diagonalMagnitude-0.08f, -0.05f, -0.04f),
+                            new Vector3(0.08f-HalfBlockSize * diagonalMagnitude,FullFloorHeight-0.09f,0),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })},
+                    new[] {
+                        new MeshBox(
+                            new Vector3(-0.001f,-0.97f,0.01f),
+                            new Vector3(HalfBlockSize * diagonalMagnitude-0.081f,FullFloorHeight-1.01f,0.03f),
+                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.45f, 0.45f-0.08f/BlockSize / diagonalMagnitude * 0.9f, 0.1f + 0.16f/BlockSize / diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
+                        new MeshBox(
+                            new Vector3(-0.001f,-0.97f,0.01f),
+                            new Vector3(HalfBlockSize * diagonalMagnitude-0.081f,FullFloorHeight-1.01f,0.03f),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )},
+                    new[] {
+                        new MeshBox(
+                            new Vector3(0.081f-HalfBlockSize * diagonalMagnitude,-0.975f,0.01f),
+                            new Vector3(0.001f,FullFloorHeight-1.015f,0.03f),
+                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.08f/BlockSize / diagonalMagnitude * 0.9f, 0.45f-0.08f/BlockSize / diagonalMagnitude * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
+                        new MeshBox(
+                            new Vector3(0.081f-HalfBlockSize * diagonalMagnitude,-0.975f,0.01f),
+                            new Vector3(0.001f,FullFloorHeight-1.015f,0.03f),
+                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )}}},
+                upgradeItem = 160550, material = () => instance.Glass
+            },
         };
         Material Glass;
         Material ScrapMetal;
