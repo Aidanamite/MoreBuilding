@@ -22,6 +22,7 @@ namespace MoreBuilding
 {
     public class Main : Mod
     {
+        #region ItemCreation
         public static float diagonalMagnitude = Vector2.one.magnitude;
         public static Vector3 diagonalScale = new Vector3(Vector2.one.magnitude,1,1);
         public ItemCreation[] items = new[]
@@ -1067,6 +1068,8 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
         };
+        #endregion
+
         Material Glass;
         Material ScrapMetal;
         Material Metal;
@@ -1232,6 +1235,23 @@ namespace MoreBuilding
             foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockCollisionMask>())
                 if (q.IgnoresBlock(item.baseItem))
                     Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().Add(item.item);
+
+            if (item.baseItem.settings_recipe.NewCost.Length > 0)
+            {
+                Item_Base craftingMaterial = ItemManager.GetItemByName("Glass");
+
+                if (item.item.UniqueName.Contains("_ScrapMetal"))
+                {
+                    craftingMaterial = ItemManager.GetItemByName("Scrap");
+                }
+                else if (item.item.UniqueName.Contains("_Metal"))
+                {
+                    craftingMaterial = ItemManager.GetItemByName("MetalIngot");
+                }
+                
+                item.item.SetRecipe(new CostMultiple[] { new CostMultiple(new Item_Base[] { craftingMaterial }, item.baseItem.settings_recipe.NewCost[0].amount) });
+            }
+
             ItemManager.GetAllItems().Add(item.item);
         }
 
