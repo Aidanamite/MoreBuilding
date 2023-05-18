@@ -1074,7 +1074,7 @@ namespace MoreBuilding
         Material ScrapMetal;
         Material Metal;
         public LanguageSourceData language;
-        public List<Object> createdObjects = new List<Object>();
+        public static List<Object> createdObjects = new List<Object>();
         Harmony harmony;
         Transform prefabHolder;
         public static Main instance;
@@ -1385,7 +1385,7 @@ namespace MoreBuilding
             m.RecalculateBounds();
             m.RecalculateNormals();
             m.RecalculateTangents();
-            instance.createdObjects.Add(m);
+            Main.createdObjects.Add(m);
             return m;
         }
 
@@ -1400,6 +1400,30 @@ namespace MoreBuilding
         }
 
         void ModUtils_ReloadBuildMenu() { }
+    }
+
+    public static class GeneratedMeshes
+    {
+        public static Mesh Foundation;
+        public static Mesh FoundationTriangle;
+        public static Mesh Floor;
+        public static Mesh FloorTriangle;
+        public static Mesh FloorHalf;
+        public static Mesh FloorTriangleHalf;
+        public static Mesh Wall;
+        public static Mesh WallHalf;
+        public static Mesh Door;
+        public static Mesh DoorWide;
+        public static Mesh Window;
+        public static Mesh WindowHalf;
+        public static Mesh Roof;
+        public static Mesh RoofDiagonal;
+        public static Mesh RoofDiagonalAlt;
+        public static Mesh RoofCorner;
+        public static Mesh Pillar;
+        public static Mesh PillarHalf;
+        public static Mesh PillarHorizontal;
+        public static Mesh PillarHorizontalHalf;
     }
 
     public class ItemCreation
@@ -1621,7 +1645,7 @@ namespace MoreBuilding
         public static Sprite ToSprite(this Texture2D texture, Rect? rect = null, Vector2? pivot = null)
         {
             var s = Sprite.Create(texture, rect ?? new Rect(0, 0, texture.width, texture.height), pivot ?? new Vector2(0.5f, 0.5f));
-            Main.instance.createdObjects.Add(s);
+            Main.createdObjects.Add(s);
             return s;
         }
 
@@ -1639,7 +1663,7 @@ namespace MoreBuilding
             texture.Apply();
             RenderTexture.active = prev;
             RenderTexture.ReleaseTemporary(temp);
-            Main.instance.createdObjects.Add(texture);
+            Main.createdObjects.Add(texture);
             return texture;
         }
         public static void Edit(this Texture2D baseImg)
