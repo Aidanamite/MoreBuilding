@@ -11,6 +11,7 @@ using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using UnityEngine.SceneManagement;
 using I2.Loc;
 using Debug = UnityEngine.Debug;
@@ -1399,6 +1400,7 @@ namespace MoreBuilding
             return l;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         void ModUtils_ReloadBuildMenu() { }
     }
 
@@ -1406,12 +1408,22 @@ namespace MoreBuilding
     {
         public static Mesh Foundation;
         public static Mesh FoundationTriangle;
+        public static Mesh FoundationTriangleMirrored;
         public static Mesh Floor;
         public static Mesh FloorTriangle;
+        public static Mesh FloorTriangleMirrored;
         public static Mesh FloorHalf;
-        public static Mesh FloorTriangleHalf;
+        public static Mesh FloorHalfTriangle;
+        public static Mesh FloorHalfTriangleMirrored;
         public static Mesh Wall;
         public static Mesh WallHalf;
+        public static Mesh WallV;
+        public static Mesh WallSlope;
+        public static Mesh WallSlopeMirrored;
+        public static Mesh WallSlopeInverted;
+        public static Mesh WallSlopeInvertedMirrored;
+        public static Mesh Fence;
+        public static Mesh Gate;
         public static Mesh Door;
         public static Mesh DoorWide;
         public static Mesh Window;
@@ -1420,10 +1432,80 @@ namespace MoreBuilding
         public static Mesh RoofDiagonal;
         public static Mesh RoofDiagonalAlt;
         public static Mesh RoofCorner;
+        public static Mesh RoofCornerInverted;
+        public static Mesh RoofV0;
+        public static Mesh RoofV1;
+        public static Mesh RoofV2I;
+        public static Mesh RoofV2L;
+        public static Mesh RoofV3;
+        public static Mesh RoofV4;
         public static Mesh Pillar;
         public static Mesh PillarHalf;
         public static Mesh PillarHorizontal;
         public static Mesh PillarHorizontalHalf;
+        static GeneratedMeshes()
+        {
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize), new Vector3(HalfBlockSize,0,HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
+                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1)
+                    );
+                Foundation = builder.ToMesh("Foundation", true);
+            }
+        }
+
+        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2,Vector2> modifyUV = null)
+        {
+            if (modifyVert == null)
+                modifyVert = x => x;
+            if (modifyUV == null)
+                modifyUV = x => x;
+            if (top != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY))),
+                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY))),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY))),
+                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.maxY)))
+                );
+            if (bottom != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY))),
+                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY))),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.maxY))),
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY)))
+                );
+            if (north != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.minY))),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.minY))),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.maxY))),
+                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.maxY)))
+                );
+            if (east != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(east.Value.minX, east.Value.minY))),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.minY))),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.maxY))),
+                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(east.Value.minX, east.Value.maxY)))
+                );
+            if (south != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY))),
+                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY))),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY))),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY)))
+                );
+            if (west != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.minY))),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.minY))),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.maxY))),
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.maxY)))
+                );
+        }
     }
 
     public class ItemCreation

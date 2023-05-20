@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine
 {
-    class MeshBuilder
+    public class MeshBuilder
     {
         Dictionary<Vertex, int> verts = new Dictionary<Vertex, int>();
         Dictionary<int, List<int>> tri = new Dictionary<int, List<int>>();
@@ -35,7 +35,7 @@ namespace UnityEngine
             AddTriangle(a, c, d, submesh);
         }
 
-        public Mesh ToMesh(string name = "")
+        public Mesh ToMesh(string name = "", bool enforceNormalsIncludeTouchingVerts = false)
         {
             var v = new Vector3[verts.Count];
             var u = new Vector2[verts.Count];
@@ -62,7 +62,12 @@ namespace UnityEngine
                             var inds = new[] { sub.Value[i], sub.Value[i + 1], sub.Value[i + 2] };
                             var ind = Array.IndexOf(inds, p.Value);
                             if (ind == -1)
-                                continue;
+                            {
+                                if (enforceNormalsIncludeTouchingVerts)
+                                    ind = Array.FindIndex(inds, x => v[x] == v[p.Value]);
+                                if (ind == -1)
+                                    continue;
+                            }
                             var v1 = inds[(ind + 1) % 3];
                             var v2 = inds[(ind + 2) % 3];
                             var norm = Quaternion.LookRotation(v[p.Value] - ((v[v1] + v[v2]) / 2), v[v1] - ((v[v1] + v[v2]) / 2)) * Vector3.left;
