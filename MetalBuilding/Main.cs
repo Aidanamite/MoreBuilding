@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HMLLibrary;
+using RaftModLoader;
 using Steamworks;
 using System;
 using System.Collections;
@@ -14,6 +15,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using UnityEngine.SceneManagement;
 using I2.Loc;
+using UnityEngine.Experimental.Rendering;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 using static BlockCreator;
@@ -33,24 +35,14 @@ namespace MoreBuilding
             new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160550, uniqueName = "Block_Upgrade_Glass", isUpgrade = true, localization = "Replaced with glass@" },
             new BlockItemCreation() {
                 baseIndex = 1, uniqueIndex = 160001, uniqueName = "Block_Floor_ScrapMetal", localization = "Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
-                meshData = new MeshData[] { new[] {MeshBox.Presets.ThinPlatform(0.15f,0.1f)} },
+                mesh = new[] {new[] { GeneratedMeshes.Floor } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
                 baseIndex = 2, uniqueIndex = 160002, uniqueName = "Block_Foundation_ScrapMetal", localization = "Scrap Metal Foundation@Used to expand your raft on the bottom floor",
-                meshData = new MeshData[] {new[] {MeshBox.Presets.ThickPlatform(HalfFloorHeight / 2,0.25f)} },
+                mesh = new[] {new[] { GeneratedMeshes.Foundation } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
-                additionEdits = x => {
-                    var f = x as Block_Foundation;
-                    f.meshRenderer = f.GetComponentInChildren<MeshRenderer>();
-                    var meshFilter = f.GetComponentInChildren<MeshFilter>();
-                    Traverse.Create(f).Field("meshFilter").SetValue(meshFilter);
-                    f.armoredMesh = meshFilter.sharedMesh;
-                    Traverse.Create(f).Field("defaultMesh").SetValue(meshFilter.sharedMesh);
-                    Traverse.Create(f).Field("defaultMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("armoredMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("reinforced").SetValue(true);
-                }
+                additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
                 baseIndex = 3, uniqueIndex = 160003, uniqueName = "Block_Stair_ScrapMetal", localization = "Scrap Metal Stair@Great to get from one floor to another",
@@ -334,30 +326,21 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 189, uniqueIndex = 160189, uniqueName = "Block_Foundation_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Foundation@Used to expand your raft on the bottom floor",
-                meshData = new MeshData[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize),
-                    new Vector3(HalfBlockSize,0,HalfBlockSize),
-                    new UVData(new Vector4(0.9f,1,0,0), new Vector2(0.75f,1), -0.05f, 1, 1 ), true, Quaternion.Euler(0,180,0))} },
+                baseIndex = 383, uniqueIndex = 160383, uniqueName = "Block_Foundation_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Foundation@Used to expand your raft on the bottom floor",
+                mesh = new[]{new[] { GeneratedMeshes.FoundationTriangle } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
-                additionEdits = x => {
-                    var f = x as Block_Foundation;
-                    f.meshRenderer = f.GetComponentInChildren<MeshRenderer>();
-                    var meshFilter = f.GetComponentInChildren<MeshFilter>();
-                    Traverse.Create(f).Field("meshFilter").SetValue(meshFilter);
-                    f.armoredMesh = meshFilter.sharedMesh;
-                    Traverse.Create(f).Field("defaultMesh").SetValue(meshFilter.sharedMesh);
-                    Traverse.Create(f).Field("defaultMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("armoredMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("reinforced").SetValue(true);
-                }
+                additionEdits = x => x.MakeAlwaysReinforced()
+            },
+            new BlockItemCreation() {
+                baseIndex = 387, uniqueIndex = 160387, uniqueName = "Block_Foundation_Triangular_ScrapMetal_Mirrored", localization = "Triangular Scrap Metal Foundation@Used to expand your raft on the bottom floor",
+                mesh = new[]{new[] { GeneratedMeshes.FoundationTriangleMirrored } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                mirroredItem = 160383,
+                additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
                 baseIndex = 191, uniqueIndex = 160191, uniqueName = "Block_Floor_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
-                meshData = new MeshData[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
-                    new Vector3(HalfBlockSize,0,HalfBlockSize),
-                    new UVData(new Vector4(0.9f,1,0,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), true, Quaternion.Euler(0,180,0))} },
+                mesh = new[] {new[] { GeneratedMeshes.FloorTriangle } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
@@ -673,17 +656,7 @@ namespace MoreBuilding
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0.75f,1), -0.05f, 1, 1 ))} },
                 upgradeItem = 160550, material = () => instance.Glass,
-                additionEdits = x => {
-                    var f = x as Block_Foundation;
-                    f.meshRenderer = f.GetComponentInChildren<MeshRenderer>();
-                    var meshFilter = f.GetComponentInChildren<MeshFilter>();
-                    Traverse.Create(f).Field("meshFilter").SetValue(meshFilter);
-                    f.armoredMesh = meshFilter.sharedMesh;
-                    Traverse.Create(f).Field("defaultMesh").SetValue(meshFilter.sharedMesh);
-                    Traverse.Create(f).Field("defaultMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("armoredMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("reinforced").SetValue(true);
-                }
+                additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
                 baseIndex = 189, uniqueIndex = 6971, uniqueName = "Block_Foundation_Triangular_Glass", localization = "Triangular Glass Foundation@Used to expand your raft on the bottom floor",
@@ -692,17 +665,7 @@ namespace MoreBuilding
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,1,0,0), new Vector2(0.75f,1), -0.05f, 1, 1 ), true, Quaternion.Euler(0,180,0))} },
                 upgradeItem = 160550, material = () => instance.Glass,
-                additionEdits = x => {
-                    var f = x as Block_Foundation;
-                    f.meshRenderer = f.GetComponentInChildren<MeshRenderer>();
-                    var meshFilter = f.GetComponentInChildren<MeshFilter>();
-                    Traverse.Create(f).Field("meshFilter").SetValue(meshFilter);
-                    f.armoredMesh = meshFilter.sharedMesh;
-                    Traverse.Create(f).Field("defaultMesh").SetValue(meshFilter.sharedMesh);
-                    Traverse.Create(f).Field("defaultMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("armoredMaterial").SetValue(f.meshRenderer.sharedMaterial);
-                    Traverse.Create(f).Field("reinforced").SetValue(true);
-                }
+                additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
                 baseIndex = 1, uniqueIndex = 6973, uniqueName = "Block_Floor_Glass", localization = "Glass Floor@Used to build additional floors and roof. Cannot be built in thin air",
@@ -1114,7 +1077,7 @@ namespace MoreBuilding
             var t = LoadImage("scrapMetal_Specular.png");
             var p = t.GetPixels();
             for (int i = 0; i < p.Length; i++)
-                p[i] = new Color(p[i].r / 2, p[i].g, 0, 0.5f);
+                p[i] = new Color(0, 1 - Mathf.Abs(p[i].r * 2 - 1f), 0, 1 - Mathf.Abs(p[i].r * 2 - 1f));
             t.SetPixels(p);
             t.Apply();
             ScrapMetal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t);
@@ -1140,7 +1103,7 @@ namespace MoreBuilding
         {
             loaded = false;
             ModUtils_ReloadBuildMenu();
-            harmony.UnpatchAll(harmony.Id);
+            harmony?.UnpatchAll(harmony.Id);
             LocalizationManager.Sources.Remove(language);
             foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
                     Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
@@ -1148,13 +1111,16 @@ namespace MoreBuilding
                     Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
             ItemManager.GetAllItems().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
             foreach (var b in GetPlacedBlocks())
-                if (b.buildableItem != null && items.Any(y => y.item?.UniqueIndex == b.buildableItem.UniqueIndex))
+                if (b && b.buildableItem && items.Any(y => y.item?.UniqueIndex == b.buildableItem.UniqueIndex))
                     RemoveBlock(b, null, false);
             foreach (var o in createdObjects)
-                if (o is AssetBundle)
-                    (o as AssetBundle).Unload(true);
-                else
-                    Destroy(o);
+                if (o)
+                {
+                    if (o is AssetBundle)
+                        (o as AssetBundle).Unload(true);
+                    else
+                        Destroy(o);
+                }
             createdObjects.Clear();
             Log("Mod has been unloaded!");
         }
@@ -1162,23 +1128,18 @@ namespace MoreBuilding
         public void CreateItem(ItemCreation item)
         {
             item.item = item.baseItem.Clone(item.uniqueIndex, item.uniqueName);
-            //var l = QualitySettings.masterTextureLimit;
-            //QualitySettings.masterTextureLimit = 0;
             if (item.loadIcon)
                 Debug.Log("not loaded image");// item.item.settings_Inventory.Sprite = LoadImage(item.uniqueName + ".png").ToSprite();
             else
             {
-                var t = item.item.settings_Inventory.Sprite.texture.GetReadable(item.item.settings_Inventory.Sprite.rect);
-                var p = t.GetPixels(0);
+                var t = item.item.settings_Inventory.Sprite.texture.GetReadable(copyArea: item.item.settings_Inventory.Sprite.rect, mipChain: false);
+                var p = t.GetPixels();
                 for (int i = 0; i < p.Length; i++)
                     p[i] = new Color(p[i].grayscale, p[i].grayscale, p[i].grayscale, p[i].a);
-                var t2 = new Texture2D(t.width, t.height, t.format, false);
-                t2.SetPixels(p);
-                t2.Apply(true, true);
-                item.item.settings_Inventory.Sprite = t2.ToSprite();
-                Destroy(t);
+                t.SetPixels(p);
+                t.Apply();
+                item.item.settings_Inventory.Sprite = t.ToSprite();
             }
-            //QualitySettings.masterTextureLimit = l;
             var up = new ItemInstance_Buildable.Upgrade();
             up.CopyFieldsOf(item.baseItem.settings_buildable.Upgrades);
             var fl = up.FindFieldsMatch<Item_Base>(x => !x);
@@ -1199,11 +1160,11 @@ namespace MoreBuilding
             if (blockCreation != null)
             {
                 var p = item.item.settings_buildable.GetBlockPrefabs().ToArray();
-                var meshes = CreateMesh(blockCreation.meshData[0].meshes);
+                var meshes = blockCreation.mesh == null ? CreateMesh(blockCreation.meshData[0].meshes) : blockCreation.mesh[0];
                 var material = blockCreation.material();
                 for (int i = 0; i < p.Length; i++)
                 {
-                    var me = blockCreation.meshData.Length <= i || blockCreation.meshData[i] == null ? meshes : CreateMesh(blockCreation.meshData[i].meshes);
+                    var me = blockCreation.mesh == null || blockCreation.mesh.Length <= i || blockCreation.mesh[i] == null ? blockCreation.meshData == null || blockCreation.meshData.Length <= i || blockCreation.meshData[i] == null ? meshes : CreateMesh(blockCreation.meshData[i].meshes) : blockCreation.mesh[i];
                     p[i] = Instantiate(p[i], prefabHolder, false);
                     var r = p[i].GetComponentsInChildren<Renderer>(true);
                     for (int j = 0; j < r.Length; j++)
@@ -1266,6 +1227,15 @@ namespace MoreBuilding
             createdObjects.Add(t);
             return t;
         }
+        public static Texture2D LoadAbsoluteImage(string filename, bool leaveReadable = true)
+        {
+            var t = new Texture2D(0, 0);
+            t.LoadImage(System.IO.File.ReadAllBytes(filename), !leaveReadable);
+            if (leaveReadable)
+                t.Apply();
+            createdObjects.Add(t);
+            return t;
+        }
         public static Mesh[] CreateMesh(MeshBox[][] data)
         {
             var a = new Mesh[data.Length];
@@ -1277,120 +1247,72 @@ namespace MoreBuilding
 
         public static Mesh CreateMesh(MeshBox[] data)
         {
-            var m = new Mesh();
-            var v = new List<Vector3>();
-            var u = new List<Vector2>();
-            var t = new List<int>();
+            var m = new MeshBuilder();
             foreach(var d in data)
             {
                 var min = d.min;
                 var max = d.max;
                 var uv = d.uv;
-                var c = v.Count;
+                var v = new List<Vertex>();
                 foreach (var i in new[]
-                    {
-                        max,new Vector3(min.x,max.y,max.z),new Vector3(min.x,min.y,max.z),new Vector3(max.x,min.y,max.z),
-                        new Vector3(max.x,max.y,min.z),new Vector3(min.x,max.y,min.z),min,new Vector3(max.x,min.y,min.z),
+                {
+                    (max, new Vector2(uv.xStart, uv.Vertical.y), true),
+                    (new Vector3(min.x, max.y, max.z), new Vector2(uv.xStart + (d.wedge ? uv.Face2Width : uv.Face1Width), uv.Vertical.y), true),
+                    (new Vector3(min.x, min.y, max.z), new Vector2(uv.xStart + (d.wedge ? uv.Face2Width : uv.Face1Width), uv.Vertical.x), true),
+                    (new Vector3(max.x, min.y, max.z), new Vector2(uv.xStart, uv.Vertical.x), true),
+                    (new Vector3(max.x, max.y, min.z), new Vector2(uv.xStart + (d.wedge ? uv.Face1Width : (uv.Face1Width * 2)) + uv.Face2Width, uv.Vertical.y), true),
+                    (new Vector3(min.x, max.y, min.z), new Vector2(uv.xStart + uv.Face1Width + uv.Face2Width, uv.Vertical.y), true),
+                    (min, new Vector2(uv.xStart + uv.Face1Width + uv.Face2Width, uv.Vertical.x), true),
+                    (new Vector3(max.x, min.y, min.z), new Vector2(uv.xStart + (d.wedge ? uv.Face1Width : (uv.Face1Width * 2)) + uv.Face2Width, uv.Vertical.x), true),
 
-                        max,new Vector3(min.x,max.y,max.z),new Vector3(min.x,min.y,max.z),new Vector3(max.x,min.y,max.z),
-                        new Vector3(max.x,max.y,min.z),new Vector3(min.x,max.y,min.z),min,new Vector3(max.x,min.y,min.z),
+                    (max, uv.EndMin, false),
+                    (new Vector3(min.x, max.y, max.z), uv.EndMinMax, false),
+                    (new Vector3(min.x, min.y, max.z), uv.AltEndUV ? uv.EndMin : uv.EndMinMax, false),
+                    (new Vector3(max.x, min.y, max.z), uv.AltEndUV ? uv.EndMinMax : uv.EndMin, false),
+                    (new Vector3(max.x, max.y, min.z), uv.EndMaxMin, false),
+                    (new Vector3(min.x, max.y, min.z), uv.EndMax, false),
+                    (min, uv.AltEndUV ? uv.EndMaxMin : uv.EndMax, false),
+                    (new Vector3(max.x, min.y, min.z), uv.AltEndUV ? uv.EndMax : uv.EndMaxMin, false),
 
-                        max,new Vector3(max.x,min.y,max.z)
-                    })
-                    v.Add(d.ModifyVerts(i));
+                    (max, new Vector2(uv.xStart + (d.wedge ? uv.Face1Width : (uv.Face1Width * 2)) + uv.Face2Width * 2, uv.Vertical.y), true),
+                    (new Vector3(max.x, min.y, max.z), new Vector2(uv.xStart + (d.wedge ? uv.Face1Width : (uv.Face1Width * 2)) + uv.Face2Width * 2, uv.Vertical.x), true)
+                })
+                v.Add((d.ModifyVerts(i.Item1), i.Item3 ? i.Item2.Rotate(uv.Rot) : i.Item2));
                 if (d.wedge)
                 {
-                    u.AddRange(new[]
-                    {
-                        new Vector2(uv.xStart,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face2Width,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face2Width,uv.Vertical.x).Rotate(uv.Rot),new Vector2(uv.xStart,uv.Vertical.x).Rotate(uv.Rot),
-                        new Vector2(uv.xStart+uv.Face1Width+uv.Face2Width,uv.Vertical.y).Rotate(uv.Rot),Vector2.zero,Vector2.zero,new Vector2(uv.xStart+uv.Face1Width+uv.Face2Width,uv.Vertical.x).Rotate(uv.Rot),
-
-                        uv.EndMin,uv.EndMinMax,uv.AltEndUV ? uv.EndMin : uv.EndMinMax,uv.AltEndUV ? uv.EndMinMax : uv.EndMin,
-                        uv.EndMaxMin,Vector2.zero,Vector2.zero,uv.AltEndUV ? uv.EndMax : uv.EndMaxMin,
-
-                        new Vector2(uv.xStart+uv.Face1Width+uv.Face2Width*2,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face1Width+uv.Face2Width*2,uv.Vertical.x).Rotate(uv.Rot)
-                    });
                     if (!d.faces.excludeN)
-                        foreach (var i in new[] { 0, 1, 2, 0, 2, 3 })
-                            t.Add(c + i);
+                        m.AddSquare(v[0], v[1], v[2], v[3]);
                     if (!d.faces.excludeE)
-                        foreach (var i in new[] { 16, 17, 7, 16, 7, 4 })
-                            t.Add(c + i);
+                        m.AddSquare(v[16], v[17], v[7], v[4]);
                     if (!d.faces.excludeS && !d.faces.excludeW)
-                        foreach (var i in new[] { 7, 2, 1, 7, 1, 4 })
-                            t.Add(c + i);
+                        m.AddSquare(v[7], v[2], v[1], v[4]);
                     if (!d.faces.excludeU)
-                        foreach (var i in new[] { 9, 8, 12 })
-                            t.Add(c + i);
+                        m.AddTriangle(v[9], v[8], v[12]);
                     if (!d.faces.excludeD)
-                        foreach (var i in new[] { 11, 10, 15 })
-                            t.Add(c + i);
+                        m.AddTriangle(v[11], v[10], v[15]);
                 }
                 else
                 {
-                    u.AddRange(new[]
-                    {
-                        new Vector2(uv.xStart,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face1Width,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face1Width,uv.Vertical.x).Rotate(uv.Rot),new Vector2(uv.xStart,uv.Vertical.x).Rotate(uv.Rot),
-                        new Vector2(uv.xStart+uv.Face1Width*2+uv.Face2Width,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face1Width+uv.Face2Width,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face1Width+uv.Face2Width,uv.Vertical.x).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face1Width*2+uv.Face2Width,uv.Vertical.x).Rotate(uv.Rot),
-
-                        uv.EndMin,uv.EndMinMax,uv.AltEndUV ? uv.EndMin : uv.EndMinMax,uv.AltEndUV ? uv.EndMinMax : uv.EndMin,
-                        uv.EndMaxMin,uv.EndMax,uv.AltEndUV ? uv.EndMaxMin : uv.EndMax,uv.AltEndUV ? uv.EndMax : uv.EndMaxMin,
-
-                        new Vector2(uv.xStart+uv.Face1Width*2+uv.Face2Width*2,uv.Vertical.y).Rotate(uv.Rot),new Vector2(uv.xStart+uv.Face1Width*2+uv.Face2Width*2,uv.Vertical.x).Rotate(uv.Rot)
-                    });
                     if (!d.faces.excludeN)
-                        foreach (var i in new[] { 0, 1, 2, 0, 2, 3 })
-                            t.Add(c + i);
+                        m.AddSquare(v[0], v[1], v[2], v[3]);
                     if (!d.faces.excludeE)
-                        foreach (var i in new[] { 16, 17, 7, 16, 7, 4 })
-                            t.Add(c + i);
+                        m.AddSquare(v[16], v[17], v[7], v[4]);
                     if (!d.faces.excludeS)
-                        foreach (var i in new[] { 7, 6, 5, 7, 5, 4 })
-                            t.Add(c + i);
+                        m.AddSquare(v[7], v[6], v[5], v[4]);
                     if (!d.faces.excludeW)
-                        foreach (var i in new[] { 1, 5, 6, 1, 6, 2 })
-                            t.Add(c + i);
+                        m.AddSquare(v[1], v[5], v[6], v[2]);
                     if (!d.faces.excludeU)
-                        foreach (var i in new[] { 9, 8, 12, 9, 12, 13 })
-                            t.Add(c + i);
+                        m.AddSquare(v[9], v[8], v[12], v[13]);
                     if (!d.faces.excludeD)
-                        foreach (var i in new[] { 11, 10, 15, 10, 14, 15 })
-                            t.Add(c + i);
+                        m.AddSquare(v[11], v[10], v[14], v[15]);
                 }
             }
-            var e = new List<int>();
-            for (int j = 0; j < v.Count; j++)
-            {
-                if (e.Contains(j)) continue;
-                for (int i = j + 1; i < v.Count; i++)
-                    if (v[i] == v[j] && u[i] == u[j])
-                    {
-                        e.Add(i);
-                        for (int k = 0; k < t.Count; k++)
-                            if (t[k] == i)
-                                t[k] = j;
-                    }
-            }
-            for (int j = v.Count - 1; j >= 0; j--)
-                if (!t.Any(x => x == j))
-                {
-                    v.RemoveAt(j);
-                    u.RemoveAt(j);
-                    for (int i = 0; i < t.Count; i++)
-                        if (t[i] >= j)
-                            t[i] -= 1;
-                }
-            m.vertices = v.ToArray();
-            m.uv = u.ToArray();
-            m.triangles = t.ToArray();
-            m.RecalculateBounds();
-            m.RecalculateNormals();
-            m.RecalculateTangents();
-            Main.createdObjects.Add(m);
-            return m;
+            var mesh = m.ToMesh("");
+            createdObjects.Add(mesh);
+            return mesh;
         }
 
-        List<(Item_Base, Item_Base,bool)> ModUtils_BuildMenuItems()
+        List<(Item_Base, Item_Base, bool)> ModUtils_BuildMenuItems()
         {
             if (!loaded) return null;
             var l = new List<(Item_Base, Item_Base, bool)>();
@@ -1402,6 +1324,20 @@ namespace MoreBuilding
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         void ModUtils_ReloadBuildMenu() { }
+
+        [ConsoleCommand("loadMetal")]
+        public static string Comm(string[] args)
+        {
+            instance.ScrapMetal.SetTexture("_Normal", LoadAbsoluteImage(args[0]));
+            return "Done";
+        }
+        public static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
+        }
     }
 
     public static class GeneratedMeshes
@@ -1453,57 +1389,148 @@ namespace MoreBuilding
                     (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
                     (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1)
                     );
-                Foundation = builder.ToMesh("Foundation", true);
+                Foundation = builder.ToMesh("Foundation");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddWedge(
+                    new Vector3(-HalfBlockSize, -HalfFloorHeight / 2, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1)
+                    );
+                FoundationTriangle = builder.ToMesh("FoundationTriangle");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddWedge(
+                    new Vector3(-HalfBlockSize, -HalfFloorHeight / 2, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
+                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
+                    x => x.Rotate(0,-90,0), (x, y) => y == Axis.Y || y == Axis.NY ? x.Rotate(90) : x
+                    );
+                FoundationTriangleMirrored = builder.ToMesh("FoundationTriangleMirrored");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyUV: (x,y) => y == Axis.Y || y == Axis.NY ? x : x.Rotate(-90)
+                    );
+                Floor = builder.ToMesh("Floor");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddWedge(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyUV: (x, y) => y == Axis.Y || y == Axis.NY ? x : x.Rotate(-90)
+                    );
+                FloorTriangle = builder.ToMesh("FloorTriangle");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddWedge(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    x => x.Rotate(0, -90, 0), (x, y) => y == Axis.Y || y == Axis.NY ? x.Rotate(90) : x.Rotate(-90)
+                    );
+                FloorTriangleMirrored = builder.ToMesh("FloorTriangleMirrored");
             }
         }
 
-        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2,Vector2> modifyUV = null)
+        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
         {
             if (modifyVert == null)
                 modifyVert = x => x;
             if (modifyUV == null)
-                modifyUV = x => x;
+                modifyUV = (x, y) => x;
             if (top != null)
                 builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY))),
-                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY))),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY))),
-                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.maxY)))
+                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY), Axis.Y)),
+                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY), Axis.Y)),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.maxY), Axis.Y)),
+                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY), Axis.Y))
                 );
             if (bottom != null)
                 builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY))),
-                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY))),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.maxY))),
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY)))
+                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY), Axis.NY)),
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY), Axis.NY)),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.maxY), Axis.NY)),
+                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY), Axis.NY))
                 );
             if (north != null)
                 builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.minY))),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.minY))),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.maxY))),
-                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.maxY)))
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.minY), Axis.Z), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.minY), Axis.Z), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.maxY), Axis.Z), unique: 1),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.maxY), Axis.Z), unique: 1)
                 );
             if (east != null)
                 builder.AddSquare(
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(east.Value.minX, east.Value.minY))),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.minY))),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.maxY))),
-                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(east.Value.minX, east.Value.maxY)))
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.minY), Axis.X), unique: 2),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.maxY), Axis.X), unique: 2),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.maxY), Axis.X), unique: 2),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.minY), Axis.X), unique: 2)
                 );
             if (south != null)
                 builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY))),
-                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY))),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY))),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY)))
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1)
                 );
             if (west != null)
                 builder.AddSquare(
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.minY))),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.minY))),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.maxY))),
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.maxY)))
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.minY), Axis.NX), unique: 2),
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(west.Value.minX, west.Value.minY), Axis.NX), unique: 2),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(west.Value.minX, west.Value.maxY), Axis.NX), unique: 2),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.maxY), Axis.NX), unique: 2)
+                );
+        }
+
+        public static void AddWedge(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? northwest = null, Func<Vector3, Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
+        {
+            if (modifyVert == null)
+                modifyVert = x => x;
+            if (modifyUV == null)
+                modifyUV = (x, y) => x;
+            if (top != null)
+                builder.AddTriangle(
+                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY), Axis.Y)),
+                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY), Axis.Y)),
+                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY), Axis.Y))
+                );
+            if (bottom != null)
+                builder.AddTriangle(
+                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY), Axis.NY)),
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY), Axis.NY)),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY), Axis.NY))
+                );
+            if (east != null)
+                builder.AddSquare(
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.minY), Axis.X), unique: 2),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.maxY), Axis.X), unique: 2),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.maxY), Axis.X), unique: 2),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.minY), Axis.X), unique: 2)
+                );
+            if (south != null)
+                builder.AddSquare(
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1)
+                );
+            if (northwest != null)
+                builder.AddSquare(
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.minY), Axis.NZ), unique: 3),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.maxY), Axis.NZ), unique: 3),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.maxY), Axis.NZ), unique: 3),
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.minY), Axis.NZ), unique: 3)
                 );
         }
     }
@@ -1523,6 +1550,7 @@ namespace MoreBuilding
     public class BlockItemCreation : ItemCreation
     {
         public MeshData[] meshData;
+        public Mesh[][] mesh;
         public int upgradeItem;
         public Func<Material> material;
         public Vector3[] modelScales;
@@ -1731,8 +1759,29 @@ namespace MoreBuilding
             return s;
         }
 
+        public static Texture2D GetReadable(this Texture2D source, GraphicsFormat targetFormat, bool mipChain = true, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default) =>
+            source.CopyTo(
+                new Texture2D(
+                    (int)(copyArea?.width ?? source.width),
+                    (int)(copyArea?.height ?? source.height),
+                    targetFormat,
+                    mipChain ? TextureCreationFlags.MipChain : TextureCreationFlags.None),
+                copyArea,
+                format,
+                readWrite);
 
-        public static Texture2D GetReadable(this Texture2D source, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default, TextureFormat? targetFormat = null, bool mipChain = true)
+        public static Texture2D GetReadable(this Texture2D source, TextureFormat? targetFormat = null, bool mipChain = true, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default) =>
+            source.CopyTo(
+                new Texture2D(
+                    (int)(copyArea?.width ?? source.width),
+                    (int)(copyArea?.height ?? source.height),
+                    targetFormat ?? TextureFormat.ARGB32,
+                    mipChain),
+                copyArea,
+                format,
+                readWrite);
+
+        static Texture2D CopyTo(this Texture2D source, Texture2D texture, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default)
         {
             var temp = RenderTexture.GetTemporary(source.width, source.height, 0, format, readWrite);
             Graphics.Blit(source, temp);
@@ -1740,7 +1789,6 @@ namespace MoreBuilding
             var prev = RenderTexture.active;
             RenderTexture.active = temp;
             var area = copyArea ?? new Rect(0, 0, temp.width, temp.height);
-            var texture = new Texture2D((int)area.width, (int)area.height, targetFormat ?? TextureFormat.RGBA32, mipChain);
             texture.ReadPixels(area, 0, 0);
             texture.Apply();
             RenderTexture.active = prev;
@@ -1777,8 +1825,133 @@ namespace MoreBuilding
                 a += Mathf.PI;
             return new Vector2(Mathf.Sin(a) * l, Mathf.Cos(a) * l);
         }
+        public static Vector3 Rotate(this Vector3 vector, Quaternion rotation) => rotation * vector;
+        public static Vector3 Rotate(this Vector3 vector, Vector3 euler) => vector.Rotate(Quaternion.Euler(euler));
+        public static Vector3 Rotate(this Vector3 vector, float x, float y, float z) => vector.Rotate(Quaternion.Euler(x, y, z));
 
         public static Vector3 Multiply(this Vector3 value, Vector3 scale) => new Vector3(value.x * scale.x, value.y * scale.y, value.z * scale.z);
+
+        public static void MakeAlwaysReinforced(this Block block)
+        {
+            var foundation = block as Block_Foundation;
+            foundation.meshRenderer = foundation.GetComponentInChildren<MeshRenderer>();
+            var meshFilter = foundation.GetComponentInChildren<MeshFilter>();
+            Traverse.Create(foundation).Field("meshFilter").SetValue(meshFilter);
+            foundation.armoredMesh = meshFilter.sharedMesh;
+            Traverse.Create(foundation).Field("defaultMesh").SetValue(meshFilter.sharedMesh);
+            Traverse.Create(foundation).Field("defaultMaterial").SetValue(foundation.meshRenderer.sharedMaterial);
+            Traverse.Create(foundation).Field("armoredMaterial").SetValue(foundation.meshRenderer.sharedMaterial);
+            Traverse.Create(foundation).Field("reinforced").SetValue(true);
+        }
+
+        public static void ShowData(this Material material)
+        {
+            var found = $" - \"{material.name}\" (shader name: \"{material.shader.name}\")";
+            for (int i = 0; i < material.shader.GetPropertyCount(); i++)
+            {
+                string t = material.shader.GetPropertyType(i).ToString();
+                var n = material.shader.GetPropertyName(i);
+                string value = null;
+                switch (material.shader.GetPropertyType(i))
+                {
+                    case UnityEngine.Rendering.ShaderPropertyType.Texture:
+                        var b = material.GetTexture(n);
+                        if (b == null)
+                            t = "Unknown Texture";
+                        else
+                        {
+                            t = b.GetType().FullName;
+                            value = b.name;
+                        }
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Range:
+                        Array a = material.GetColorArray(n);
+                        if (a == null)
+                            a = material.GetFloatArray(n);
+                        if (a == null)
+                            a = material.GetMatrixArray(n);
+                        if (a == null)
+                            a = material.GetVectorArray(n);
+                        if (a == null)
+                            t = "Unknown Range";
+                        else
+                        {
+                            t = a.GetType().FullName;
+                            value = a.GetValue(0).ToString();
+                            for (int j = 1; j < a.Length; j++)
+                                value += ", " + a.GetValue(j);
+                        }
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Vector:
+                        var c = material.GetVector(n);
+                        if (c == null)
+                            t = "Unknown Vector";
+                        else
+                        {
+                            t = c.GetType().FullName;
+                            value = $"({c.x}, {c.y}, {c.z}, {c.w})";
+                        }
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Float:
+                        value = material.GetFloat(n).ToString();
+                        break;
+                    case UnityEngine.Rendering.ShaderPropertyType.Color:
+                        var v = material.GetColor(n);
+                        value = $"({v.r}, {v.g}, {v.b}, {v.a})";
+                        break;
+                }
+                found += $"\nProperty: {n} ({t})\nDescription: {material.shader.GetPropertyDescription(i)}" + (value == null ? "" : $"\nValue: {value}");
+            }
+            Debug.Log(found);
+        }
+
+        public static void ShowValues(this object obj)
+        {
+            if (obj == null)
+            {
+                Debug.Log("Value: null");
+                return;
+            }    
+            var t = obj.GetType();
+            var m = new System.Text.StringBuilder();
+            while (t != typeof(object))
+            {
+                foreach (var f in t.GetFields(~BindingFlags.Default))
+                    if (f != null && !f.IsStatic)
+                    {
+                        m.Append($"\n - Field: {f.FieldType.FullName} {f.DeclaringType.FullName}.{f.Name}");
+                        try
+                        {
+                            var v = f.GetValue(obj);
+                            if (v == null)
+                                m.Append("\n   Value: null");
+                            else
+                                m.Append($"\n   Value: {v}\n   Type: {v.GetType()}");
+                        } catch (Exception e)
+                        {
+                            m.Append($"\n   Exception: {e.GetType().FullName}: {e.Message}");
+                        }
+                    }
+                foreach (var p in t.GetProperties(~BindingFlags.Default))
+                    if (p != null && p.GetGetMethod() != null && !p.GetGetMethod().IsStatic && p.GetIndexParameters().Length == 0)
+                    {
+                        m.Append($"\n - Property: {p.GetGetMethod().ReturnType.FullName} {p.DeclaringType.FullName}.{p.Name}");
+                        try
+                        {
+                            var v = p.GetValue(obj);
+                            if (v == null)
+                                m.Append("\n   Value: null");
+                            else
+                                m.Append($"\n   Value: {v}\n   Type: {v.GetType()}");
+                        } catch (Exception e)
+                        {
+                            m.Append($"\n   Exception: {e.GetType().FullName}: {e.Message}");
+                        }
+                    }
+                t = t.BaseType;
+            }
+            Debug.Log(m.ToString());
+        }
     }
 
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
@@ -1830,7 +2003,7 @@ namespace MoreBuilding
         static void Postfix(Block __instance, ref bool __result)
         {
             foreach (var p in Main.instance.items)
-                if (p.item.UniqueIndex == __instance.buildableItem?.UniqueIndex)
+                if (p.item && p.item.UniqueIndex == __instance.buildableItem?.UniqueIndex)
                 {
                     __result = p.baseItem.settings_buildable.GetBlockPrefab(0).IsWalkable();
                     return;

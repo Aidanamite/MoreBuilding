@@ -43,6 +43,7 @@ namespace UnityEngine
             var s = new SubMeshDescriptor[tri.Count];
             var t = new int[totalTri];
             var n = new Vector3[verts.Count];
+            var tg = new Vector4[verts.Count];
             foreach (var p in verts)
             {
                 v[p.Value] = p.Key.Location;
@@ -55,12 +56,27 @@ namespace UnityEngine
                 if (p.Key.Normal == null)
                 {
                     var sum = Vector3.zero;
+                    var sum2 = Vector3.zero;
                     var edges = new HashSet<Vector3>();
                     foreach (var sub in tri)
                         for (int i = 0; i < sub.Value.Count; i += 3)
                         {
                             var inds = new[] { sub.Value[i], sub.Value[i + 1], sub.Value[i + 2] };
                             var ind = Array.IndexOf(inds, p.Value);
+                            if (ind != -1)
+                            {
+                                var v1 = inds[(ind + 1) % 3];
+                                var v2 = inds[(ind + 2) % 3];
+                                if (u[p.Value] != u[v1] && u[p.Value] != u[v2] && u[v2] != u[v1] && v[p.Value] != v[v1] && v[p.Value] != v[v2] && v[v2] != v[v1])
+                                    sum2 += Quaternion.LerpUnclamped(Quaternion.LookRotation(v[v1] - v[p.Value]), Quaternion.LookRotation(v[v2] - v[p.Value]), Vector2.SignedAngle(u[v1] - u[p.Value], Vector2.right) / Vector2.SignedAngle(u[v1] - u[p.Value], u[v2] - u[p.Value])) * Vector3.forward;
+                                /*    sum2 += (v[v1] - v[p.Value]).normalized * (u[v1].x < u[p.Value].x ? -1 : 1);
+                                else if (u[p.Value].y == u[v2].y)
+                                    sum2 += (v[v2] - v[p.Value]).normalized * (u[v2].x < u[p.Value].x ? -1 : 1);
+                                else if (u[v1].y == u[v2].y)
+                                    sum2 += (v[v1] - v[v2]).normalized * (u[v1].x < u[v2].x ? -1 : 1);
+                                else
+                                    sum2 += (v[p.Value] - ((u[p.Value].y - u[v2].y) / (u[v1].y - u[v2].y) * (v[v1] - v[v2]) + v[v2])).normalized * (u[v1].x < u[p.Value].x ? -1 : 1);*/
+                            }
                             if (ind == -1)
                             {
                                 if (enforceNormalsIncludeTouchingVerts)
@@ -68,16 +84,20 @@ namespace UnityEngine
                                 if (ind == -1)
                                     continue;
                             }
-                            var v1 = inds[(ind + 1) % 3];
-                            var v2 = inds[(ind + 2) % 3];
-                            var norm = Quaternion.LookRotation(v[p.Value] - ((v[v1] + v[v2]) / 2), v[v1] - ((v[v1] + v[v2]) / 2)) * Vector3.left;
-                            norm.x = Mathf.Round(norm.x * 1000) / 1000;
-                            norm.y = Mathf.Round(norm.y * 1000) / 1000;
-                            norm.z = Mathf.Round(norm.z * 1000) / 1000;
-                            if (edges.Add(norm))
-                                sum += norm;
+                            {
+                                var v1 = inds[(ind + 1) % 3];
+                                var v2 = inds[(ind + 2) % 3];
+                                var norm = Quaternion.LookRotation(v[p.Value] - ((v[v1] + v[v2]) / 2), v[v1] - ((v[v1] + v[v2]) / 2)) * Vector3.left;
+                                norm.x = Mathf.Round(norm.x * 1000) / 1000;
+                                norm.y = Mathf.Round(norm.y * 1000) / 1000;
+                                norm.z = Mathf.Round(norm.z * 1000) / 1000;
+                                if (edges.Add(norm))
+                                    sum += norm;
+                            }
                         }
                     n[p.Value] = sum.normalized;
+                    sum2 = sum2.normalized;
+                    tg[p.Value] = new Vector4(sum2.x, sum2.y, sum2.z, -1);
                 }
             var submeshIds = new List<int>();
             foreach (var key in tri.Keys)
@@ -97,12 +117,13 @@ namespace UnityEngine
             mesh.uv = u;
             mesh.triangles = t;
             mesh.normals = n;
+            mesh.tangents = tg;
             mesh.boneWeights = b;
             mesh.subMeshCount = s.Length;
             for (int i = 0; i < s.Length; i++)
                 mesh.SetSubMesh(i, s[i]);
-            mesh.RecalculateTangents();
             mesh.RecalculateBounds();
+            //mesh.RecalculateTangents();
             return mesh;
         }
     }
