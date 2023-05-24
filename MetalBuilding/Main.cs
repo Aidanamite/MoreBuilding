@@ -34,19 +34,58 @@ namespace MoreBuilding
             new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160548, uniqueName = "Block_Upgrade_Metal", isUpgrade = true, localization = "Replaced with solid metal@" },
             new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160550, uniqueName = "Block_Upgrade_Glass", isUpgrade = true, localization = "Replaced with glass@" },
             new BlockItemCreation() {
-                baseIndex = 1, uniqueIndex = 160001, uniqueName = "Block_Floor_ScrapMetal", localization = "Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
-                mesh = new[] {new[] { GeneratedMeshes.Floor } },
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 2, uniqueIndex = 160002, uniqueName = "Block_Foundation_ScrapMetal", localization = "Scrap Metal Foundation@Used to expand your raft on the bottom floor",
+                baseIndex = 382, uniqueIndex = 160002, uniqueName = "Block_Foundation_ScrapMetal", localization = "Scrap Metal Foundation@Used to expand your raft on the bottom floor",
                 mesh = new[] {new[] { GeneratedMeshes.Foundation } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
                 additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
+                baseIndex = 383, uniqueIndex = 160383, uniqueName = "Block_Foundation_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Foundation@Used to expand your raft on the bottom floor",
+                mesh = new[]{new[] { GeneratedMeshes.FoundationTriangle } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                additionEdits = x => x.MakeAlwaysReinforced()
+            },
+            new BlockItemCreation() {
+                baseIndex = 387, uniqueIndex = 160387, uniqueName = "Block_Foundation_Triangular_ScrapMetal_Mirrored", localization = "Triangular Scrap Metal Foundation@Used to expand your raft on the bottom floor",
+                mesh = new[]{new[] { GeneratedMeshes.FoundationTriangleMirrored } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                mirroredItem = 160383,
+                additionEdits = x => x.MakeAlwaysReinforced()
+            },
+            new BlockItemCreation() {
+                baseIndex = 384, uniqueIndex = 160384, uniqueName = "Block_Floor_ScrapMetal", localization = "Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
+                mesh = new[] {new[] { GeneratedMeshes.Floor } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
+                baseIndex = 385, uniqueIndex = 160385, uniqueName = "Block_Floor_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
+                mesh = new[] {new[] { GeneratedMeshes.FloorTriangle } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
+                baseIndex = 388, uniqueIndex = 160388, uniqueName = "Block_Floor_Triangular_ScrapMetal_Mirrored", localization = "Triangular Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
+                mesh = new[] {new[] { GeneratedMeshes.FloorTriangleMirrored } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                mirroredItem = 160385
+            },
+            new BlockItemCreation() {
+                baseIndex = 409, uniqueIndex = 160409, uniqueName = "Block_Wall_ScrapMetal", localization = "Scrap Metal Wall@Provides support for additional floors",
+                mesh = new[] {new[] { GeneratedMeshes.Wall }, new[] { GeneratedMeshes.WallDiagonal } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
+                baseIndex = 410, uniqueIndex = 160410, uniqueName = "Block_HalfWall_ScrapMetal", localization = "Half Scrap Metal Wall@Provides support for additional floors",
+                mesh = new[] {new[] { GeneratedMeshes.WallHalf }, new[] { GeneratedMeshes.WallHalfDiagonal } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
+                baseIndex = 408, uniqueIndex = 160408, uniqueName = "Block_Wall_Slope_ScrapMetal", localization = "Triangular Scrap Metal Wall@Fills triangular holes",
+                mesh = new[]{new[] { GeneratedMeshes.WallSlope } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
                 baseIndex = 3, uniqueIndex = 160003, uniqueName = "Block_Stair_ScrapMetal", localization = "Scrap Metal Stair@Great to get from one floor to another",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfFloorHeight,0.15f-HalfBlockSize,-HalfBlockSize),
                     new Vector3(0,0.35f-HalfBlockSize,HalfBlockSize),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, DifferentEnds: true ), true, Quaternion.Euler(0,0,-90)),
@@ -81,16 +120,8 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 4, uniqueIndex = 160004, uniqueName = "Block_Wall_ScrapMetal", localization = "Scrap Metal Wall@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.05f,-0.04f),
-                    new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,2), 0, 0.9f, 0.1f ))} },
-                upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
-            },
-            new BlockItemCreation() {
-                baseIndex = 82, uniqueIndex = 160082, uniqueName = "Block_Wall_Window_ScrapMetal", localization = "Scrap Metal Window@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                baseIndex = 411, uniqueIndex = 160411, uniqueName = "Block_Wall_Window_ScrapMetal", localization = "Scrap Metal Window@Provides support for additional floors",
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.05f,-0.04f),
                     new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0),
                     new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,1), 0, 0.9f, 0.1f )),
@@ -117,8 +148,36 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
             },
             new BlockItemCreation() {
+                baseIndex = 493, uniqueIndex = 160493, uniqueName = "Block_Wall_Window_ScrapMetal_Half", localization = "Half Scrap Metal Window@Provides support for additional floors",
+                mesh = new[] {new[] {new MeshBox(
+                    new Vector3(-HalfBlockSize,-0.05f,-0.04f),
+                    new Vector3(HalfBlockSize,0.3f,0),
+                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,0.35f/HalfFloorHeight), 0, 0.9f, 0.1f )),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize,HalfFloorHeight-0.35f,-0.04f),
+                    new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0),
+                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(1 - (0.3f/HalfFloorHeight),1), 0, 0.9f, 0.1f )),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize, 0.3f, -0.04f),
+                    new Vector3(0.2f-HalfBlockSize,HalfFloorHeight-0.35f,0),
+                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0.9f - 0.2f / BlockSize * 0.9f, 0.2f / BlockSize * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
+                new MeshBox(
+                    new Vector3(HalfBlockSize-0.2f, 0.3f, -0.04f),
+                    new Vector3(HalfBlockSize,HalfFloorHeight-0.35f,0),
+                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.2f / BlockSize * 0.9f, 0.9f - 0.4f / BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
+                new MeshBox(
+                    new Vector3(-HalfBlockSize, 0.3f, -0.04f),
+                    new Vector3(HalfBlockSize,HalfFloorHeight-0.35f,0),
+                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
+                new MeshBox(
+                    new Vector3(HalfBlockSize-0.2f, 0.3f, -0.04f),
+                    new Vector3(0.2f-HalfBlockSize,HalfFloorHeight-0.35f,0),
+                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })}},
+                upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
+            },
+            new BlockItemCreation() {
                 baseIndex = 84, uniqueIndex = 160084, uniqueName = "Block_Pillar_ScrapMetal", localization = "Scrap Metal Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-0.075f, -0.05f, -0.075f),
                     new Vector3(0.075f,FullFloorHeight-0.05f,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -130,7 +189,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 85, uniqueIndex = 160085, uniqueName = "Block_Wall_Fence_ScrapMetal", localization = "Scrap Metal Fence@Keeps you from falling of your raft",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize, -0.05f, -0.06f),
                     new Vector3(0.12f-HalfBlockSize,HalfFloorHeight*0.8f-0.05f,0.06f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -166,7 +225,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 88, uniqueIndex = 160088, uniqueName = "Block_Wall_Door_ScrapMetal", localization = "Scrap Metal Door@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {
+                mesh = new[] {new[] {
                     new[] {
                         new MeshBox(
                             new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f),
@@ -250,7 +309,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 143, uniqueIndex = 160143, uniqueName = "Block_HalfFloor_ScrapMetal", localization = "Scrap Metal Raised Floor@A floor half the height of a wall",
-                meshData = new MeshData[] {new[] {
+                mesh = new[] {new[] {
                     new MeshBox(
                         new Vector3(-HalfBlockSize,HalfFloorHeight-0.15f,-HalfBlockSize),
                         new Vector3(HalfBlockSize,HalfFloorHeight,HalfBlockSize),
@@ -266,16 +325,8 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 144, uniqueIndex = 160144, uniqueName = "Block_HalfWall_ScrapMetal", localization = "Half Scrap Metal Wall@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.05f,0),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.04f),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,1), 0, 0.9f, 0.1f ))} },
-                upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
-            },
-            new BlockItemCreation() {
                 baseIndex = 146, uniqueIndex = 160146, uniqueName = "Block_HalfPillar_ScrapMetal", localization = "Half Scrap Metal Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-0.075f, -0.05f, -0.075f),
                     new Vector3(0.075f,HalfFloorHeight-0.05f,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -287,7 +338,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 148, uniqueIndex = 160148, uniqueName = "Block_Roof_Straight_ScrapMetal", localization = "Scrap Metal Roof@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(HalfBlockSize,0,BlockSize),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => x.z > 0 ? x + Vector3.up * HalfFloorHeight : x)},
@@ -303,49 +354,23 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 150, uniqueIndex = 160150, uniqueName = "Block_Roof_Corner_ScrapMetal", localization = "Scrap Metal Roof Corner@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (x.x < 0 && x.z > 0) ? x + Vector3.up * HalfFloorHeight : x)}},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 152, uniqueIndex = 160152, uniqueName = "Block_Wall_Slope_ScrapMetal", localization = "Triangular Scrap Metal Wall@Fills triangular holes",
-                meshData = new MeshData[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.04f,0.05f-HalfFloorHeight),
-                    new Vector3(HalfBlockSize,0,0.05f),
-                    new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90,true, DifferentEnds: true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0))} },
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
                 baseIndex = 160, uniqueIndex = 160160, uniqueName = "Block_Roof_InvCorner_ScrapMetal", localization = "Inverted Scrap Metal Roof Corner@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x < 0 || x.z > 0) ? x + Vector3.up * HalfFloorHeight : x))}},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 383, uniqueIndex = 160383, uniqueName = "Block_Foundation_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Foundation@Used to expand your raft on the bottom floor",
-                mesh = new[]{new[] { GeneratedMeshes.FoundationTriangle } },
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
-                additionEdits = x => x.MakeAlwaysReinforced()
-            },
-            new BlockItemCreation() {
-                baseIndex = 387, uniqueIndex = 160387, uniqueName = "Block_Foundation_Triangular_ScrapMetal_Mirrored", localization = "Triangular Scrap Metal Foundation@Used to expand your raft on the bottom floor",
-                mesh = new[]{new[] { GeneratedMeshes.FoundationTriangleMirrored } },
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
-                mirroredItem = 160383,
-                additionEdits = x => x.MakeAlwaysReinforced()
-            },
-            new BlockItemCreation() {
-                baseIndex = 191, uniqueIndex = 160191, uniqueName = "Block_Floor_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Floor@Used to build additional floors and roof. Cannot be built in thin air",
-                mesh = new[] {new[] { GeneratedMeshes.FloorTriangle } },
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
                 baseIndex = 193, uniqueIndex = 160193, uniqueName = "Block_HalfFloor_Triangular_ScrapMetal", localization = "Triangular Scrap Metal Raised Floor@A floor half the height of a wall",
-                meshData = new MeshData[] {new[] {
+                mesh = new[] {new[] {
                     new MeshBox(
                         new Vector3(-HalfBlockSize,HalfFloorHeight-0.15f,-HalfBlockSize),
                         new Vector3(HalfBlockSize,HalfFloorHeight,HalfBlockSize),
@@ -362,7 +387,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 255, uniqueIndex = 160255, uniqueName = "Block_Wall_Gate_ScrapMetal", localization = "Scrap Metal Gate@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {
+                mesh = new[] {new[] {
                     new[] {
                         new MeshBox(
                             new Vector3(-HalfBlockSize, -0.05f, -0.05f),
@@ -438,7 +463,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 421, uniqueIndex = 160421, uniqueName = "Block_Wall_VSlope_ScrapMetal", localization = "Pyramid Scrap Metal Wall@Fills pyramid holes",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
                     new Vector3(0,0.02f,0.05f),
                     new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0), new FaceChanges() { excludeU = true }),
@@ -458,7 +483,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 424, uniqueIndex = 160424, uniqueName = "Block_Roof_ScrapMetal_Endcap", localization = "Scrap Metal Roof Endcap@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
@@ -478,7 +503,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 427, uniqueIndex = 160427, uniqueName = "Block_Roof_ScrapMetal_Pyramid", localization = "Scrap Metal Roof Pyramid@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.45f,1,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
@@ -498,7 +523,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 430, uniqueIndex = 160430, uniqueName = "Block_Roof_ScrapMetal_StraightV", localization = "Scrap Metal Double Roof Corner@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Mathf.Abs(x.x) < 0.25f ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
@@ -510,7 +535,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 443, uniqueIndex = 160443, uniqueName = "Block_Wall_Slope_ScrapMetal_Inverted", localization = "Triangular Scrap Metal Wall@Fills triangular holes",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.006f-HalfBlockSize,0,-0.051f-HalfFloorHeight),
                     new Vector3(HalfBlockSize+0.006f,0.04f,-0.051f),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, true, true), true, Quaternion.Euler(90,180,0))} },
@@ -518,7 +543,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 488, uniqueIndex = 160488, uniqueName = "Block_Roof_ScrapMetal_TJunction", localization = "Scrap Metal T-Junction@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f || Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
@@ -533,36 +558,8 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 491, uniqueIndex = 160491, uniqueName = "Block_Wall_Window_ScrapMetal_Half", localization = "Half Scrap Metal Window@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.05f,-0.04f),
-                    new Vector3(HalfBlockSize,0.3f,0),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,0.35f/HalfFloorHeight), 0, 0.9f, 0.1f )),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize,HalfFloorHeight-0.35f,-0.04f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(1 - (0.3f/HalfFloorHeight),1), 0, 0.9f, 0.1f )),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize, 0.3f, -0.04f),
-                    new Vector3(0.2f-HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0.9f - 0.2f / BlockSize * 0.9f, 0.2f / BlockSize * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.2f, 0.3f, -0.04f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.2f / BlockSize * 0.9f, 0.9f - 0.4f / BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize, 0.3f, -0.04f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.2f, 0.3f, -0.04f),
-                    new Vector3(0.2f-HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
-            },
-            new BlockItemCreation() {
                 baseIndex = 497, uniqueIndex = 160497, uniqueName = "Block_Roof_ScrapMetal_XJunction", localization = "Scrap Metal X-Junction@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
@@ -598,7 +595,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 502, uniqueIndex = 160502, uniqueName = "Block_Roof_ScrapMetal_LJunction", localization = "Scrap Metal L-Junction@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
@@ -626,7 +623,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 541, uniqueIndex = 160541, uniqueName = "Block_HorizontalPillar_ScrapMetal", localization = "Horizontal Scrap Metal Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.1f, 0, -0.075f),
                     new Vector3(0.25f,BlockSize*2,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -638,7 +635,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 542, uniqueIndex = 160542, uniqueName = "Block_HorizontalPillar_ScrapMetal_Half", localization = "Horizontal Half Scrap Metal Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.1f, 0, -0.075f),
                     new Vector3(0.25f,BlockSize,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -651,7 +648,7 @@ namespace MoreBuilding
             /* Glass Blocks */
             new BlockItemCreation() {
                 baseIndex = 2, uniqueIndex = 6970, uniqueName = "Block_Foundation_Glass", localization = "Glass Foundation@Used to expand your raft on the bottom floor",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0.75f,1), -0.05f, 1, 1 ))} },
@@ -660,7 +657,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 189, uniqueIndex = 6971, uniqueName = "Block_Foundation_Triangular_Glass", localization = "Triangular Glass Foundation@Used to expand your raft on the bottom floor",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,1,0,0), new Vector2(0.75f,1), -0.05f, 1, 1 ), true, Quaternion.Euler(0,180,0))} },
@@ -669,7 +666,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 1, uniqueIndex = 6973, uniqueName = "Block_Floor_Glass", localization = "Glass Floor@Used to build additional floors and roof. Cannot be built in thin air",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ))} },
@@ -677,7 +674,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 191, uniqueIndex = 6974, uniqueName = "Block_Floor_Triangular_Glass", localization = "Triangular Glass Floor@Used to build additional floors and roof. Cannot be built in thin air",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,1,0,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), true, Quaternion.Euler(0,180,0))} },
@@ -685,7 +682,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 4, uniqueIndex = 6976, uniqueName = "Block_Wall_Glass", localization = "Glass Wall@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.05f,-0.04f),
                     new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
                     new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,2), 0, 0.9f, 0.1f ))} },
@@ -693,7 +690,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 144, uniqueIndex = 6977, uniqueName = "Block_HalfWall_Glass", localization = "Half Glass Wall@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.05f,0),
                     new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.04f),
                     new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,1), 0, 0.9f, 0.1f ))} },
@@ -701,7 +698,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 152, uniqueIndex = 6978, uniqueName = "Block_Wall_Slope_Glass", localization = "Triangular Glass Wall@Fills triangular holes",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.04f,0.05f-HalfFloorHeight),
                     new Vector3(HalfBlockSize,0,0.05f),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90,true, DifferentEnds: true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0))} },
@@ -709,7 +706,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 421, uniqueIndex = 6979, uniqueName = "Block_Wall_VSlope_Glass", localization = "Pyramid Glass Wall@Fills pyramid holes",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
                     new Vector3(0,0.02f,0.05f),
                     new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0), new FaceChanges() { excludeU = true }),
@@ -729,7 +726,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 443, uniqueIndex = 6980, uniqueName = "Block_Wall_Slope_Glass_Inverted", localization = "Triangular Glass Wall@Fills triangular holes",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.006f-HalfBlockSize,0,-0.051f-HalfFloorHeight),
                     new Vector3(HalfBlockSize+0.006f,0.04f,-0.051f),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, true, true), true, Quaternion.Euler(90,180,0))} },
@@ -737,7 +734,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 148, uniqueIndex = 6983, uniqueName = "Block_Roof_Straight_Glass", localization = "Glass Roof@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(HalfBlockSize,0,BlockSize),
                     new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => x.z > 0 ? x + Vector3.up * HalfFloorHeight : x)},
@@ -753,7 +750,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 150, uniqueIndex = 6984, uniqueName = "Block_Roof_Corner_Glass", localization = "Glass Roof Corner@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (x.x < 0 && x.z > 0) ? x + Vector3.up * HalfFloorHeight : x)}},
@@ -761,7 +758,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 160, uniqueIndex = 6985, uniqueName = "Block_Roof_InvCorner_Glass", localization = "Inverted Glass Roof Corner@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x < 0 || x.z > 0) ? x + Vector3.up * HalfFloorHeight : x))}},
@@ -769,7 +766,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 430, uniqueIndex = 6986, uniqueName = "Block_Roof_Glass_StraightV", localization = "Glass Double Roof Corner@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
                     new UVData(new Vector4(0,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Mathf.Abs(x.x) < 0.25f ? x + Vector3.up * HalfFloorHeight * 0.5f : x),
@@ -781,7 +778,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 502, uniqueIndex = 6987, uniqueName = "Block_Roof_Glass_LJunction", localization = "Glass L-Junction@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
@@ -809,7 +806,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 488, uniqueIndex = 6988, uniqueName = "Block_Roof_Glass_TJunction", localization = "Glass T-Junction@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f || Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
@@ -825,7 +822,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 497, uniqueIndex = 6989, uniqueName = "Block_Roof_Glass_XJunction", localization = "Glass X-Junction@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.9f,0.5f,0.45f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x == 0 || x.z == 0) ? x + Vector3.up * HalfFloorHeight * 0.5f : x), true),
@@ -861,7 +858,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 424, uniqueIndex = 6990, uniqueName = "Block_Roof_Glass_Endcap", localization = "Glass Roof Endcap@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
@@ -881,7 +878,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 427, uniqueIndex = 6991, uniqueName = "Block_Roof_Glass_Pyramid", localization = "Glass Roof Pyramid@Covers your head",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0.45f,1,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90, true ), x=> Quaternion.Euler(0, 90, 0) * ((Mathf.Abs(x.x) < 0.25f && Mathf.Abs(x.z) < 0.25f) ? x + Vector3.up * HalfFloorHeight * 0.5f : x)),
@@ -901,7 +898,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 84, uniqueIndex = 6992, uniqueName = "Block_Pillar_Glass", localization = "Glass Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-0.075f, -0.05f, -0.075f),
                     new Vector3(0.075f,FullFloorHeight-0.05f,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -913,7 +910,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 146, uniqueIndex = 6993, uniqueName = "Block_Pillar_Glass_Half", localization = "Half Glass Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(-0.075f, -0.05f, -0.075f),
                     new Vector3(0.075f,HalfFloorHeight-0.05f,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -925,7 +922,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 541, uniqueIndex = 6994, uniqueName = "Block_HorizontalPillar_Glass", localization = "Horizontal Glass Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.1f, 0, -0.075f),
                     new Vector3(0.25f,BlockSize*2,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -937,7 +934,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 542, uniqueIndex = 6995, uniqueName = "Block_HorizontalPillar_Glass_Half", localization = "Horizontal Half Glass Pillar@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {new MeshBox(
+                mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.1f, 0, -0.075f),
                     new Vector3(0.25f,BlockSize,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Rotation: Quaternion.Euler(0,0,-90), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
@@ -949,7 +946,7 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 88, uniqueIndex = 6996, uniqueName = "Block_Wall_Door_Glass", localization = "Glass Door@Provides support for additional floors",
-                meshData = new MeshData[] {new[] {
+                mesh = new[] {new[] {
                     new[] {
                         new MeshBox(
                             new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f),
@@ -1160,21 +1157,19 @@ namespace MoreBuilding
             if (blockCreation != null)
             {
                 var p = item.item.settings_buildable.GetBlockPrefabs().ToArray();
-                var meshes = blockCreation.mesh == null ? CreateMesh(blockCreation.meshData[0].meshes) : blockCreation.mesh[0];
-                var material = blockCreation.material();
                 for (int i = 0; i < p.Length; i++)
                 {
-                    var me = blockCreation.mesh == null || blockCreation.mesh.Length <= i || blockCreation.mesh[i] == null ? blockCreation.meshData == null || blockCreation.meshData.Length <= i || blockCreation.meshData[i] == null ? meshes : CreateMesh(blockCreation.meshData[i].meshes) : blockCreation.mesh[i];
+                    var me = blockCreation.mesh[i];
                     p[i] = Instantiate(p[i], prefabHolder, false);
                     var r = p[i].GetComponentsInChildren<Renderer>(true);
                     for (int j = 0; j < r.Length; j++)
                         if (me.Length > j && me[j] != null)
                         {
-                            r[j].sharedMaterial = material;
+                            r[j].sharedMaterial = blockCreation.materials[i];
                             if (r[j] is SkinnedMeshRenderer)
-                                (r[j] as SkinnedMeshRenderer).sharedMesh = me[j];
+                                (r[j] as SkinnedMeshRenderer).sharedMesh = me.GetSafe(j);
                             else
-                                r[j].GetComponent<MeshFilter>().sharedMesh = me[j];
+                                r[j].GetComponent<MeshFilter>().sharedMesh = me.GetSafe(j);
                             if (blockCreation.resetModelRotations?.Length > i && blockCreation.resetModelRotations[i]?.Length > j && blockCreation.resetModelRotations[i][j])
                                 r[j].transform.localRotation = default;
                         }
@@ -1352,12 +1347,12 @@ namespace MoreBuilding
         public static Mesh FloorHalfTriangle;
         public static Mesh FloorHalfTriangleMirrored;
         public static Mesh Wall;
+        public static Mesh WallDiagonal;
         public static Mesh WallHalf;
+        public static Mesh WallHalfDiagonal;
         public static Mesh WallV;
         public static Mesh WallSlope;
-        public static Mesh WallSlopeMirrored;
         public static Mesh WallSlopeInverted;
-        public static Mesh WallSlopeInvertedMirrored;
         public static Mesh Fence;
         public static Mesh Gate;
         public static Mesh Door;
@@ -1441,56 +1436,154 @@ namespace MoreBuilding
                     );
                 FloorTriangleMirrored = builder.ToMesh("FloorTriangleMirrored");
             }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 2), (0.9f, 0, 1, 2),
+                    (0, 0, 0.9f, 2), (0.9f, 0, 1, 2)
+                    );
+                Wall = builder.ToMesh("Wall");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize * Main.diagonalMagnitude, -0.01f, -0.06f), new Vector3(0, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0, 0, 0.9f, 2), null,
+                    (0, 0, 0.9f, 2), (0.9f, 0, 1, 2)
+                    );
+                builder.AddBox(
+                    new Vector3(0, -0.01f, -0.06f), new Vector3(HalfBlockSize * Main.diagonalMagnitude, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0, 0.9f, 2), (0.9f, 0, 1, 2),
+                    (0, 0, 0.9f, 2), null
+                    );
+                WallDiagonal = builder.ToMesh("WallDiagonal");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1)
+                    );
+                WallHalf = builder.ToMesh("WallHalf");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize * Main.diagonalMagnitude, -0.01f, -0.06f), new Vector3(0, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0, 0, 0.9f, 1), null,
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1)
+                    );
+                builder.AddBox(
+                    new Vector3(0, -0.01f, -0.06f), new Vector3(HalfBlockSize * Main.diagonalMagnitude, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), null
+                    );
+                WallHalfDiagonal = builder.ToMesh("WallHalfDiagonal");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddRamp(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0.9f, 0, 1, 1)
+                    );
+                WallSlope = builder.ToMesh("WallSlope");
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddRamp(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0.9f, 0, 1, 1)
+                    );
+                WallSlope = builder.ToMesh("WallSlope");
+            }
         }
 
-        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
+        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null, (float minX, float minY, float maxX, float maxY, Axis axis1, Axis axis2)? slice = null)
         {
             if (modifyVert == null)
                 modifyVert = x => x;
             if (modifyUV == null)
                 modifyUV = (x, y) => x;
+            var slices = slice == null || slice.Value.axis1 == slice.Value.axis2 || slice.Value.axis1.Opposite() == slice.Value.axis2 ? new Axis[0] : new[] { slice.Value.axis1, slice.Value.axis2 };
+            var keep = new HashSet<Axis>() { Axis.X, Axis.Y, Axis.Z, Axis.NX, Axis.NY, Axis.NZ };
+            keep.RemoveWhere(slices.Contains);
+            void AddFace(Axis direction, Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4)
+            {
+                if (slices.Contains(direction))
+                    return;
+                var u = new List<Vector2>() { modifyUV(uv1, direction), modifyUV(uv2, direction), modifyUV(uv3, direction), modifyUV(uv4, direction) };
+                var p = new List<(Axis[] a, Vertex v)>();
+                foreach (var a in new[]
+                    {
+                        new[] { Axis.NX, Axis.Y, Axis.NZ },
+                        new[] { Axis.NX, Axis.Y, Axis.Z },
+                        new[] { Axis.X, Axis.Y, Axis.Z },
+                        new[] { Axis.X, Axis.Y, Axis.NZ },
+                        new[] { Axis.X, Axis.NY, Axis.NZ },
+                        new[] { Axis.X, Axis.NY, Axis.Z },
+                        new[] { Axis.NX, Axis.NY, Axis.Z },
+                        new[] { Axis.NX, Axis.NY, Axis.NZ }
+                    })
+                    if (a.Contains(direction))
+                        p.Add((a, (modifyVert(new Vector3((((int)a[0] / 3) == 1 ? min : max).x, (((int)a[1] / 3) == 1 ? min : max).y, (((int)a[2] / 3) == 1 ? min : max).z)), u.Take())));
+                if (slice == null || slices.Contains(direction.Opposite()))
+                    builder.AddSquare(p[0].v, p[1].v, p[2].v, p[3].v);
+                else
+                {
+                    p.RemoveAll(x => slices.Contains(x.a[((int)direction + 1) % 3]) && slices.Contains(x.a[((int)direction + 2) % 3]));
+                    builder.AddTriangle(p[0].v, p[1].v, p[2].v);
+                }
+            }
             if (top != null)
-                builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY), Axis.Y)),
-                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY), Axis.Y)),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.maxY), Axis.Y)),
-                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY), Axis.Y))
-                );
+                AddFace(Axis.Y,
+                    new Vector2(top.Value.maxX, top.Value.minY),
+                    new Vector2(top.Value.minX, top.Value.minY),
+                    new Vector2(top.Value.minX, top.Value.maxY),
+                    new Vector2(top.Value.maxX, top.Value.maxY));
             if (bottom != null)
-                builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY), Axis.NY)),
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY), Axis.NY)),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.maxY), Axis.NY)),
-                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY), Axis.NY))
-                );
+                AddFace(Axis.NY,
+                    new Vector2(bottom.Value.minX, bottom.Value.maxY),
+                    new Vector2(bottom.Value.maxX, bottom.Value.maxY),
+                    new Vector2(bottom.Value.maxX, bottom.Value.minY),
+                    new Vector2(bottom.Value.minX, bottom.Value.minY));
             if (north != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.minY), Axis.Z), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.minY), Axis.Z), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.maxY), Axis.Z), unique: 1),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.maxY), Axis.Z), unique: 1)
-                );
+                AddFace(Axis.Z,
+                    new Vector2(north.Value.minX, north.Value.maxY),
+                    new Vector2(north.Value.maxX, north.Value.maxY),
+                    new Vector2(north.Value.maxX, north.Value.minY),
+                    new Vector2(north.Value.minX, north.Value.minY));
             if (east != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.minY), Axis.X), unique: 2),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.maxY), Axis.X), unique: 2),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.maxY), Axis.X), unique: 2),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.minY), Axis.X), unique: 2)
-                );
+                AddFace(Axis.X,
+                    new Vector2(east.Value.minX, east.Value.maxY),
+                    new Vector2(east.Value.maxX, east.Value.maxY),
+                    new Vector2(east.Value.maxX, east.Value.minY),
+                    new Vector2(east.Value.minX, east.Value.minY));
             if (south != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1)
-                );
+                AddFace(Axis.NZ,
+                    new Vector2(south.Value.maxX, south.Value.maxY),
+                    new Vector2(south.Value.minX, south.Value.maxY),
+                    new Vector2(south.Value.minX, south.Value.minY),
+                    new Vector2(south.Value.maxX, south.Value.minY));
             if (west != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.minY), Axis.NX), unique: 2),
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(west.Value.minX, west.Value.minY), Axis.NX), unique: 2),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(west.Value.minX, west.Value.maxY), Axis.NX), unique: 2),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.maxY), Axis.NX), unique: 2)
-                );
+                AddFace(Axis.NX,
+                    new Vector2(west.Value.minX, west.Value.maxY),
+                    new Vector2(west.Value.maxX, west.Value.maxY),
+                    new Vector2(west.Value.maxX, west.Value.minY),
+                    new Vector2(west.Value.minX, west.Value.minY));
+            // TODO: Add slice face
+
         }
 
         public static void AddWedge(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? northwest = null, Func<Vector3, Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
@@ -1520,17 +1613,58 @@ namespace MoreBuilding
                 );
             if (south != null)
                 builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1)
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1)
                 );
             if (northwest != null)
                 builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.minY), Axis.NZ), unique: 3),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.maxY), Axis.NZ), unique: 3),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.maxY), Axis.NZ), unique: 3),
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.minY), Axis.NZ), unique: 3)
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.minY), Axis.NZ), unique: 3),
+                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.maxY), Axis.NZ), unique: 3),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.maxY), Axis.NZ), unique: 3),
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.minY), Axis.NZ), unique: 3)
+                );
+        }
+
+        public static void AddRamp(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3, Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
+        {
+            if (modifyVert == null)
+                modifyVert = x => x;
+            if (modifyUV == null)
+                modifyUV = (x, y) => x;
+            if (top != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY), Axis.Y)),
+                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY), Axis.Y)),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.maxY), Axis.Y)),
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY), Axis.Y))
+                );
+            if (bottom != null)
+                builder.AddSquare(
+                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY), Axis.NY)),
+                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY), Axis.NY)),
+                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.maxY), Axis.NY)),
+                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY), Axis.NY))
+                );
+            if (north != null)
+                builder.AddTriangle(
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.minY), Axis.Z), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.minY), Axis.Z), unique: 1),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.maxY), Axis.Z), unique: 1)
+                );
+            if (south != null)
+                builder.AddTriangle(
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
+                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1)
+                );
+            if (west != null)
+                builder.AddSquare(
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.minY), Axis.NX), unique: 2),
+                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.minY), Axis.NX), unique: 2),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.maxY), Axis.NX), unique: 2),
+                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.maxY), Axis.NX), unique: 2)
                 );
         }
     }
@@ -1549,10 +1683,16 @@ namespace MoreBuilding
     }
     public class BlockItemCreation : ItemCreation
     {
-        public MeshData[] meshData;
-        public Mesh[][] mesh;
+        public MeshData mesh;
         public int upgradeItem;
-        public Func<Material> material;
+        public Func<Material> material
+        {
+            set
+            {
+                materials = value;
+            }
+        }
+        public Materials materials;
         public Vector3[] modelScales;
         public bool[][] resetModelRotations;
         public Action<Block> additionEdits;
@@ -1585,15 +1725,69 @@ namespace MoreBuilding
         public Vector2 EndMaxMin => EndFlipped ? new Vector2(Ends.x, Ends.w) : new Vector2(Ends.z, Ends.y);
     }
 
+    public class Materials
+    {
+        Material[] mats;
+        Func<Material>[] matGets;
+        public static implicit operator Materials(Material[] m) => new Materials() { mats = m };
+        public static implicit operator Materials(Material m) => new Materials() { mats = new[] { m } };
+        public static implicit operator Materials(Func<Material>[] m) => new Materials() { matGets = m };
+        public static implicit operator Materials(Func<Material> m) => new Materials() { matGets = new[] { m } };
+
+        public Material this[int index]
+        {
+            get
+            {
+                if (mats == null)
+                {
+                    if (matGets == null)
+                        return null;
+                    mats = new Material[matGets.Length];
+                }
+                if (mats.Length <= index)
+                    index = 0;
+                if (mats[index] == null)
+                {
+                    var m = matGets.GetSafe(index);
+                    if (m != null)
+                        mats[index] = m();
+                }
+                return mats[index] ?? mats[0];
+            }
+        }
+    }
+
     public class MeshData
     {
-        public MeshBox[][] meshes;
-        public static implicit operator MeshData(MeshBox[] m) => new MeshData() { meshes = new[] { m } };
-        public static implicit operator MeshData(MeshBox[][] m) => new MeshData() { meshes = m };
+        Mesh[][] meshes;
+        MeshBox[][][] meshboxes;
+        public static implicit operator MeshData(Mesh m) => new MeshData() { meshes = new[] { new[] { m } } };
+        public static implicit operator MeshData(Mesh[] m) => new MeshData() { meshes = new[] { m } };
+        public static implicit operator MeshData(Mesh[][] m) => new MeshData() { meshes = m };
+        public static implicit operator MeshData(MeshBox[] m) => new MeshData() { meshboxes = new[] { new[] { m } } };
+        public static implicit operator MeshData(MeshBox[][] m) => new MeshData() { meshboxes = new[] { m } };
+        public static implicit operator MeshData(MeshBox[][][] m) => new MeshData() { meshboxes = m };
 
-        public static class Presets
+        public Mesh[] this[int index]
         {
-            
+            get
+            {
+                if (meshes == null)
+                {
+                    if (meshboxes == null)
+                        return null;
+                    meshes = new Mesh[meshboxes.Length][];
+                }
+                if (meshes.Length <= index)
+                    index = 0;
+                if (meshes[index] == null)
+                {
+                    var b = meshboxes.GetSafe(index);
+                    if (b != null)
+                        meshes[index] = Main.CreateMesh(b);
+                }
+                return meshes[index] ?? meshes[0];
+            }
         }
     }
     public class MeshBox
@@ -1952,6 +2146,26 @@ namespace MoreBuilding
             }
             Debug.Log(m.ToString());
         }
+
+        public static T GetSafe<T>(this T[] c, int index)
+        {
+            if (c == null)
+                return default;
+            if (c.Length <= index)
+                return default;
+            return c[index];
+        }
+
+        public static Axis Opposite(this Axis axis) => (Axis)(((int)axis + 3) % 6);
+
+        public static T Take<T>(this List<T> list)
+        {
+            var v = list[0];
+            list.RemoveAt(0);
+            return v;
+        }
+
+        public static bool Bit(this int value, byte offset) => (value & (1 << offset)) != 0;
     }
 
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
