@@ -1042,6 +1042,7 @@ namespace MoreBuilding
         bool loaded = false;
         public void Start()
         {
+            AssetBundle.GetAllLoadedAssetBundles();
             if (SceneManager.GetActiveScene().name == Raft_Network.GameSceneName && ComponentManager<Raft_Network>.Value.remoteUsers.Count > 1)
             {
                 Debug.LogError($"[{name}]: This cannot be loaded while in a multiplayer");
@@ -1102,14 +1103,17 @@ namespace MoreBuilding
             ModUtils_ReloadBuildMenu();
             harmony?.UnpatchAll(harmony.Id);
             LocalizationManager.Sources.Remove(language);
-            foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
+            if (items != null)
+            {
+                foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
                     Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
-            foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockCollisionMask>())
+                foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockCollisionMask>())
                     Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
-            ItemManager.GetAllItems().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
-            foreach (var b in GetPlacedBlocks())
-                if (b && b.buildableItem && items.Any(y => y.item?.UniqueIndex == b.buildableItem.UniqueIndex))
-                    RemoveBlock(b, null, false);
+                ItemManager.GetAllItems().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
+                foreach (var b in GetPlacedBlocks())
+                    if (b && b.buildableItem && items.Any(y => y.item?.UniqueIndex == b.buildableItem.UniqueIndex))
+                        RemoveBlock(b, null, false);
+            }
             foreach (var o in createdObjects)
                 if (o)
                 {
@@ -1384,16 +1388,18 @@ namespace MoreBuilding
                     (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
                     (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1)
                     );
-                Foundation = builder.ToMesh("Foundation");
+                Main.createdObjects.Add(Foundation = builder.ToMesh("Foundation"));
             }
             {
                 var builder = new MeshBuilder();
-                builder.AddWedge(
+                builder.AddBox(
                     new Vector3(-HalfBlockSize, -HalfFloorHeight / 2, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
                     (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
-                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1)
+                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
+                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
+                    slice: ((0, 0.6666666f, 0.9f, 1), Axis.Z,Axis.NX)
                     );
-                FoundationTriangle = builder.ToMesh("FoundationTriangle");
+                Main.createdObjects.Add(FoundationTriangle = builder.ToMesh("FoundationTriangle"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1403,7 +1409,7 @@ namespace MoreBuilding
                     (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
                     x => x.Rotate(0,-90,0), (x, y) => y == Axis.Y || y == Axis.NY ? x.Rotate(90) : x
                     );
-                FoundationTriangleMirrored = builder.ToMesh("FoundationTriangleMirrored");
+                Main.createdObjects.Add(FoundationTriangleMirrored = builder.ToMesh("FoundationTriangleMirrored"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1414,7 +1420,7 @@ namespace MoreBuilding
                     (0, 0, 1, .1f), (0, 0, 1, .1f),
                     modifyUV: (x,y) => y == Axis.Y || y == Axis.NY ? x : x.Rotate(-90)
                     );
-                Floor = builder.ToMesh("Floor");
+                Main.createdObjects.Add(Floor = builder.ToMesh("Floor"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1424,7 +1430,7 @@ namespace MoreBuilding
                     (0, 0, 1, .1f), (0, 0, 1, .1f), (0, 0, 1, .1f),
                     modifyUV: (x, y) => y == Axis.Y || y == Axis.NY ? x : x.Rotate(-90)
                     );
-                FloorTriangle = builder.ToMesh("FloorTriangle");
+                Main.createdObjects.Add(FloorTriangle = builder.ToMesh("FloorTriangle"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1434,7 +1440,7 @@ namespace MoreBuilding
                     (0, 0, 1, .1f), (0, 0, 1, .1f), (0, 0, 1, .1f),
                     x => x.Rotate(0, -90, 0), (x, y) => y == Axis.Y || y == Axis.NY ? x.Rotate(90) : x.Rotate(-90)
                     );
-                FloorTriangleMirrored = builder.ToMesh("FloorTriangleMirrored");
+                Main.createdObjects.Add(FloorTriangleMirrored = builder.ToMesh("FloorTriangleMirrored"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1444,7 +1450,7 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 2), (0.9f, 0, 1, 2),
                     (0, 0, 0.9f, 2), (0.9f, 0, 1, 2)
                     );
-                Wall = builder.ToMesh("Wall");
+                Main.createdObjects.Add(Wall = builder.ToMesh("Wall"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1460,7 +1466,7 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 2), (0.9f, 0, 1, 2),
                     (0, 0, 0.9f, 2), null
                     );
-                WallDiagonal = builder.ToMesh("WallDiagonal");
+                Main.createdObjects.Add(WallDiagonal = builder.ToMesh("WallDiagonal"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1470,7 +1476,7 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
                     (0, 0, 0.9f, 1), (0.9f, 0, 1, 1)
                     );
-                WallHalf = builder.ToMesh("WallHalf");
+                Main.createdObjects.Add(WallHalf = builder.ToMesh("WallHalf"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1486,7 +1492,7 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
                     (0, 0, 0.9f, 1), null
                     );
-                WallHalfDiagonal = builder.ToMesh("WallHalfDiagonal");
+                Main.createdObjects.Add(WallHalfDiagonal = builder.ToMesh("WallHalfDiagonal"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1496,7 +1502,7 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
                     (0.9f, 0, 1, 1)
                     );
-                WallSlope = builder.ToMesh("WallSlope");
+                Main.createdObjects.Add(WallSlope = builder.ToMesh("WallSlope"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1506,12 +1512,50 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
                     (0.9f, 0, 1, 1)
                     );
-                WallSlope = builder.ToMesh("WallSlope");
+                Main.createdObjects.Add(WallSlope = builder.ToMesh("WallSlope"));
             }
         }
-
-        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null, (float minX, float minY, float maxX, float maxY, Axis axis1, Axis axis2)? slice = null)
+        static Dictionary<Axis, Func<(float minX, float minY, float maxX, float maxY), Vector2[]>> faceUVOrder = new Dictionary<Axis, Func<(float minX, float minY, float maxX, float maxY), Vector2[]>>()
         {
+            [Axis.Y] = (x) => new[]
+            {
+                new Vector2(x.maxX, x.minY),
+                new Vector2(x.minX, x.minY),
+                new Vector2(x.minX, x.maxY),
+                new Vector2(x.maxX, x.maxY)
+            },
+            [Axis.NY] = (x) => new[]
+            {
+                new Vector2(x.minX, x.minY),
+                new Vector2(x.minX, x.maxY),
+                new Vector2(x.maxX, x.maxY),
+                new Vector2(x.maxX, x.minY)
+            },
+            [Axis.NZ] = (x) => new[]
+            {
+                new Vector2(x.maxX, x.maxY),
+                new Vector2(x.minX, x.maxY),
+                new Vector2(x.minX, x.minY),
+                new Vector2(x.maxX, x.minY)
+            },
+            [Axis.X] = (x) => new[]
+            {
+                new Vector2(x.maxX, x.maxY),
+                new Vector2(x.minX, x.maxY),
+                new Vector2(x.minX, x.minY),
+                new Vector2(x.maxX, x.minY)
+            },
+            [Axis.None] = (x) => new[]
+            {
+                new Vector2(x.maxX, x.minY),
+                new Vector2(x.maxX, x.maxY),
+                new Vector2(x.minX, x.maxY),
+                new Vector2(x.minX, x.minY)
+            }
+        };
+        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null, ((float minX, float minY, float maxX, float maxY)? face, Axis axis1, Axis axis2)? slice = null)
+        {
+            var log = "";
             if (modifyVert == null)
                 modifyVert = x => x;
             if (modifyUV == null)
@@ -1519,71 +1563,67 @@ namespace MoreBuilding
             var slices = slice == null || slice.Value.axis1 == slice.Value.axis2 || slice.Value.axis1.Opposite() == slice.Value.axis2 ? new Axis[0] : new[] { slice.Value.axis1, slice.Value.axis2 };
             var keep = new HashSet<Axis>() { Axis.X, Axis.Y, Axis.Z, Axis.NX, Axis.NY, Axis.NZ };
             keep.RemoveWhere(slices.Contains);
-            void AddFace(Axis direction, Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4)
+            void AddFace(Axis direction, (float minX, float minY, float maxX, float maxY) face)
             {
                 if (slices.Contains(direction))
                     return;
-                var u = new List<Vector2>() { modifyUV(uv1, direction), modifyUV(uv2, direction), modifyUV(uv3, direction), modifyUV(uv4, direction) };
+                var u = (faceUVOrder.TryGetValue(direction, out var array) ? array : faceUVOrder[Axis.None])(face).ToList().ConvertAll(x => modifyUV(x, direction));
                 var p = new List<(Axis[] a, Vertex v)>();
-                foreach (var a in new[]
-                    {
-                        new[] { Axis.NX, Axis.Y, Axis.NZ },
-                        new[] { Axis.NX, Axis.Y, Axis.Z },
-                        new[] { Axis.X, Axis.Y, Axis.Z },
-                        new[] { Axis.X, Axis.Y, Axis.NZ },
-                        new[] { Axis.X, Axis.NY, Axis.NZ },
-                        new[] { Axis.X, Axis.NY, Axis.Z },
-                        new[] { Axis.NX, Axis.NY, Axis.Z },
-                        new[] { Axis.NX, Axis.NY, Axis.NZ }
-                    })
-                    if (a.Contains(direction))
-                        p.Add((a, (modifyVert(new Vector3((((int)a[0] / 3) == 1 ? min : max).x, (((int)a[1] / 3) == 1 ? min : max).y, (((int)a[2] / 3) == 1 ? min : max).z)), u.Take())));
+                log += "\nGetting face " + direction;
+                for (int i = 0; i < 4; i++)
+                {
+                    var a = new[] { Axis.X, Axis.Y, Axis.Z };
+                    a[(int)direction.ToPositive()] = direction;
+                    if (direction.IsNegative() ? (0 < i && i < 3) : i < 2)
+                        a[(int)direction.Next().ToPositive()] = a[(int)direction.Next().ToPositive()].Opposite();
+                    if (direction.IsNegative() ? i < 2 : (0 < i && i < 3))
+                        a[(int)direction.Next(2).ToPositive()] = a[(int)direction.Next(2).ToPositive()].Opposite();
+                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), unique: (int)direction.ToPositive())));
+                    log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
+                }
                 if (slice == null || slices.Contains(direction.Opposite()))
                     builder.AddSquare(p[0].v, p[1].v, p[2].v, p[3].v);
                 else
                 {
-                    p.RemoveAll(x => slices.Contains(x.a[((int)direction + 1) % 3]) && slices.Contains(x.a[((int)direction + 2) % 3]));
+                    p.RemoveAll(x => slices.Contains(x.a[(int)direction.Next().ToPositive()]) && slices.Contains(x.a[(int)direction.Next(2).ToPositive()]));
                     builder.AddTriangle(p[0].v, p[1].v, p[2].v);
                 }
             }
             if (top != null)
-                AddFace(Axis.Y,
-                    new Vector2(top.Value.maxX, top.Value.minY),
-                    new Vector2(top.Value.minX, top.Value.minY),
-                    new Vector2(top.Value.minX, top.Value.maxY),
-                    new Vector2(top.Value.maxX, top.Value.maxY));
+                AddFace(Axis.Y, top.Value);
             if (bottom != null)
-                AddFace(Axis.NY,
-                    new Vector2(bottom.Value.minX, bottom.Value.maxY),
-                    new Vector2(bottom.Value.maxX, bottom.Value.maxY),
-                    new Vector2(bottom.Value.maxX, bottom.Value.minY),
-                    new Vector2(bottom.Value.minX, bottom.Value.minY));
+                AddFace(Axis.NY, bottom.Value);
             if (north != null)
-                AddFace(Axis.Z,
-                    new Vector2(north.Value.minX, north.Value.maxY),
-                    new Vector2(north.Value.maxX, north.Value.maxY),
-                    new Vector2(north.Value.maxX, north.Value.minY),
-                    new Vector2(north.Value.minX, north.Value.minY));
+                AddFace(Axis.Z, north.Value);
             if (east != null)
-                AddFace(Axis.X,
-                    new Vector2(east.Value.minX, east.Value.maxY),
-                    new Vector2(east.Value.maxX, east.Value.maxY),
-                    new Vector2(east.Value.maxX, east.Value.minY),
-                    new Vector2(east.Value.minX, east.Value.minY));
+                AddFace(Axis.X, east.Value);
             if (south != null)
-                AddFace(Axis.NZ,
-                    new Vector2(south.Value.maxX, south.Value.maxY),
-                    new Vector2(south.Value.minX, south.Value.maxY),
-                    new Vector2(south.Value.minX, south.Value.minY),
-                    new Vector2(south.Value.maxX, south.Value.minY));
+                AddFace(Axis.NZ, south.Value);
             if (west != null)
-                AddFace(Axis.NX,
-                    new Vector2(west.Value.minX, west.Value.maxY),
-                    new Vector2(west.Value.maxX, west.Value.maxY),
-                    new Vector2(west.Value.maxX, west.Value.minY),
-                    new Vector2(west.Value.minX, west.Value.minY));
-            // TODO: Add slice face
-
+                AddFace(Axis.NX, west.Value);
+            if (slice?.face != null) {
+                var face = slice.Value.face.Value;
+                var d = slices.Contains(Axis.X) ? Axis.X : slices.Contains(Axis.Z) ? Axis.Z : slices.Contains(Axis.NX) ? Axis.NX : Axis.NZ;
+                var o = slices[(Array.IndexOf(slices, d) + 1) % 2];
+                var u = (faceUVOrder.TryGetValue(d, out var array) ? array : faceUVOrder[Axis.None])(face).ToList().ConvertAll(x => modifyUV(x, Axis.None));
+                var p = new List<(Axis[] a, Vertex v)>();
+                log += "\nGetting slice face " + d;
+                for (int i = 0; i < 4; i++)
+                {
+                    var a = new[] { Axis.X, Axis.Y, Axis.Z };
+                    a[(int)d.ToPositive()] = d;
+                    if (d.IsNegative() ? (0 < i && i < 3) : i < 2)
+                        a[(int)d.Next().ToPositive()] = a[(int)d.Next().ToPositive()].Opposite();
+                    if (d.IsNegative() ? i < 2 : (0 < i && i < 3))
+                        a[(int)d.Next(2).ToPositive()] = a[(int)d.Next(2).ToPositive()].Opposite();
+                    if (a.Contains(o))
+                        a[(int)d.ToPositive()] = a[(int)d.ToPositive()].Opposite();
+                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), unique: 3)));
+                    log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
+                }
+                builder.AddSquare(p[0].v, p[1].v, p[2].v, p[3].v);
+            }
+            Debug.Log(log);
         }
 
         public static void AddWedge(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? northwest = null, Func<Vector3, Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
@@ -2157,6 +2197,10 @@ namespace MoreBuilding
         }
 
         public static Axis Opposite(this Axis axis) => (Axis)(((int)axis + 3) % 6);
+        public static bool IsNegative(this Axis axis) => (int)axis >= 3;
+        public static Axis ToPositive(this Axis axis) => (Axis)((int)axis % 3);
+        public static Axis ToNegative(this Axis axis) => (Axis)((int)axis % 3 + 3);
+        public static Axis Next(this Axis axis, int steps = 1) => (Axis)(((int)axis / 3) * 3 + (((int)axis + steps) % 3));
 
         public static T Take<T>(this List<T> list)
         {
@@ -2165,7 +2209,7 @@ namespace MoreBuilding
             return v;
         }
 
-        public static bool Bit(this int value, byte offset) => (value & (1 << offset)) != 0;
+        public static bool Bit(this int value, int offset) => (value & (1 << offset)) != 0;
     }
 
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
