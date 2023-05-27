@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using static MoreBuilding.Main;
 
 namespace MoreBuilding
 {
@@ -87,7 +86,7 @@ namespace MoreBuilding
                     if (getMesh != null)
                         mesh = getMesh();
                     if (mesh == null && meshboxes != null)
-                        mesh = CreateMesh(meshboxes);
+                        mesh = MeshBox.CreateMesh(meshboxes);
                 }
                 return mesh;
             }
