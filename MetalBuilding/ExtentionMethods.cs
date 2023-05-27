@@ -199,10 +199,12 @@ namespace MoreBuilding
                 return value;
             var l = value.magnitude;
             var a = Mathf.Atan2(value.x, value.y) + angle / 180 * Mathf.PI;
-            if (value.y < 0)
-                a += Mathf.PI;
             return new Vector2(Mathf.Sin(a) * l, Mathf.Cos(a) * l);
         }
+        public static float Magnitude(this Vector2 vector, Vector2 relativeDirection) => vector.Rotate(-Vector2.SignedAngle(relativeDirection, Vector2.up)).y;
+        public static Vector2 Scale(this Vector2 vector, float scale, Vector2 center = default) => ((vector - center) * scale) + center;
+        public static Vector2 Scale(this Vector2 vector, Vector2 scale, Vector2 center = default) => ((vector - center) * scale) + center;
+        public static Vector2 ModifyAround(this Vector2 vector, Vector2 center, Func<Vector2, Vector2> function) => function(vector - center) + center;
         public static Vector3 Rotate(this Vector3 vector, Quaternion rotation) => rotation * vector;
         public static Vector3 Rotate(this Vector3 vector, Vector3 euler) => vector.Rotate(Quaternion.Euler(euler));
         public static Vector3 Rotate(this Vector3 vector, float x, float y, float z) => vector.Rotate(Quaternion.Euler(x, y, z));

@@ -214,35 +214,22 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 148, uniqueIndex = 160148, uniqueName = "Block_Roof_Straight_ScrapMetal", localization = "Scrap Metal Roof@Covers your head",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.15f,0),
-                    new Vector3(HalfBlockSize,0,BlockSize),
-                    new UVData(new Vector4(0,0,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => x.z > 0 ? x + Vector3.up * HalfFloorHeight : x)},
-                new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
-                    new Vector3(HalfBlockSize,0,HalfBlockSize),
-                    new UVData(new Vector4(0.9f,0,0,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Quaternion.Euler(0,135,0) * (x.x == x.z ? x + Vector3.up * HalfFloorHeight : x), true)},
-                new[] {new MeshBox(
-                    new Vector3(-BlockSize,-0.15f,-BlockSize),
-                    new Vector3(0,0,0),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Quaternion.Euler(0,-45,0) * (x.x != x.z ? x + Vector3.up * HalfFloorHeight : x), true)}},
+                baseIndex = 403, uniqueIndex = 160148, uniqueName = "Block_Roof_Straight_ScrapMetal", localization = "Scrap Metal Roof@Covers your head",
+                mesh = new[] {
+                    new[] { GeneratedMeshes.Roof },
+                    new[] { GeneratedMeshes.RoofDiagonal },
+                    new[] { GeneratedMeshes.RoofDiagonalAlt }
+                },
                 upgradeItem = 160546, material = () => instance.ScrapMetal, resetModelRotations = new[]{null, new[] { true }, new[] { true } }
             },
             new BlockItemCreation() {
-                baseIndex = 150, uniqueIndex = 160150, uniqueName = "Block_Roof_Corner_ScrapMetal", localization = "Scrap Metal Roof Corner@Covers your head",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
-                    new Vector3(HalfBlockSize,0,HalfBlockSize),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> (x.x < 0 && x.z > 0) ? x + Vector3.up * HalfFloorHeight : x)}},
+                baseIndex = 401, uniqueIndex = 160150, uniqueName = "Block_Roof_Corner_ScrapMetal", localization = "Scrap Metal Roof Corner@Covers your head",
+                mesh = new[] {new[] { GeneratedMeshes.RoofCorner } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 160, uniqueIndex = 160160, uniqueName = "Block_Roof_InvCorner_ScrapMetal", localization = "Inverted Scrap Metal Roof Corner@Covers your head",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
-                    new Vector3(HalfBlockSize,0,HalfBlockSize),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x=> Quaternion.Euler(0, 90, 0) * ((x.x < 0 || x.z > 0) ? x + Vector3.up * HalfFloorHeight : x))}},
+                baseIndex = 402, uniqueIndex = 160160, uniqueName = "Block_Roof_InvCorner_ScrapMetal", localization = "Inverted Scrap Metal Roof Corner@Covers your head",
+                mesh = new[] {new[] { GeneratedMeshes.RoofCornerInverted } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
@@ -848,7 +835,7 @@ namespace MoreBuilding
             var t = LoadImage("scrapMetal_Specular.png");
             var p = t.GetPixels();
             for (int i = 0; i < p.Length; i++)
-                p[i] = new Color(0, 1 - Mathf.Abs(p[i].r * 2 - 1f), 0, 1 - Mathf.Abs(p[i].r * 2 - 1f));
+                p[i] = new Color(0, 1 - Mathf.Pow(Mathf.Abs(p[i].r * 2 - 1f), 2), 0, 1 - Mathf.Abs(p[i].r * 2 - 1f));
             t.SetPixels(p);
             t.Apply();
             ScrapMetal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t);

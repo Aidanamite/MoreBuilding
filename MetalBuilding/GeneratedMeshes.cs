@@ -630,6 +630,97 @@ namespace MoreBuilding
                     );
                 createdObjects.Add(WindowHalfDiagonal = builder.ToMesh("WindowHalfDiagonal"));
             }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.2f, 0), new Vector3(HalfBlockSize, 0, BlockSize),
+                    (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyVert: x  => new  Vector3(x.x, x.y + (x.z / BlockSize * HalfFloorHeight), x.z),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90)
+                    );
+                createdObjects.Add(Roof = builder.ToMesh("Roof"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyVert: x => new Vector3(x.x, x.y + (new Vector2(x.z / DiagonalHalfBlockSize, x.x / DiagonalHalfBlockSize).Magnitude(Vector2.one) * HalfFloorHeight), x.z).Rotate(0,135,0),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.ModifyAround(new Vector2(0.45f, 0.5f), z => (z / new Vector2(0.9f, 1) / DiagonalMagnitude).Rotate(y.IsNegative() ? 135 : 45) * new Vector2(0.9f, 2)) + new Vector2(0,0.5f) : x.Rotate(-90),
+                    slice: ((0, 0, 1, .1f), Axis.NX,Axis.NZ)
+                    );
+                createdObjects.Add(RoofDiagonal = builder.ToMesh("RoofDiagonal"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, -0.2f, -DiagonalHalfBlockSize), new Vector3(0, 0, 0),
+                    (0, 0.45f, 1, 0.9f), (0, 0.45f, 1, 0.9f),
+                    (0, 0, 1, .1f), null,
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyVert: x => new Vector3(x.x, x.y +( -x.z / DiagonalHalfBlockSize * HalfFloorHeight), x.z),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                    slice: ((0, 0, 1, .1f), Axis.NX, Axis.Z)
+                    );
+                builder.AddBox(
+                    new Vector3(0, -0.2f, -DiagonalHalfBlockSize), new Vector3(DiagonalHalfBlockSize, 0, 0),
+                    (0, 0, 1, 0.45f), (0, 0, 1, 0.45f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), null,
+                    modifyVert: x => new Vector3(x.x, x.y + (-x.z / DiagonalHalfBlockSize * HalfFloorHeight), x.z),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                    slice: ((0, 0, 1, .1f), Axis.X, Axis.Z)
+                    );
+                createdObjects.Add(RoofDiagonalAlt = builder.ToMesh("RoofDiagonalAlt"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyVert: x=> new Vector3(x.x, x.y + Mathf.Min(-x.x / BlockSize + 0.5f, x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                    slice: (null,Axis.X,Axis.Z)
+                    );
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyVert: x => new Vector3(x.x, x.y + Mathf.Min(-x.x / BlockSize + 0.5f, x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                    slice: (null, Axis.NX, Axis.NZ), uniqueOffset: 3
+                    );
+                createdObjects.Add(RoofCorner = builder.ToMesh("RoofCorner"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyVert: x => new Vector3(x.x, x.y + Mathf.Max(x.x / BlockSize + 0.5f, x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                    slice: (null, Axis.NX, Axis.Z)
+                    );
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyVert: x => new Vector3(x.x, x.y + Mathf.Max(x.x / BlockSize + 0.5f, x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                    slice: (null, Axis.X, Axis.NZ), uniqueOffset: 3
+                    );
+                createdObjects.Add(RoofCornerInverted = builder.ToMesh("RoofCornerInverted"));
+            }
         }
 
         public static List<Vector2> UV(this (float minX, float minY, float maxX, float maxY) face, Func<Vector2, Vector2> modifyUV) => new List<Vector2>
@@ -659,7 +750,7 @@ namespace MoreBuilding
             }
             return p;
         }
-        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null, ((float minX, float minY, float maxX, float maxY)? face, Axis axis1, Axis axis2)? slice = null, Func<Axis[],IEnumerable<Vertex.Weight>> getBoneWeights = null)
+        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null, ((float minX, float minY, float maxX, float maxY)? face, Axis axis1, Axis axis2)? slice = null, Func<Axis[],IEnumerable<Vertex.Weight>> getBoneWeights = null, int uniqueOffset = 0)
         {
             //var log = "";
             if (modifyVert == null)
@@ -680,7 +771,7 @@ namespace MoreBuilding
                 //log += "\nGetting face " + direction;
                 foreach (var a in GetFacePoints(direction))
                 {
-                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), getBoneWeights(a), unique: (int)direction.ToPositive())));
+                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), getBoneWeights(a), unique: (int)direction.ToPositive() + uniqueOffset)));
                     //log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
                 }
                 if (slice == null || slices.Contains(direction.Opposite()))
@@ -714,7 +805,7 @@ namespace MoreBuilding
                 {
                     if (a.Contains(o))
                         a[(int)d.ToPositive()] = a[(int)d.ToPositive()].Opposite();
-                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), getBoneWeights(a), unique: 3)));
+                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), getBoneWeights(a), unique: 3 + uniqueOffset)));
                     //log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
                 }
                 builder.AddSquare(p[0].v, p[1].v, p[2].v, p[3].v);

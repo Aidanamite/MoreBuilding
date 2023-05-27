@@ -37,11 +37,12 @@ namespace MoreBuilding
     public class Materials
     {
         Material[] mats;
-        Func<Material>[] matGets;
+        Func<Material[]> matGets;
         public static implicit operator Materials(Material[] m) => new Materials() { mats = m };
         public static implicit operator Materials(Material m) => new Materials() { mats = new[] { m } };
-        public static implicit operator Materials(Func<Material>[] m) => new Materials() { matGets = m };
-        public static implicit operator Materials(Func<Material> m) => new Materials() { matGets = new[] { m } };
+        public static implicit operator Materials(Func<Material>[] m) => new Materials() { matGets = () => m.Cast(x => x?.Invoke()) };
+        public static implicit operator Materials(Func<Material> m) => new Materials() { matGets = () => new[] { m?.Invoke() } };
+        public static implicit operator Materials(Func<Material[]> m) => new Materials() { matGets = m };
 
         public Material this[int index]
         {
@@ -51,16 +52,10 @@ namespace MoreBuilding
                 {
                     if (matGets == null)
                         return null;
-                    mats = new Material[matGets.Length];
+                    mats = matGets();
                 }
                 if (mats.Length <= index)
                     index = 0;
-                if (mats[index] == null)
-                {
-                    var m = matGets.GetSafe(index);
-                    if (m != null)
-                        mats[index] = m();
-                }
                 return mats[index] ?? mats[0];
             }
         }
@@ -72,7 +67,7 @@ namespace MoreBuilding
         MeshBox[] meshboxes;
         Func<Mesh> getMesh;
         MeshSource() { }
-        MeshSource(Func<Mesh> getter) : this() => getMesh = getter;
+        public MeshSource(Func<Mesh> getter) : this() => getMesh = getter;
         public static implicit operator MeshSource(Mesh m) => new MeshSource() { mesh = m };
         public static implicit operator MeshSource(Func<Mesh> m) => new MeshSource() { getMesh = m };
         public static implicit operator MeshSource(MeshBox m) => new MeshSource() { meshboxes = new[] { m } };
