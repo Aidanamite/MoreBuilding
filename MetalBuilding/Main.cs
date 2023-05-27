@@ -19,6 +19,7 @@ using UnityEngine.Experimental.Rendering;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 using static BlockCreator;
+using static MoreBuilding.Main;
 
 
 namespace MoreBuilding
@@ -26,8 +27,10 @@ namespace MoreBuilding
     public class Main : Mod
     {
         #region ItemCreation
-        public static float diagonalMagnitude = Vector2.one.magnitude;
-        public static Vector3 diagonalScale = new Vector3(Vector2.one.magnitude,1,1);
+        public static float DiagonalMagnitude = Vector2.one.magnitude;
+        public static Vector3 DiagonalScale = new Vector3(DiagonalMagnitude, 1,1);
+        public static float DiagonalBlockSize = DiagonalMagnitude * BlockSize;
+        public static float DiagonalHalfBlockSize = DiagonalMagnitude * HalfBlockSize;
         public ItemCreation[] items = new[]
         {
             new ItemCreation() { baseIndex = 546, loadIcon = true, uniqueIndex = 160546, uniqueName = "Block_Upgrade_ScrapMetal", isUpgrade = true, localization = "Replaced with scrap metal@" },
@@ -79,8 +82,60 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
+                baseIndex = 423, uniqueIndex = 160421, uniqueName = "Block_Wall_VSlope_ScrapMetal", localization = "Pyramid Scrap Metal Wall@Fills pyramid holes",
+                mesh = new[] {new[] { GeneratedMeshes.WallV } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
                 baseIndex = 408, uniqueIndex = 160408, uniqueName = "Block_Wall_Slope_ScrapMetal", localization = "Triangular Scrap Metal Wall@Fills triangular holes",
                 mesh = new[]{new[] { GeneratedMeshes.WallSlope } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
+                baseIndex = 445, uniqueIndex = 160443, uniqueName = "Block_Wall_Slope_ScrapMetal_Inverted", localization = "Triangular Scrap Metal Wall@Fills triangular holes",
+                mesh = new[]{new[] { GeneratedMeshes.WallSlopeInverted } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                additionEdits = x => x.transform.Find("model").localPosition = new Vector3(HalfBlockSize,HalfFloorHeight,0)
+            },
+            new BlockItemCreation() {
+                baseIndex = 386, uniqueIndex = 160085, uniqueName = "Block_Wall_Fence_ScrapMetal", localization = "Scrap Metal Fence@Keeps you from falling of your raft",
+                mesh = new[] {new[] { GeneratedMeshes.Fence, GeneratedMeshes.FenceConnector, GeneratedMeshes.FenceConnector }, new[] { GeneratedMeshes.FenceDiagonal, GeneratedMeshes.FenceConnector, GeneratedMeshes.FenceConnector } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                additionEdits = x =>
+                {
+                    var t = x.transform.Find("knobRight");
+                    t.localPosition += new Vector3(0, -t.localPosition.y, 0);
+                    t = x.transform.Find("knobLeft");
+                    t.localPosition += new Vector3(0, -t.localPosition.y, 0);
+                    Traverse.Create(x).Field<int>("knobPriority").Value += 5;
+                }
+            },
+            new BlockItemCreation() {
+                baseIndex = 407, uniqueIndex = 160255, uniqueName = "Block_Wall_Gate_ScrapMetal", localization = "Scrap Metal Gate@Provides support for additional floors",
+                mesh = new[] {
+                    new[] { GeneratedMeshes.Gate, GeneratedMeshes.Empty, GeneratedMeshes.Empty },
+                    new[] { GeneratedMeshes.GateDiagonal, GeneratedMeshes.Empty, GeneratedMeshes.Empty }
+                },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                additionEdits = x => x.MakeDoorSkinRendered()
+            },
+            new BlockItemCreation() {
+                baseIndex = 406, uniqueIndex = 160088, uniqueName = "Block_Wall_Door_ScrapMetal", localization = "Scrap Metal Door@Provides support for additional floors",
+                mesh = new[] {
+                    new[] { GeneratedMeshes.Door, GeneratedMeshes.Empty, GeneratedMeshes.Empty },
+                    new[] { GeneratedMeshes.DoorDiagonal, GeneratedMeshes.Empty, GeneratedMeshes.Empty }
+                },
+                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                additionEdits = x => x.MakeDoorSkinRendered()
+            },
+            new BlockItemCreation() {
+                baseIndex = 411, uniqueIndex = 160411, uniqueName = "Block_Wall_Window_ScrapMetal", localization = "Scrap Metal Window@Provides support for additional floors",
+                mesh = new[] {new[] { GeneratedMeshes.Window }, new[] { GeneratedMeshes.WindowDiagonal } },
+                upgradeItem = 160546, material = () => instance.ScrapMetal
+            },
+            new BlockItemCreation() {
+                baseIndex = 493, uniqueIndex = 160493, uniqueName = "Block_Wall_Window_ScrapMetal_Half", localization = "Half Scrap Metal Window@Provides support for additional floors",
+                mesh = new[] {new[] { GeneratedMeshes.WindowHalf }, new[] { GeneratedMeshes.WindowHalfDiagonal } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
@@ -120,62 +175,6 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 411, uniqueIndex = 160411, uniqueName = "Block_Wall_Window_ScrapMetal", localization = "Scrap Metal Window@Provides support for additional floors",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.05f,-0.04f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,1), 0, 0.9f, 0.1f )),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize,FullFloorHeight-0.4f,-0.04f),
-                    new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(1 - (0.35f/HalfFloorHeight),1), 0, 0.9f, 0.1f )),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize, HalfFloorHeight-0.05f, -0.04f),
-                    new Vector3(0.04f-HalfBlockSize,FullFloorHeight-0.4f,0),
-                    new UVData(Vector4.zero, new Vector2(0,1 - (0.35f/HalfFloorHeight)), 0.9f - 0.04f / BlockSize * 0.9f, 0.04f / BlockSize * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.04f, HalfFloorHeight-0.05f, -0.04f),
-                    new Vector3(HalfBlockSize,FullFloorHeight-0.4f,0),
-                    new UVData(Vector4.zero, new Vector2(0,1 - (0.35f/HalfFloorHeight)), 0, 0.04f / BlockSize * 0.9f, 0.9f - 0.08f / BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize, HalfFloorHeight-0.05f, -0.04f),
-                    new Vector3(HalfBlockSize,FullFloorHeight-0.4f,0),
-                    new UVData(Vector4.zero, new Vector2(0,1 - (0.35f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.04f, HalfFloorHeight-0.05f, -0.04f),
-                    new Vector3(0.04f-HalfBlockSize,FullFloorHeight-0.4f,0),
-                    new UVData(Vector4.zero, new Vector2(0,1 - (0.35f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
-            },
-            new BlockItemCreation() {
-                baseIndex = 493, uniqueIndex = 160493, uniqueName = "Block_Wall_Window_ScrapMetal_Half", localization = "Half Scrap Metal Window@Provides support for additional floors",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.05f,-0.04f),
-                    new Vector3(HalfBlockSize,0.3f,0),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,0.35f/HalfFloorHeight), 0, 0.9f, 0.1f )),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize,HalfFloorHeight-0.35f,-0.04f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0),
-                    new UVData(new Vector4(0.9f,1,1,0), new Vector2(1 - (0.3f/HalfFloorHeight),1), 0, 0.9f, 0.1f )),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize, 0.3f, -0.04f),
-                    new Vector3(0.2f-HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0.9f - 0.2f / BlockSize * 0.9f, 0.2f / BlockSize * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.2f, 0.3f, -0.04f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.2f / BlockSize * 0.9f, 0.9f - 0.4f / BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize, 0.3f, -0.04f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.2f, 0.3f, -0.04f),
-                    new Vector3(0.2f-HalfBlockSize,HalfFloorHeight-0.35f,0),
-                    new UVData(Vector4.zero, new Vector2(0.35f/HalfFloorHeight,1 - (0.3f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
-            },
-            new BlockItemCreation() {
                 baseIndex = 84, uniqueIndex = 160084, uniqueName = "Block_Pillar_ScrapMetal", localization = "Scrap Metal Pillar@Provides support for additional floors",
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-0.075f, -0.05f, -0.075f),
@@ -185,126 +184,6 @@ namespace MoreBuilding
                     new Vector3(-0.075f, -0.05f, -0.075f),
                     new Vector3(0.075f,FullFloorHeight-0.05f,0.075f),
                     new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true })}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 85, uniqueIndex = 160085, uniqueName = "Block_Wall_Fence_ScrapMetal", localization = "Scrap Metal Fence@Keeps you from falling of your raft",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize, -0.05f, -0.06f),
-                    new Vector3(0.12f-HalfBlockSize,HalfFloorHeight*0.8f-0.05f,0.06f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize, -0.05f, -0.06f),
-                    new Vector3(0.12f-HalfBlockSize,HalfFloorHeight*0.8f-0.05f,0.06f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.12f, -0.05f, -0.06f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight*0.8f-0.05f,0.06f),
-                    new UVData(new Vector4(0.9f,0.9f,1,1), new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.12f, -0.05f, -0.06f),
-                    new Vector3(HalfBlockSize,HalfFloorHeight*0.8f-0.05f,0.06f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,1), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(0.12f-HalfBlockSize, 0.05f, -0.05f),
-                    new Vector3(HalfBlockSize-0.12f,0.15f,0.05f),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), 0, 1, 0, -90 ), Faces: new FaceChanges() { excludeE = true, excludeW = true }),
-                new MeshBox(
-                    new Vector3(0.12f-HalfBlockSize, 0.25f, -0.05f),
-                    new Vector3(HalfBlockSize-0.12f,0.35f,0.05f),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), 0, 1, 0, -90 ), Faces: new FaceChanges() { excludeE = true, excludeW = true }),
-                new MeshBox(
-                    new Vector3(0.12f-HalfBlockSize, 0.45f, -0.05f),
-                    new Vector3(HalfBlockSize-0.12f,0.55f,0.05f),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), 0, 1, 0, -90 ), Faces: new FaceChanges() { excludeE = true, excludeW = true }),
-                new MeshBox(
-                    new Vector3(0.12f-HalfBlockSize, 0.65f, -0.05f),
-                    new Vector3(HalfBlockSize-0.12f,0.75f,0.05f),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), 0, 1, 0, -90 ), Faces: new FaceChanges() { excludeE = true, excludeW = true })}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal, modelScales = new[] { Vector3.one, diagonalScale }
-            },
-            new BlockItemCreation() {
-                baseIndex = 88, uniqueIndex = 160088, uniqueName = "Block_Wall_Door_ScrapMetal", localization = "Scrap Metal Door@Provides support for additional floors",
-                mesh = new[] {new[] {
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
-                            new UVData(new Vector4(0.9f,1,1,0), new Vector2(2 - (0.04f/HalfFloorHeight),2), 0, 0.9f, 0.1f )),
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.04f),
-                            new Vector3(0.08f-HalfBlockSize,FullFloorHeight-0.09f,0),
-                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.9f - 0.08f / BlockSize * 0.9f, 0.08f / BlockSize * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize-0.08f, -0.05f, -0.04f),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0),
-                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.08f / BlockSize * 0.9f, 0.9f - 0.16f / BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.04f),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize-0.08f, -0.05f, -0.04f),
-                            new Vector3(0.08f-HalfBlockSize,FullFloorHeight-0.09f,0),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-0.001f,-0.97f,-0.01f),
-                            new Vector3(HalfBlockSize-0.081f,FullFloorHeight-1.01f,0.01f),
-                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.45f, 0.45f-0.08f/BlockSize * 0.9f, 0.1f + 0.16f/BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(-0.001f,-0.97f,-0.01f),
-                            new Vector3(HalfBlockSize-0.081f,FullFloorHeight-1.01f,0.01f),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(0.081f-HalfBlockSize,-0.975f,-0.01f),
-                            new Vector3(0.001f,FullFloorHeight-1.015f,0.01f),
-                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.08f/BlockSize * 0.9f, 0.45f-0.08f/BlockSize * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(0.081f-HalfBlockSize,-0.975f,-0.01f),
-                            new Vector3(0.001f,FullFloorHeight-1.015f,0.01f),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )}},
-                new[] {
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f).Multiply(diagonalScale),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0).Multiply(diagonalScale),
-                            new UVData(new Vector4(0.9f,1,1,0), new Vector2(2 - (0.04f/HalfFloorHeight),2), 0, 0.9f, 0.1f )),
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(diagonalScale),
-                            new Vector3(0.08f-HalfBlockSize * diagonalMagnitude,FullFloorHeight-0.09f,0),
-                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.9f - 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.08f, -0.05f, -0.04f),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(diagonalScale),
-                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.9f - 0.16f / BlockSize / diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(diagonalScale),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(diagonalScale),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.08f, -0.05f, -0.04f),
-                            new Vector3(0.08f-HalfBlockSize * diagonalMagnitude,FullFloorHeight-0.09f,0),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-0.001f,-0.97f,0.01f),
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.081f,FullFloorHeight-1.01f,0.03f),
-                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.45f, 0.45f-0.08f/BlockSize / diagonalMagnitude * 0.9f, 0.1f + 0.16f/BlockSize / diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(-0.001f,-0.97f,0.01f),
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.081f,FullFloorHeight-1.01f,0.03f),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(0.081f-HalfBlockSize * diagonalMagnitude,-0.975f,0.01f),
-                            new Vector3(0.001f,FullFloorHeight-1.015f,0.03f),
-                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.08f/BlockSize / diagonalMagnitude * 0.9f, 0.45f-0.08f/BlockSize / diagonalMagnitude * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(0.081f-HalfBlockSize * diagonalMagnitude,-0.975f,0.01f),
-                            new Vector3(0.001f,FullFloorHeight-1.015f,0.03f),
-                            new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )}}},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
@@ -386,102 +265,6 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 255, uniqueIndex = 160255, uniqueName = "Block_Wall_Gate_ScrapMetal", localization = "Scrap Metal Gate@Provides support for additional floors",
-                mesh = new[] {new[] {
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.05f),
-                            new Vector3(0.08f-HalfBlockSize,HalfFloorHeight-0.05f,0.075f),
-                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,1), 0.9f - 0.08f / BlockSize * 0.9f, 0.08f / BlockSize * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize-0.08f, -0.05f, -0.05f),
-                            new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.075f),
-                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,1), 0, 0.08f / BlockSize * 0.9f, 0.9f - 0.16f / BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true }),
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.05f),
-                            new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.075f),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize-0.08f, -0.05f, -0.05f),
-                            new Vector3(0.08f-HalfBlockSize,HalfFloorHeight-0.05f,0.075f),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(0.074f-HalfBlockSize,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(-0.006f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,1), 0.08f/BlockSize * 0.9f, 0.45f-0.08f/BlockSize * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(0.074f-HalfBlockSize,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(-0.006f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-0.004f,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(HalfBlockSize-0.084f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,1), 0.45f, 0.45f-0.08f/BlockSize * 0.9f, 0.1f + 0.16f/BlockSize * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(-0.004f,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(HalfBlockSize-0.084f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )}},
-                new[] {
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.05f).Multiply(diagonalScale),
-                            new Vector3(0.08f-HalfBlockSize*diagonalMagnitude,HalfFloorHeight-0.05f,0.075f),
-                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,1), 0.9f - 0.08f / BlockSize/diagonalMagnitude * 0.9f, 0.08f/BlockSize/diagonalMagnitude*0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize*diagonalMagnitude-0.08f, -0.05f, -0.05f),
-                            new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.075f).Multiply(diagonalScale),
-                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,1), 0, 0.08f / BlockSize/diagonalMagnitude * 0.9f, 0.9f - 0.16f / BlockSize/diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true }),
-                        new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.05f).Multiply(diagonalScale),
-                            new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.075f).Multiply(diagonalScale),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
-                        new MeshBox(
-                            new Vector3(HalfBlockSize*diagonalMagnitude-0.08f, -0.05f, -0.05f),
-                            new Vector3(0.08f-HalfBlockSize*diagonalMagnitude,HalfFloorHeight-0.05f,0.075f),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(-0.004f,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(HalfBlockSize*diagonalMagnitude-0.084f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,1), 0.45f, 0.45f-0.08f/BlockSize/diagonalMagnitude * 0.9f, 0.1f + 0.16f/BlockSize/diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(-0.004f,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(HalfBlockSize*diagonalMagnitude-0.084f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )},
-                    new[] {
-                        new MeshBox(
-                            new Vector3(0.074f-HalfBlockSize*diagonalMagnitude,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(-0.006f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,1), 0.08f/BlockSize/diagonalMagnitude * 0.9f, 0.45f-0.08f/BlockSize/diagonalMagnitude * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
-                        new MeshBox(
-                            new Vector3(0.074f-HalfBlockSize*diagonalMagnitude,-HalfFloorHeight/2-0.011f,-0.05f),
-                            new Vector3(-0.006f,HalfFloorHeight/2-0.011f,0.05f),
-                            new UVData(Vector4.zero, new Vector2(0,1), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )}}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 421, uniqueIndex = 160421, uniqueName = "Block_Wall_VSlope_ScrapMetal", localization = "Pyramid Scrap Metal Wall@Fills pyramid holes",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
-                    new Vector3(0,0.02f,0.05f),
-                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0), new FaceChanges() { excludeU = true }),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
-                    new Vector3(0,0.02f,0.05f),
-                    new UVData(new Vector4(0.45f,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(90,0,0), new FaceChanges() { excludeD = true }),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
-                    new Vector3(0,0.02f,0.05f),
-                    new UVData(new Vector4(0.45f,0,0.9f,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(0,0,180) * Quaternion.Euler(-90,0,0), new FaceChanges() { excludeN = true, excludeE = true, excludeS = true, excludeW = true, excludeD = true }),
-                new MeshBox(
-                    new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
-                    new Vector3(0,0.02f,0.05f),
-                    new UVData(new Vector4(0.45f,0,0,0.5f), new Vector2(0,0.1f), 0, 1, 1, -90,true), true, Quaternion.Euler(90,0,0), new FaceChanges() { excludeN = true, excludeE = true, excludeS = true, excludeW = true, excludeU = true })}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
                 baseIndex = 424, uniqueIndex = 160424, uniqueName = "Block_Roof_ScrapMetal_Endcap", localization = "Scrap Metal Roof Endcap@Covers your head",
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
@@ -531,14 +314,6 @@ namespace MoreBuilding
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(0,0,HalfBlockSize),
                     new UVData(new Vector4(0,0.5f,0.9f,1), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Mathf.Abs(x.x) < 0.25f ? x + Vector3.up * HalfFloorHeight * 0.5f : x)}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 443, uniqueIndex = 160443, uniqueName = "Block_Wall_Slope_ScrapMetal_Inverted", localization = "Triangular Scrap Metal Wall@Fills triangular holes",
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(0.006f-HalfBlockSize,0,-0.051f-HalfFloorHeight),
-                    new Vector3(HalfBlockSize+0.006f,0.04f,-0.051f),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, true, true), true, Quaternion.Euler(90,180,0))} },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
@@ -686,7 +461,7 @@ namespace MoreBuilding
                     new Vector3(-HalfBlockSize,-0.05f,-0.04f),
                     new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
                     new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,2), 0, 0.9f, 0.1f ))} },
-                upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, diagonalScale }
+                upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, DiagonalScale }
             },
             new BlockItemCreation() {
                 baseIndex = 144, uniqueIndex = 6977, uniqueName = "Block_HalfWall_Glass", localization = "Half Glass Wall@Provides support for additional floors",
@@ -694,7 +469,7 @@ namespace MoreBuilding
                     new Vector3(-HalfBlockSize,-0.05f,0),
                     new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.04f),
                     new UVData(new Vector4(0.9f,1,1,0), new Vector2(0,1), 0, 0.9f, 0.1f ))} },
-                upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, diagonalScale }
+                upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, DiagonalScale }
             },
             new BlockItemCreation() {
                 baseIndex = 152, uniqueIndex = 6978, uniqueName = "Block_Wall_Slope_Glass", localization = "Triangular Glass Wall@Fills triangular holes",
@@ -989,41 +764,41 @@ namespace MoreBuilding
                 new[] {
                     new[] {
                         new MeshBox(
-                            new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f).Multiply(diagonalScale),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0).Multiply(diagonalScale),
+                            new Vector3(-HalfBlockSize,FullFloorHeight-0.09f,-0.04f).Multiply(DiagonalScale),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0).Multiply(DiagonalScale),
                             new UVData(new Vector4(0.9f,1,1,0), new Vector2(2 - (0.04f/HalfFloorHeight),2), 0, 0.9f, 0.1f )),
                         new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(diagonalScale),
-                            new Vector3(0.08f-HalfBlockSize * diagonalMagnitude,FullFloorHeight-0.09f,0),
-                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.9f - 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
+                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(DiagonalScale),
+                            new Vector3(0.08f-DiagonalHalfBlockSize,FullFloorHeight-0.09f,0),
+                            new UVData(new Vector4(0.9f,1,1,1 - 0.04f / BlockSize), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.9f - 0.08f / BlockSize / DiagonalMagnitude * 0.9f, 0.08f / BlockSize / DiagonalMagnitude * 0.9f, 0.1f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
                         new MeshBox(
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.08f, -0.05f, -0.04f),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(diagonalScale),
-                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.08f / BlockSize / diagonalMagnitude * 0.9f, 0.9f - 0.16f / BlockSize / diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
+                            new Vector3(DiagonalHalfBlockSize-0.08f, -0.05f, -0.04f),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(DiagonalScale),
+                            new UVData(new Vector4(0.9f,0.04f / BlockSize,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.08f / BlockSize / DiagonalMagnitude * 0.9f, 0.9f - 0.16f / BlockSize / DiagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeU = true }),
                         new MeshBox(
-                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(diagonalScale),
-                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(diagonalScale),
+                            new Vector3(-HalfBlockSize, -0.05f, -0.04f).Multiply(DiagonalScale),
+                            new Vector3(HalfBlockSize,FullFloorHeight-0.09f,0).Multiply(DiagonalScale),
                             new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true }),
                         new MeshBox(
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.08f, -0.05f, -0.04f),
-                            new Vector3(0.08f-HalfBlockSize * diagonalMagnitude,FullFloorHeight-0.09f,0),
+                            new Vector3(DiagonalHalfBlockSize-0.08f, -0.05f, -0.04f),
+                            new Vector3(0.08f-DiagonalHalfBlockSize,FullFloorHeight-0.09f,0),
                             new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeD = true, excludeU = true })},
                     new[] {
                         new MeshBox(
                             new Vector3(-0.001f,-0.97f,0.01f),
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.081f,FullFloorHeight-1.01f,0.03f),
-                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.45f, 0.45f-0.08f/BlockSize / diagonalMagnitude * 0.9f, 0.1f + 0.16f/BlockSize / diagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
+                            new Vector3(DiagonalHalfBlockSize-0.081f,FullFloorHeight-1.01f,0.03f),
+                            new UVData(new Vector4(0.9f,0.5f,1,0), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.45f, 0.45f-0.08f/BlockSize / DiagonalMagnitude * 0.9f, 0.1f + 0.16f/BlockSize / DiagonalMagnitude * 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
                         new MeshBox(
                             new Vector3(-0.001f,-0.97f,0.01f),
-                            new Vector3(HalfBlockSize * diagonalMagnitude-0.081f,FullFloorHeight-1.01f,0.03f),
+                            new Vector3(DiagonalHalfBlockSize-0.081f,FullFloorHeight-1.01f,0.03f),
                             new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )},
                     new[] {
                         new MeshBox(
-                            new Vector3(0.081f-HalfBlockSize * diagonalMagnitude,-0.975f,0.01f),
+                            new Vector3(0.081f-DiagonalHalfBlockSize,-0.975f,0.01f),
                             new Vector3(0.001f,FullFloorHeight-1.015f,0.03f),
-                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.08f/BlockSize / diagonalMagnitude * 0.9f, 0.45f-0.08f/BlockSize / diagonalMagnitude * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
+                            new UVData(new Vector4(0.9f,1,1,0.5f), new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0.08f/BlockSize / DiagonalMagnitude * 0.9f, 0.45f-0.08f/BlockSize / DiagonalMagnitude * 0.9f, 1 ), Faces: new FaceChanges() { excludeE = true, excludeW = true } ),
                         new MeshBox(
-                            new Vector3(0.081f-HalfBlockSize * diagonalMagnitude,-0.975f,0.01f),
+                            new Vector3(0.081f-DiagonalHalfBlockSize,-0.975f,0.01f),
                             new Vector3(0.001f,FullFloorHeight-1.015f,0.03f),
                             new UVData(Vector4.zero, new Vector2(0,2 - (0.04f/HalfFloorHeight)), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true, excludeU = true, excludeD = true } )}}},
                 upgradeItem = 160550, material = () => instance.Glass
@@ -1165,6 +940,7 @@ namespace MoreBuilding
                 {
                     var me = blockCreation.mesh[i];
                     p[i] = Instantiate(p[i], prefabHolder, false);
+                    p[i].name = item.item.UniqueName + ((p.Length == 1 || p[i].dpsType == DPS.Default) ? "" : $"_{p[i].dpsType}");
                     var r = p[i].GetComponentsInChildren<Renderer>(true);
                     for (int j = 0; j < r.Length; j++)
                         if (me.Length > j && me[j] != null)
@@ -1341,6 +1117,7 @@ namespace MoreBuilding
 
     public static class GeneratedMeshes
     {
+        public static Mesh Empty;
         public static Mesh Foundation;
         public static Mesh FoundationTriangle;
         public static Mesh FoundationTriangleMirrored;
@@ -1358,11 +1135,16 @@ namespace MoreBuilding
         public static Mesh WallSlope;
         public static Mesh WallSlopeInverted;
         public static Mesh Fence;
+        public static Mesh FenceDiagonal;
+        public static Mesh FenceConnector;
         public static Mesh Gate;
+        public static Mesh GateDiagonal;
         public static Mesh Door;
-        public static Mesh DoorWide;
+        public static Mesh DoorDiagonal;
         public static Mesh Window;
+        public static Mesh WindowDiagonal;
         public static Mesh WindowHalf;
+        public static Mesh WindowHalfDiagonal;
         public static Mesh Roof;
         public static Mesh RoofDiagonal;
         public static Mesh RoofDiagonalAlt;
@@ -1380,36 +1162,54 @@ namespace MoreBuilding
         public static Mesh PillarHorizontalHalf;
         static GeneratedMeshes()
         {
+            createdObjects.Add(Empty = new MeshBuilder().ToMesh("Empty"));
             {
                 var builder = new MeshBuilder();
                 builder.AddBox(
-                    new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize), new Vector3(HalfBlockSize,0,HalfBlockSize),
+                    new Vector3(-HalfBlockSize,-HalfFloorHeight * 2 / 3,-HalfBlockSize), new Vector3(HalfBlockSize,0,HalfBlockSize),
                     (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
-                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
-                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1)
+                    (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                    (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1)
                     );
-                Main.createdObjects.Add(Foundation = builder.ToMesh("Foundation"));
+                createdObjects.Add(Foundation = builder.ToMesh("Foundation"));
             }
             {
                 var builder = new MeshBuilder();
                 builder.AddBox(
-                    new Vector3(-HalfBlockSize, -HalfFloorHeight / 2, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    new Vector3(-HalfBlockSize, -HalfFloorHeight * 2 / 3, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
                     (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
-                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
-                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
-                    slice: ((0, 0.6666666f, 0.9f, 1), Axis.Z,Axis.NX)
+                    (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                    (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                    slice: (null, Axis.Z,Axis.NX)
                     );
-                Main.createdObjects.Add(FoundationTriangle = builder.ToMesh("FoundationTriangle"));
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -HalfFloorHeight * 2 / 3, -HalfBlockSize), new Vector3(0, 0, 0),
+                    slice: ((0, 0.3333333f, 0.9f, 1), Axis.Z, Axis.NX)
+                    );
+                builder.AddBox(
+                    new Vector3(0, -HalfFloorHeight * 2 / 3, 0), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    slice: ((0, 0.3333333f, 0.9f, 1), Axis.Z, Axis.NX)
+                    );
+                createdObjects.Add(FoundationTriangle = builder.ToMesh("FoundationTriangle"));
             }
             {
                 var builder = new MeshBuilder();
-                builder.AddWedge(
-                    new Vector3(-HalfBlockSize, -HalfFloorHeight / 2, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
-                    (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
-                    (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1), (0, 0.6666666f, 0.9f, 1),
-                    x => x.Rotate(0,-90,0), (x, y) => y == Axis.Y || y == Axis.NY ? x.Rotate(90) : x
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -HalfFloorHeight * 2 / 3, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                    (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                    slice: (null, Axis.NZ, Axis.NX)
                     );
-                Main.createdObjects.Add(FoundationTriangleMirrored = builder.ToMesh("FoundationTriangleMirrored"));
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -HalfFloorHeight * 2 / 3, 0), new Vector3(0, 0, HalfBlockSize),
+                    slice: ((0, 0.3333333f, 0.9f, 1), Axis.NZ, Axis.NX)
+                    );
+                builder.AddBox(
+                    new Vector3(0, -HalfFloorHeight * 2 / 3, -HalfBlockSize), new Vector3(HalfBlockSize, 0, 0),
+                    slice: ((0, 0.3333333f, 0.9f, 1), Axis.NZ, Axis.NX)
+                    );
+                createdObjects.Add(FoundationTriangleMirrored = builder.ToMesh("FoundationTriangleMirrored"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1418,29 +1218,33 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
                     (0, 0, 1, .1f), (0, 0, 1, .1f),
                     (0, 0, 1, .1f), (0, 0, 1, .1f),
-                    modifyUV: (x,y) => y == Axis.Y || y == Axis.NY ? x : x.Rotate(-90)
+                    modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90)
                     );
-                Main.createdObjects.Add(Floor = builder.ToMesh("Floor"));
+                createdObjects.Add(Floor = builder.ToMesh("Floor"));
             }
             {
                 var builder = new MeshBuilder();
-                builder.AddWedge(
+                builder.AddBox(
                     new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
                     (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
-                    (0, 0, 1, .1f), (0, 0, 1, .1f), (0, 0, 1, .1f),
-                    modifyUV: (x, y) => y == Axis.Y || y == Axis.NY ? x : x.Rotate(-90)
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                    slice: ((0, 0, 1, .1f), Axis.Z, Axis.NX)
                     );
-                Main.createdObjects.Add(FloorTriangle = builder.ToMesh("FloorTriangle"));
+                createdObjects.Add(FloorTriangle = builder.ToMesh("FloorTriangle"));
             }
             {
                 var builder = new MeshBuilder();
-                builder.AddWedge(
+                builder.AddBox(
                     new Vector3(-HalfBlockSize, -0.2f, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
-                    (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
-                    (0, 0, 1, .1f), (0, 0, 1, .1f), (0, 0, 1, .1f),
-                    x => x.Rotate(0, -90, 0), (x, y) => y == Axis.Y || y == Axis.NY ? x.Rotate(90) : x.Rotate(-90)
+                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    (0, 0, 1, .1f), (0, 0, 1, .1f),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                    slice: ((0, 0, 1, .1f), Axis.NZ, Axis.NX)
                     );
-                Main.createdObjects.Add(FloorTriangleMirrored = builder.ToMesh("FloorTriangleMirrored"));
+                createdObjects.Add(FloorTriangleMirrored = builder.ToMesh("FloorTriangleMirrored"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1450,23 +1254,23 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 2), (0.9f, 0, 1, 2),
                     (0, 0, 0.9f, 2), (0.9f, 0, 1, 2)
                     );
-                Main.createdObjects.Add(Wall = builder.ToMesh("Wall"));
+                createdObjects.Add(Wall = builder.ToMesh("Wall"));
             }
             {
                 var builder = new MeshBuilder();
                 builder.AddBox(
-                    new Vector3(-HalfBlockSize * Main.diagonalMagnitude, -0.01f, -0.06f), new Vector3(0, FullFloorHeight - 0.01f, 0.06f),
+                    new Vector3(-DiagonalHalfBlockSize, -0.01f, -0.06f), new Vector3(0, FullFloorHeight - 0.01f, 0.06f),
                     (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
                     (0, 0, 0.9f, 2), null,
                     (0, 0, 0.9f, 2), (0.9f, 0, 1, 2)
                     );
                 builder.AddBox(
-                    new Vector3(0, -0.01f, -0.06f), new Vector3(HalfBlockSize * Main.diagonalMagnitude, FullFloorHeight - 0.01f, 0.06f),
+                    new Vector3(0, -0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
                     (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
                     (0, 0, 0.9f, 2), (0.9f, 0, 1, 2),
                     (0, 0, 0.9f, 2), null
                     );
-                Main.createdObjects.Add(WallDiagonal = builder.ToMesh("WallDiagonal"));
+                createdObjects.Add(WallDiagonal = builder.ToMesh("WallDiagonal"));
             }
             {
                 var builder = new MeshBuilder();
@@ -1476,90 +1280,501 @@ namespace MoreBuilding
                     (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
                     (0, 0, 0.9f, 1), (0.9f, 0, 1, 1)
                     );
-                Main.createdObjects.Add(WallHalf = builder.ToMesh("WallHalf"));
+                createdObjects.Add(WallHalf = builder.ToMesh("WallHalf"));
             }
             {
                 var builder = new MeshBuilder();
                 builder.AddBox(
-                    new Vector3(-HalfBlockSize * Main.diagonalMagnitude, -0.01f, -0.06f), new Vector3(0, HalfFloorHeight - 0.01f, 0.06f),
+                    new Vector3(-DiagonalHalfBlockSize, -0.01f, -0.06f), new Vector3(0, HalfFloorHeight - 0.01f, 0.06f),
                     (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
                     (0, 0, 0.9f, 1), null,
                     (0, 0, 0.9f, 1), (0.9f, 0, 1, 1)
                     );
                 builder.AddBox(
-                    new Vector3(0, -0.01f, -0.06f), new Vector3(HalfBlockSize * Main.diagonalMagnitude, HalfFloorHeight - 0.01f, 0.06f),
+                    new Vector3(0, -0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
                     (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
                     (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
                     (0, 0, 0.9f, 1), null
                     );
-                Main.createdObjects.Add(WallHalfDiagonal = builder.ToMesh("WallHalfDiagonal"));
+                createdObjects.Add(WallHalfDiagonal = builder.ToMesh("WallHalfDiagonal"));
             }
             {
                 var builder = new MeshBuilder();
-                builder.AddRamp(
-                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
-                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
-                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
-                    (0.9f, 0, 1, 1)
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(0, HalfFloorHeight / 2 - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0.45f, 0, 0.9f, 0.5f), null,
+                    (0, 0, 0.45f, 0.5f), (0.45f, 0, 1, 0.5f),
+                    slice: ((1, 1, 0.9f, 0.5f), Axis.Y, Axis.NX)
                     );
-                Main.createdObjects.Add(WallSlope = builder.ToMesh("WallSlope"));
+                builder.AddBox(
+                    new Vector3(0, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight / 2 - 0.01f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0, 0.45f, 0.5f), (0.45f, 0, 1, 0.5f),
+                    (0.45f, 0, 0.9f, 0.5f), null,
+                    slice: ((0.9f, 0, 1, 0.5f), Axis.Y, Axis.X)
+                    );
+                createdObjects.Add(WallV = builder.ToMesh("WallV"));
             }
             {
                 var builder = new MeshBuilder();
-                builder.AddRamp(
+                builder.AddBox(
                     new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
                     (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
-                    (0, 0, 0.9f, 1), (0, 0, 0.9f, 1),
-                    (0.9f, 0, 1, 1)
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    slice: ((0.9f, 0, 1, 1), Axis.Y, Axis.X)
                     );
-                Main.createdObjects.Add(WallSlope = builder.ToMesh("WallSlope"));
+                createdObjects.Add(WallSlope = builder.ToMesh("WallSlope"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, 0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight + 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    slice: ((0.9f, 0, 1, 1), Axis.Y, Axis.X)
+                    );
+                createdObjects.Add(WallSlopeInverted = builder.ToMesh("WallSlopeInverted"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, HalfFloorHeight / 4 - 0.01f, -0.04f), new Vector3(HalfBlockSize, HalfFloorHeight * 7 / 12 - 0.01f, 0.04f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.6666666f, 0.9f, 1), null,
+                    (0, 0.6666666f, 0.9f, 1), null
+                    );
+                builder.AddBox(
+                    new Vector3(-0.05f - HalfBlockSize, -0.01f, -0.05f), new Vector3(0.05f - HalfBlockSize, HalfFloorHeight / 3 * 2 - 0.01f, 0.05f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1)
+                    );
+                builder.AddBox(
+                    new Vector3(HalfBlockSize - 0.05f, -0.01f, -0.05f), new Vector3(HalfBlockSize + 0.05f, HalfFloorHeight / 3 * 2 - 0.01f, 0.05f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1)
+                    );
+                createdObjects.Add(Fence = builder.ToMesh("Fence"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, HalfFloorHeight / 4 - 0.01f, -0.04f), new Vector3(0, HalfFloorHeight * 7 / 12 - 0.01f, 0.04f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0, 0.6666666f, 0.9f, 1), null,
+                    (0, 0.6666666f, 0.9f, 1), null
+                    );
+                builder.AddBox(
+                    new Vector3(0, HalfFloorHeight / 4 - 0.01f, -0.04f), new Vector3(DiagonalHalfBlockSize, HalfFloorHeight * 7 / 12 - 0.01f, 0.04f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0.6666666f, 0.9f, 1), null,
+                    (0, 0.6666666f, 0.9f, 1), null
+                    );
+                builder.AddBox(
+                    new Vector3(-0.05f - DiagonalHalfBlockSize, -0.01f, -0.05f), new Vector3(0.05f - DiagonalHalfBlockSize, HalfFloorHeight / 3 * 2 - 0.01f, 0.05f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1)
+                    );
+                builder.AddBox(
+                    new Vector3(DiagonalHalfBlockSize - 0.05f, -0.01f, -0.05f), new Vector3(DiagonalHalfBlockSize + 0.05f, HalfFloorHeight / 3 * 2 - 0.01f, 0.05f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1)
+                    );
+                createdObjects.Add(FenceDiagonal = builder.ToMesh("FenceDiagonal"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-0.08f, -0.011f, -0.08f), new Vector3(0.08f, HalfFloorHeight / 3 * 2 - 0.009f, 0.08f),
+                    null, null,
+                    (0.3333333f, 0, 0.6666666f, 1.9f), (0.3333333f, 0, 0.6666666f, 1.9f),
+                    (0.3333333f, 0, 0.6666666f, 1.9f), (0.3333333f, 0, 0.6666666f, 1.9f),
+                    modifyUV: (x, y) => x.Rotate(90)
+                    );
+                builder.AddBox(
+                    new Vector3(-0.08f, -0.011f, -0.08f), new Vector3(0.08f, HalfFloorHeight / 3 * 2 - 0.009f, 0),
+                    (0.75f, 0.6666666f, 0.9f, 0.3333333f), (0.75f, 0.6666666f, 0.9f, 0.3333333f)
+                    );
+                builder.AddBox(
+                    new Vector3(-0.08f, -0.011f, 0), new Vector3(0.08f, HalfFloorHeight / 3 * 2 - 0.009f, 0.08f),
+                    (0, 0.3333333f, 0.15f, 0.6666666f), (0, 0.3333333f, 0.15f, 0.6666666f)
+                    );
+                createdObjects.Add(FenceConnector = builder.ToMesh("FenceConnector"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(0.1f - HalfBlockSize, HalfFloorHeight / 12 - 0.01f, -0.06f), new Vector3(0, HalfFloorHeight - 0.011f, 0.06f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0.45f, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.45f, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (2, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0, HalfFloorHeight / 12 - 0.01f, -0.06f), new Vector3(HalfBlockSize- 0.1f , HalfFloorHeight - 0.011f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0, 0.45f, 1), (0.9f, 0, 1, 1),
+                    (0.45f, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (1, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(0.1f - HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(HalfBlockSize - 0.1f, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                createdObjects.Add(Gate = builder.ToMesh("Gate"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(0.1f - DiagonalHalfBlockSize, HalfFloorHeight / 12 - 0.01f, -0.06f), new Vector3(0, HalfFloorHeight - 0.011f, 0.06f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (1, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0, HalfFloorHeight / 12 - 0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize - 0.1f, HalfFloorHeight - 0.011f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (2, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, -0.01f, -0.06f), new Vector3(0.1f - DiagonalHalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(DiagonalHalfBlockSize - 0.1f, -0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                createdObjects.Add(GateDiagonal = builder.ToMesh("GateDiagonal"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(0.1f - HalfBlockSize, 0.04f, -0.06f), new Vector3(0, FullFloorHeight - 0.06f, 0.06f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0.45f, 0, 0.9f, 2), (0.9f, 0, 1, 2),
+                    (0, 0, 0.45f, 2), (0.9f, 0, 1, 2),
+                    getBoneWeights: x => new Vertex.Weight[] { (2, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0, 0.04f, -0.06f), new Vector3(HalfBlockSize - 0.1f, FullFloorHeight - 0.06f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0, 0.45f, 2), (0.9f, 0, 1, 2),
+                    (0.45f, 0, 0.9f, 2), (0.9f, 0, 1, 2),
+                    getBoneWeights: x => new Vertex.Weight[] { (1, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(0.1f - HalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 2), (0.9f, 0, 1, 2),
+                    (0.9f, 0, 1, 2), (0.9f, 0, 1, 2),
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(HalfBlockSize - 0.1f, -0.01f, -0.06f), new Vector3(HalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.9f, 1, 1), (0.9f, 0.9f, 1, 1),
+                    (0.9f, 0, 1, 2), (0.9f, 0, 1, 2),
+                    (0.9f, 0, 1, 2), (0.9f, 0, 1, 2),
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0.1f - HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize - 0.1f, 0.04f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.9f, 1, 1), null,
+                    (0, 0.9f, 1, 1), null,
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x,
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0.1f - HalfBlockSize, FullFloorHeight - 0.06f, -0.06f), new Vector3(HalfBlockSize - 0.1f, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.9f, 1, 1), null,
+                    (0, 0.9f, 1, 1), null,
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x,
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                createdObjects.Add(Door = builder.ToMesh("Door"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(0.1f - HalfBlockSize, 0.04f, -0.06f), new Vector3(0, FullFloorHeight - 0.06f, 0.06f),
+                    (0.9f, 0, 1, 0.5f), (0.9f, 0, 1, 0.5f),
+                    (0.45f, 0, 0.9f, 2), (0.9f, 0, 1, 2),
+                    (0, 0, 0.45f, 2), (0.9f, 0, 1, 2),
+                    getBoneWeights: x => new Vertex.Weight[] { (2, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0, 0.04f, -0.06f), new Vector3(HalfBlockSize - 0.1f, FullFloorHeight - 0.06f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0, 0, 0.45f, 2), (0.9f, 0, 1, 2),
+                    (0.45f, 0, 0.9f, 2), (0.9f, 0, 1, 2),
+                    getBoneWeights: x => new Vertex.Weight[] { (1, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, -0.01f, -0.06f), new Vector3(0.1f - HalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 1.9f), (0.9f, 0, 1, 2),
+                    (0.3333333f, 0, 0.6666666f, 1.9f), (0.9f, 0, 1, 2),
+                    modifyUV: (x,y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x,
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(HalfBlockSize - 0.1f, -0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.5f, 1, 1), (0.9f, 0.5f, 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 1.9f), (0.9f, 0, 1, 2),
+                    (0.3333333f, 0, 0.6666666f, 1.9f), (0.9f, 0, 1, 2),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x,
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0.1f - HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize - 0.1f, 0.04f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.9f, 1, 1), null,
+                    (0, 0.9f, 1, 1), null,
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x,
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                builder.AddBox(
+                    new Vector3(0.1f - HalfBlockSize, FullFloorHeight - 0.06f, -0.06f), new Vector3(HalfBlockSize - 0.1f, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.9f, 1, 1), null,
+                    (0, 0.9f, 1, 1), null,
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x,
+                    getBoneWeights: x => new Vertex.Weight[] { (0, 1f) }
+                    );
+                createdObjects.Add(DoorDiagonal = builder.ToMesh("DoorDiagonal"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1)
+                    );
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, FullFloorHeight / 6 * 5 - 0.01f, -0.06f), new Vector3(HalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.6666666f, 0.9f, 1), (0.9f, 0.6666666f, 1, 1),
+                    (0, 0.6666666f, 0.9f, 1), (0.9f, 0.6666666f, 1, 1)
+                    );
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, HalfFloorHeight - 0.01f, -0.06f), new Vector3(0.05f - HalfBlockSize, FullFloorHeight / 6 * 5 - 0.01f, 0.06f),
+                    null, null,
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f)
+                    );
+                builder.AddBox(
+                    new Vector3(HalfBlockSize - 0.05f, HalfFloorHeight - 0.01f, -0.06f), new Vector3(HalfBlockSize, FullFloorHeight / 6 * 5 - 0.01f, 0.06f),
+                    null, null,
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f)
+                    );
+                createdObjects.Add(Window = builder.ToMesh("Window"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, -0.01f, -0.06f), new Vector3(0, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), null,
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1)
+                    );
+                builder.AddBox(
+                    new Vector3(0, -0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1),
+                    (0, 0, 0.9f, 1), null
+                    );
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, FullFloorHeight / 6 * 5 - 0.01f, -0.06f), new Vector3(0, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.6666666f, 0.9f, 1), null,
+                    (0, 0.6666666f, 0.9f, 1), (0.9f, 0.6666666f, 1, 1)
+                    );
+                builder.AddBox(
+                    new Vector3(0, FullFloorHeight / 6 * 5 - 0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, FullFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                    (0, 0.6666666f, 0.9f, 1), (0.9f, 0.6666666f, 1, 1),
+                    (0, 0.6666666f, 0.9f, 1), null
+                    );
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, HalfFloorHeight - 0.01f, -0.06f), new Vector3(0.05f - DiagonalHalfBlockSize, FullFloorHeight / 6 * 5 - 0.01f, 0.06f),
+                    null, null,
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f)
+                    );
+                builder.AddBox(
+                    new Vector3(DiagonalHalfBlockSize - 0.05f, HalfFloorHeight - 0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, FullFloorHeight / 6 * 5 - 0.01f, 0.06f),
+                    null, null,
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f),
+                    (0.9f, 0, 1, 1), (0.9f, 0, 1, 0.6666666f)
+                    );
+                createdObjects.Add(WindowDiagonal = builder.ToMesh("WindowDiagonal"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, -0.01f, -0.06f), new Vector3(0.2f - HalfBlockSize, HalfFloorHeight / 2 - 0.01f, 0.06f),
+                    null, (0.9f, 1 - (0.2f / BlockSize), 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(-HalfBlockSize, HalfFloorHeight / 2 - 0.01f, -0.06f), new Vector3(0.2f - HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 0.2f / BlockSize), null,
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(HalfBlockSize - 0.2f, -0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight / 2 - 0.01f, 0.06f),
+                    null, (0.9f, 0, 1, 0.2f / BlockSize),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(HalfBlockSize - 0.2f, HalfFloorHeight / 2 - 0.01f, -0.06f), new Vector3(HalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 1 - (0.2f / BlockSize), 1, 1), null,
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(0.2f - HalfBlockSize, -0.01f, -0.06f), new Vector3(HalfBlockSize - 0.2f, 0.29f, 0.06f),
+                    (0.9f, 0.2f / BlockSize, 1, 1 - (0.2f / BlockSize)), (0.9f, 0.2f / BlockSize, 1, 1 - (0.2f / BlockSize)),
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null
+                    );
+                builder.AddBox(
+                    new Vector3(0.2f - HalfBlockSize, HalfFloorHeight - 0.31f, -0.06f), new Vector3(HalfBlockSize - 0.2f, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.2f / BlockSize, 1, 1 - (0.2f / BlockSize)), (0.9f, 0.2f / BlockSize, 1, 1 - (0.2f / BlockSize)),
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null
+                    );
+                createdObjects.Add(WindowHalf = builder.ToMesh("WindowHalf"));
+            }
+            {
+                var builder = new MeshBuilder();
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, -0.01f, -0.06f), new Vector3(0.2f - DiagonalHalfBlockSize, HalfFloorHeight / 2 - 0.01f, 0.06f),
+                    null, (0.9f, 1 - (0.2f / DiagonalBlockSize), 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(-DiagonalHalfBlockSize, HalfFloorHeight / 2 - 0.01f, -0.06f), new Vector3(0.2f - DiagonalHalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0, 1, 0.2f / DiagonalBlockSize), null,
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(DiagonalHalfBlockSize - 0.2f, -0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, HalfFloorHeight / 2 - 0.01f, 0.06f),
+                    null, (0.9f, 0, 1, 0.2f / DiagonalBlockSize),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0, 1, 0.5f),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(DiagonalHalfBlockSize - 0.2f, HalfFloorHeight / 2 - 0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 1 - (0.2f / DiagonalBlockSize), 1, 1), null,
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    (0.3333333f, 0, 0.6666666f, 0.9f), (0.9f, 0.5f, 1, 1),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x.Rotate(90) : x
+                    );
+                builder.AddBox(
+                    new Vector3(0.2f - DiagonalHalfBlockSize, -0.01f, -0.06f), new Vector3(0, 0.29f, 0.06f),
+                    (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)), (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)),
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null
+                    );
+                builder.AddBox(
+                    new Vector3(0, -0.01f, -0.06f), new Vector3(DiagonalHalfBlockSize - 0.2f, 0.29f, 0.06f),
+                    (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)), (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)),
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null
+                    );
+                builder.AddBox(
+                    new Vector3(0.2f - DiagonalHalfBlockSize, HalfFloorHeight - 0.31f, -0.06f), new Vector3(0, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)), (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)),
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null
+                    );
+                builder.AddBox(
+                    new Vector3(0, HalfFloorHeight - 0.31f, -0.06f), new Vector3(DiagonalHalfBlockSize - 0.2f, HalfFloorHeight - 0.01f, 0.06f),
+                    (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)), (0.9f, 0.2f / DiagonalBlockSize, 1, 1 - (0.2f / DiagonalBlockSize)),
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                    (0, 0.3333333f, 0.9f, 0.6666666f), null
+                    );
+                createdObjects.Add(WindowHalfDiagonal = builder.ToMesh("WindowHalfDiagonal"));
             }
         }
-        static Dictionary<Axis, Func<(float minX, float minY, float maxX, float maxY), Vector2[]>> faceUVOrder = new Dictionary<Axis, Func<(float minX, float minY, float maxX, float maxY), Vector2[]>>()
+
+        public static List<Vector2> UV(this (float minX, float minY, float maxX, float maxY) face, Func<Vector2, Vector2> modifyUV) => new List<Vector2>
         {
-            [Axis.Y] = (x) => new[]
-            {
-                new Vector2(x.maxX, x.minY),
-                new Vector2(x.minX, x.minY),
-                new Vector2(x.minX, x.maxY),
-                new Vector2(x.maxX, x.maxY)
-            },
-            [Axis.NY] = (x) => new[]
-            {
-                new Vector2(x.minX, x.minY),
-                new Vector2(x.minX, x.maxY),
-                new Vector2(x.maxX, x.maxY),
-                new Vector2(x.maxX, x.minY)
-            },
-            [Axis.NZ] = (x) => new[]
-            {
-                new Vector2(x.maxX, x.maxY),
-                new Vector2(x.minX, x.maxY),
-                new Vector2(x.minX, x.minY),
-                new Vector2(x.maxX, x.minY)
-            },
-            [Axis.X] = (x) => new[]
-            {
-                new Vector2(x.maxX, x.maxY),
-                new Vector2(x.minX, x.maxY),
-                new Vector2(x.minX, x.minY),
-                new Vector2(x.maxX, x.minY)
-            },
-            [Axis.None] = (x) => new[]
-            {
-                new Vector2(x.maxX, x.minY),
-                new Vector2(x.maxX, x.maxY),
-                new Vector2(x.minX, x.maxY),
-                new Vector2(x.minX, x.minY)
-            }
+            modifyUV(new Vector2(face.maxX, face.maxY)),
+            modifyUV(new Vector2(face.maxX, face.minY)),
+            modifyUV(new Vector2(face.minX, face.minY)),
+            modifyUV(new Vector2(face.minX, face.maxY))
         };
-        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null, ((float minX, float minY, float maxX, float maxY)? face, Axis axis1, Axis axis2)? slice = null)
+
+        public static Axis[][] GetFacePoints(Axis direction)
         {
-            var log = "";
+            var p = new Axis[4][];
+            for (int i = 0; i < p.Length; i++)
+            {
+                var a = new[] { Axis.X, Axis.Y, Axis.Z };
+                a[(int)direction.ToPositive()] = direction;
+                var f = (int)direction.ToPositive().Next(direction.ToPositive() == Axis.X ? 2 : 1);
+                if (direction.IsNegative() ^ (direction.ToPositive() == Axis.X))
+                    a[f] = a[f].Opposite();
+                var l = (int)direction.ToPositive().Next(direction.ToPositive() == Axis.X ? 1 : 2);
+                if (i < 2)
+                    a[f] = a[f].Opposite();
+                if (0 < i && i < 3)
+                    a[l] = a[l].Opposite();
+                p[i] = a;
+            }
+            return p;
+        }
+        public static void AddBox(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3,Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null, ((float minX, float minY, float maxX, float maxY)? face, Axis axis1, Axis axis2)? slice = null, Func<Axis[],IEnumerable<Vertex.Weight>> getBoneWeights = null)
+        {
+            //var log = "";
             if (modifyVert == null)
                 modifyVert = x => x;
             if (modifyUV == null)
                 modifyUV = (x, y) => x;
+            if (getBoneWeights == null)
+                getBoneWeights = x => default;
             var slices = slice == null || slice.Value.axis1 == slice.Value.axis2 || slice.Value.axis1.Opposite() == slice.Value.axis2 ? new Axis[0] : new[] { slice.Value.axis1, slice.Value.axis2 };
             var keep = new HashSet<Axis>() { Axis.X, Axis.Y, Axis.Z, Axis.NX, Axis.NY, Axis.NZ };
             keep.RemoveWhere(slices.Contains);
@@ -1567,19 +1782,13 @@ namespace MoreBuilding
             {
                 if (slices.Contains(direction))
                     return;
-                var u = (faceUVOrder.TryGetValue(direction, out var array) ? array : faceUVOrder[Axis.None])(face).ToList().ConvertAll(x => modifyUV(x, direction));
+                var u = face.UV(x => modifyUV(x,direction));
                 var p = new List<(Axis[] a, Vertex v)>();
-                log += "\nGetting face " + direction;
-                for (int i = 0; i < 4; i++)
+                //log += "\nGetting face " + direction;
+                foreach (var a in GetFacePoints(direction))
                 {
-                    var a = new[] { Axis.X, Axis.Y, Axis.Z };
-                    a[(int)direction.ToPositive()] = direction;
-                    if (direction.IsNegative() ? (0 < i && i < 3) : i < 2)
-                        a[(int)direction.Next().ToPositive()] = a[(int)direction.Next().ToPositive()].Opposite();
-                    if (direction.IsNegative() ? i < 2 : (0 < i && i < 3))
-                        a[(int)direction.Next(2).ToPositive()] = a[(int)direction.Next(2).ToPositive()].Opposite();
-                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), unique: (int)direction.ToPositive())));
-                    log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
+                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), getBoneWeights(a), unique: (int)direction.ToPositive())));
+                    //log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
                 }
                 if (slice == null || slices.Contains(direction.Opposite()))
                     builder.AddSquare(p[0].v, p[1].v, p[2].v, p[3].v);
@@ -1605,107 +1814,19 @@ namespace MoreBuilding
                 var face = slice.Value.face.Value;
                 var d = slices.Contains(Axis.X) ? Axis.X : slices.Contains(Axis.Z) ? Axis.Z : slices.Contains(Axis.NX) ? Axis.NX : Axis.NZ;
                 var o = slices[(Array.IndexOf(slices, d) + 1) % 2];
-                var u = (faceUVOrder.TryGetValue(d, out var array) ? array : faceUVOrder[Axis.None])(face).ToList().ConvertAll(x => modifyUV(x, Axis.None));
+                var u = face.UV(x => modifyUV(x, Axis.None));
                 var p = new List<(Axis[] a, Vertex v)>();
-                log += "\nGetting slice face " + d;
-                for (int i = 0; i < 4; i++)
+                //log += "\nGetting slice face " + d;
+                foreach (var a in GetFacePoints(d))
                 {
-                    var a = new[] { Axis.X, Axis.Y, Axis.Z };
-                    a[(int)d.ToPositive()] = d;
-                    if (d.IsNegative() ? (0 < i && i < 3) : i < 2)
-                        a[(int)d.Next().ToPositive()] = a[(int)d.Next().ToPositive()].Opposite();
-                    if (d.IsNegative() ? i < 2 : (0 < i && i < 3))
-                        a[(int)d.Next(2).ToPositive()] = a[(int)d.Next(2).ToPositive()].Opposite();
                     if (a.Contains(o))
                         a[(int)d.ToPositive()] = a[(int)d.ToPositive()].Opposite();
-                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), unique: 3)));
-                    log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
+                    p.Add((a, new Vertex(modifyVert(new Vector3((a[0].IsNegative() ? min : max).x, (a[1].IsNegative() ? min : max).y, (a[2].IsNegative() ? min : max).z)), u.Take(), getBoneWeights(a), unique: 3)));
+                    //log += $"\nIncluding corner {a[0]} - {a[1]} - {a[2]} >> {p[p.Count - 1].v.Location}";
                 }
                 builder.AddSquare(p[0].v, p[1].v, p[2].v, p[3].v);
             }
-            Debug.Log(log);
-        }
-
-        public static void AddWedge(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? east = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? northwest = null, Func<Vector3, Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
-        {
-            if (modifyVert == null)
-                modifyVert = x => x;
-            if (modifyUV == null)
-                modifyUV = (x, y) => x;
-            if (top != null)
-                builder.AddTriangle(
-                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY), Axis.Y)),
-                    (modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY), Axis.Y)),
-                    (modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY), Axis.Y))
-                );
-            if (bottom != null)
-                builder.AddTriangle(
-                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY), Axis.NY)),
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY), Axis.NY)),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY), Axis.NY))
-                );
-            if (east != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.minY), Axis.X), unique: 2),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(east.Value.maxX, east.Value.maxY), Axis.X), unique: 2),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.maxY), Axis.X), unique: 2),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(east.Value.minX, east.Value.minY), Axis.X), unique: 2)
-                );
-            if (south != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.maxY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1)
-                );
-            if (northwest != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.minY), Axis.NZ), unique: 3),
-                    new Vertex(modifyVert(new Vector3(max.x, max.y, max.z)), modifyUV(new Vector2(northwest.Value.minX, northwest.Value.maxY), Axis.NZ), unique: 3),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.maxY), Axis.NZ), unique: 3),
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(northwest.Value.maxX, northwest.Value.minY), Axis.NZ), unique: 3)
-                );
-        }
-
-        public static void AddRamp(this MeshBuilder builder, Vector3 min, Vector3 max, (float minX, float minY, float maxX, float maxY)? top = null, (float minX, float minY, float maxX, float maxY)? bottom = null, (float minX, float minY, float maxX, float maxY)? north = null, (float minX, float minY, float maxX, float maxY)? south = null, (float minX, float minY, float maxX, float maxY)? west = null, Func<Vector3, Vector3> modifyVert = null, Func<Vector2, Axis, Vector2> modifyUV = null)
-        {
-            if (modifyVert == null)
-                modifyVert = x => x;
-            if (modifyUV == null)
-                modifyUV = (x, y) => x;
-            if (top != null)
-                builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.minY), Axis.Y)),
-                    (modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.minY), Axis.Y)),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(top.Value.minX, top.Value.maxY), Axis.Y)),
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(top.Value.maxX, top.Value.maxY), Axis.Y))
-                );
-            if (bottom != null)
-                builder.AddSquare(
-                    (modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.minY), Axis.NY)),
-                    (modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(bottom.Value.minX, bottom.Value.maxY), Axis.NY)),
-                    (modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.maxY), Axis.NY)),
-                    (modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(bottom.Value.maxX, bottom.Value.minY), Axis.NY))
-                );
-            if (north != null)
-                builder.AddTriangle(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.minY), Axis.Z), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, max.z)), modifyUV(new Vector2(north.Value.maxX, north.Value.minY), Axis.Z), unique: 1),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(north.Value.minX, north.Value.maxY), Axis.Z), unique: 1)
-                );
-            if (south != null)
-                builder.AddTriangle(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.minY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(south.Value.maxX, south.Value.maxY), Axis.NZ), unique: 1),
-                    new Vertex(modifyVert(new Vector3(max.x, min.y, min.z)), modifyUV(new Vector2(south.Value.minX, south.Value.minY), Axis.NZ), unique: 1)
-                );
-            if (west != null)
-                builder.AddSquare(
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.minY), Axis.NX), unique: 2),
-                    new Vertex(modifyVert(new Vector3(min.x, min.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.minY), Axis.NX), unique: 2),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, max.z)), modifyUV(new Vector2(west.Value.maxX, west.Value.maxY), Axis.NX), unique: 2),
-                    new Vertex(modifyVert(new Vector3(min.x, max.y, min.z)), modifyUV(new Vector2(west.Value.minX, west.Value.maxY), Axis.NX), unique: 2)
-                );
+            //Debug.Log(log);
         }
     }
 
@@ -1797,38 +1918,47 @@ namespace MoreBuilding
         }
     }
 
-    public class MeshData
+    public class MeshSource
     {
-        Mesh[][] meshes;
-        MeshBox[][][] meshboxes;
-        public static implicit operator MeshData(Mesh m) => new MeshData() { meshes = new[] { new[] { m } } };
-        public static implicit operator MeshData(Mesh[] m) => new MeshData() { meshes = new[] { m } };
-        public static implicit operator MeshData(Mesh[][] m) => new MeshData() { meshes = m };
-        public static implicit operator MeshData(MeshBox[] m) => new MeshData() { meshboxes = new[] { new[] { m } } };
-        public static implicit operator MeshData(MeshBox[][] m) => new MeshData() { meshboxes = new[] { m } };
-        public static implicit operator MeshData(MeshBox[][][] m) => new MeshData() { meshboxes = m };
-
-        public Mesh[] this[int index]
+        Mesh mesh;
+        MeshBox[] meshboxes;
+        Func<Mesh> getMesh;
+        MeshSource() { }
+        MeshSource(Func<Mesh> getter) : this() => getMesh = getter;
+        public static implicit operator MeshSource(Mesh m) => new MeshSource() { mesh = m };
+        public static implicit operator MeshSource(Func<Mesh> m) => new MeshSource() { getMesh = m };
+        public static implicit operator MeshSource(MeshBox m) => new MeshSource() { meshboxes = new[] { m } };
+        public static implicit operator MeshSource(MeshBox[] m) => new MeshSource() { meshboxes = m };
+        public Mesh Mesh
         {
             get
             {
-                if (meshes == null)
+                if (mesh == null)
                 {
-                    if (meshboxes == null)
-                        return null;
-                    meshes = new Mesh[meshboxes.Length][];
+                    if (getMesh != null)
+                        mesh = getMesh();
+                    if (mesh == null && meshboxes != null)
+                        mesh = CreateMesh(meshboxes);
                 }
-                if (meshes.Length <= index)
-                    index = 0;
-                if (meshes[index] == null)
-                {
-                    var b = meshboxes.GetSafe(index);
-                    if (b != null)
-                        meshes[index] = Main.CreateMesh(b);
-                }
-                return meshes[index] ?? meshes[0];
+                return mesh;
             }
         }
+    }
+    public class MeshData
+    {
+        MeshSource[][] meshes;
+        public static implicit operator MeshData(MeshSource m) => new MeshData() { meshes = new[] { new[] { m } } };
+        public static implicit operator MeshData(MeshSource[] m) => new MeshData() { meshes = new[] { m } };
+        public static implicit operator MeshData(MeshSource[][] m) => new MeshData() { meshes = m };
+        public static implicit operator MeshData(Mesh m) => new MeshData() { meshes = new[] { new[] { (MeshSource)m } } };
+        public static implicit operator MeshData(Mesh[] m) => new MeshData() { meshes = new[] { m.Cast(x => (MeshSource)x) } };
+        public static implicit operator MeshData(Mesh[][] m) => new MeshData() { meshes = m.Cast(y => y.Cast(x => (MeshSource)x)) };
+        public static implicit operator MeshData(MeshBox m) => new MeshData() { meshes = new[] { new[] { (MeshSource)m } } };
+        public static implicit operator MeshData(MeshBox[] m) => new MeshData() { meshes = new[] { new[] { (MeshSource)m } } };
+        public static implicit operator MeshData(MeshBox[][] m) => new MeshData() { meshes = new[] { m.Cast(x => (MeshSource)x) } };
+        public static implicit operator MeshData(MeshBox[][][] m) => new MeshData() { meshes = m.Cast(y => y.Cast(x => (MeshSource)x)) };
+
+        public Mesh[] this[int index] => (meshes.GetSafe(index) ?? meshes[0]).Cast(x => x.Mesh);
     }
     public class MeshBox
     {
@@ -1890,6 +2020,7 @@ namespace MoreBuilding
         {
             Item_Base item = ScriptableObject.CreateInstance<Item_Base>();
             item.Initialize(uniqueIndex, uniqueName, source.MaxUses);
+            item.name = uniqueName;
             item.settings_buildable = source.settings_buildable.Clone();
             item.settings_consumeable = source.settings_consumeable.Clone();
             item.settings_cookable = source.settings_cookable.Clone();
@@ -1921,6 +2052,21 @@ namespace MoreBuilding
                 foreach (var f in t1.GetFields(~BindingFlags.Default))
                     if (!f.IsStatic)
                         f.SetValue(value, f.GetValue(source));
+                t1 = t1.BaseType;
+            }
+        }
+
+        public static void CopyPropertiesOf(this object value, object source)
+        {
+            var t1 = value.GetType();
+            var t2 = source.GetType();
+            while (!t1.IsAssignableFrom(t2))
+                t1 = t1.BaseType;
+            while (t1 != typeof(Object) && t1 != typeof(object))
+            {
+                foreach (var p in t1.GetProperties(~BindingFlags.Default))
+                    if (p.GetGetMethod() != null && p.GetSetMethod() != null && !p.GetGetMethod().IsStatic)
+                        p.SetValue(value, p.GetValue(source));
                 t1 = t1.BaseType;
             }
         }
@@ -1989,7 +2135,7 @@ namespace MoreBuilding
         public static Sprite ToSprite(this Texture2D texture, Rect? rect = null, Vector2? pivot = null)
         {
             var s = Sprite.Create(texture, rect ?? new Rect(0, 0, texture.width, texture.height), pivot ?? new Vector2(0.5f, 0.5f));
-            Main.createdObjects.Add(s);
+            createdObjects.Add(s);
             return s;
         }
 
@@ -2027,7 +2173,7 @@ namespace MoreBuilding
             texture.Apply();
             RenderTexture.active = prev;
             RenderTexture.ReleaseTemporary(temp);
-            Main.createdObjects.Add(texture);
+            createdObjects.Add(texture);
             return texture;
         }
         public static void Edit(this Texture2D baseImg)
@@ -2076,6 +2222,23 @@ namespace MoreBuilding
             Traverse.Create(foundation).Field("defaultMaterial").SetValue(foundation.meshRenderer.sharedMaterial);
             Traverse.Create(foundation).Field("armoredMaterial").SetValue(foundation.meshRenderer.sharedMaterial);
             Traverse.Create(foundation).Field("reinforced").SetValue(true);
+        }
+
+        public static void MakeDoorSkinRendered (this Block block)
+        {
+            var t = block.transform.Find("model");
+            var r = t.GetComponent<MeshRenderer>().ReplaceComponent<SkinnedMeshRenderer>();
+            var f = t.GetComponent<MeshFilter>();
+            var m = Object.Instantiate(f.sharedMesh);
+            createdObjects.Add(m);
+            r.rootBone = t;
+            r.bones = new[] { t, t.Find("door right"), t.Find("door left") };
+            var binds = new Matrix4x4[r.bones.Length];
+            for (int i = 0; i < binds.Length; i++)
+                binds[i] = r.bones[i].worldToLocalMatrix * r.rootBone.localToWorldMatrix;
+            m.bindposes = binds;
+            r.sharedMesh = m;
+            Object.DestroyImmediate(f);
         }
 
         public static void ShowData(this Material material)
@@ -2145,7 +2308,7 @@ namespace MoreBuilding
             {
                 Debug.Log("Value: null");
                 return;
-            }    
+            }
             var t = obj.GetType();
             var m = new System.Text.StringBuilder();
             while (t != typeof(object))
@@ -2187,20 +2350,11 @@ namespace MoreBuilding
             Debug.Log(m.ToString());
         }
 
-        public static T GetSafe<T>(this T[] c, int index)
-        {
-            if (c == null)
-                return default;
-            if (c.Length <= index)
-                return default;
-            return c[index];
-        }
-
-        public static Axis Opposite(this Axis axis) => (Axis)(((int)axis + 3) % 6);
-        public static bool IsNegative(this Axis axis) => (int)axis >= 3;
-        public static Axis ToPositive(this Axis axis) => (Axis)((int)axis % 3);
-        public static Axis ToNegative(this Axis axis) => (Axis)((int)axis % 3 + 3);
-        public static Axis Next(this Axis axis, int steps = 1) => (Axis)(((int)axis / 3) * 3 + (((int)axis + steps) % 3));
+        public static Axis Opposite(this Axis axis) => axis < Axis.All ? (Axis)(((int)axis + 3) % 6) : axis;
+        public static bool IsNegative(this Axis axis) => axis < Axis.All ? axis > Axis.Z : false;
+        public static Axis ToPositive(this Axis axis) => axis < Axis.All ? (Axis)((int)axis % 3) : axis;
+        public static Axis ToNegative(this Axis axis) => axis < Axis.All ? (Axis)((int)axis % 3 + 3) : axis;
+        public static Axis Next(this Axis axis, int steps = 1) => axis < Axis.All ? (Axis)((int)axis / 3 * 3 + (((int)axis + steps) % 3)) : axis;
 
         public static T Take<T>(this List<T> list)
         {
@@ -2210,6 +2364,70 @@ namespace MoreBuilding
         }
 
         public static bool Bit(this int value, int offset) => (value & (1 << offset)) != 0;
+
+        public static Y[] Cast<X,Y>(this X[] array,Func<X,Y> cast)
+        {
+            var r = new Y[array.Length];
+            for (int i = 0; i < array.Length; i++)
+                r[i] = cast(array[i]);
+            return r;
+        }
+
+        public static T ReplaceComponent<T>(this Component original, int serializationLayers = 0) where T : Component
+        {
+            var g = original.gameObject;
+            var n = g.AddComponent<T>();
+            n.CopyFieldsOf(original);
+            n.CopyPropertiesOf(original);
+            g.ReplaceValues(original, n, serializationLayers);
+            Object.DestroyImmediate(original);
+            return n;
+        }
+        public static void ReplaceValues(this Component value, object original, object replacement, int serializableLayers = 0)
+        {
+            foreach (var c in value.GetComponentsInChildren<Component>(true))
+                (c as object).ReplaceValues(original, replacement, serializableLayers);
+        }
+        public static void ReplaceValues(this GameObject value, object original, object replacement, int serializableLayers = 0)
+        {
+            foreach (var c in value.GetComponentsInChildren<Component>(true))
+                (c as object).ReplaceValues(original, replacement, serializableLayers);
+        }
+
+        public static void ReplaceValues(this object value, object original, object replacement, int serializableLayers = 0)
+        {
+            if (value == null)
+                return;
+            var t = value.GetType();
+            while (t != typeof(Object) && t != typeof(object))
+            {
+                foreach (var f in t.GetFields(~BindingFlags.Default))
+                    if (!f.IsStatic)
+                    {
+                        if (f.GetValue(value) == original || (f.GetValue(value)?.Equals(original) ?? false))
+                            try
+                            {
+                                f.SetValue(value, replacement);
+                            }
+                            catch { }
+                        else if (f.GetValue(value) is IList)
+                        {
+                            var l = f.GetValue(value) as IList;
+                            for (int i = 0; i < l.Count; i++)
+                                if (l[i] == original || (l[i]?.Equals(original) ?? false))
+                                    try
+                                    {
+                                        l[i] = replacement;
+                                    }
+                                    catch { }
+
+                        }
+                        else if (serializableLayers > 0 && (f.GetValue(value)?.GetType()?.IsSerializable ?? false))
+                            f.GetValue(value).ReplaceValues(original, replacement, serializableLayers - 1);
+                    }
+                t = t.BaseType;
+            }
+        }
     }
 
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
@@ -2217,23 +2435,23 @@ namespace MoreBuilding
     {
         static void Postfix(ItemInstance_Buildable.Upgrade __instance, Item_Base buildableItem, ref Item_Base __result)
         {
-            var i = buildableItem == null ? null : Main.instance.items.FirstOrDefault(x => x.isUpgrade && x.item?.UniqueIndex == buildableItem.UniqueIndex)?.baseItem;
+            var i = buildableItem == null ? null : instance.items.FirstOrDefault(x => x.isUpgrade && x.item?.UniqueIndex == buildableItem.UniqueIndex)?.baseItem;
             if (i)
             {
-                foreach (var p in Main.instance.items)
+                foreach (var p in instance.items)
                     if ((p as BlockItemCreation)?.upgradeItem == buildableItem.UniqueIndex && p.item && p.baseItem?.settings_buildable?.Upgrades == __instance)
                     {
                         __result = p.item;
                         return;
                     }
-                foreach (var p in Main.instance.items)
+                foreach (var p in instance.items)
                     if ((p as BlockItemCreation)?.upgradeItem == buildableItem.UniqueIndex && p.item && (p.baseItem?.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x => x?.settings_buildable?.Upgrades == __instance) ?? false))
                     {
                         __result = p.item;
                         return;
                     }
                 var b = __instance.GetNewItemFromUpgradeItem(i);
-                foreach (var p in Main.instance.items)
+                foreach (var p in instance.items)
                     if ((p as BlockItemCreation)?.upgradeItem == buildableItem.UniqueIndex && p.item && (
                         p.baseItem?.settings_buildable?.Upgrades == b.settings_buildable.Upgrades
                         || (p.baseItem?.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x => x?.settings_buildable?.Upgrades == b.settings_buildable.Upgrades) ?? false)))
@@ -2250,7 +2468,7 @@ namespace MoreBuilding
     {
         static void Postfix(Item_Base buildableItem, ref bool __result)
         {
-            if (!__result && buildableItem != null && Main.instance.items.Any(x => x.isUpgrade && x.item?.UniqueIndex == buildableItem.UniqueIndex))
+            if (!__result && buildableItem != null && instance.items.Any(x => x.isUpgrade && x.item?.UniqueIndex == buildableItem.UniqueIndex))
                 __result = true;
         }
     }
@@ -2260,7 +2478,7 @@ namespace MoreBuilding
     {
         static void Postfix(Block __instance, ref bool __result)
         {
-            foreach (var p in Main.instance.items)
+            foreach (var p in instance.items)
                 if (p.item && p.item.UniqueIndex == __instance.buildableItem?.UniqueIndex)
                 {
                     __result = p.baseItem.settings_buildable.GetBlockPrefab(0).IsWalkable();
@@ -2274,7 +2492,7 @@ namespace MoreBuilding
     {
         static void Postfix(LanguageSourceData __instance, ref int __result)
         {
-            if (__result == -1 && __instance == Main.instance.language)
+            if (__result == -1 && __instance == instance.language)
                 __result = 0;
         }
     }
