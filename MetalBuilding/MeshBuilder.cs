@@ -216,8 +216,16 @@ namespace UnityEngine
             Tangent = tangent;
             Unique = unique;
         }
-        public Vertex(Vertex original, Optional<Vector3> location = null, Optional<Vector2> uv = null, Optional<IEnumerable<Weight>> weights = null, Optional<Color> color = null, Optional<Vector3?> normal = null, Optional<Vector4?> tangent = null, Optional<int> unique = null)
-            : this(location ^ original.Location, uv ^ original.UV, weights ^ original.BoneWeights, color ^ original.Color, normal ^ original.Normal, tangent ^ original.Tangent, unique ^ original.Unique) { }
+        public Vertex(Vertex original, Optional<Vector3> location = null, Optional<Vector2> uv = null, Optional<IEnumerable<Weight>> weights = null, Optional<Color> color = null, Optional<Vector3?> normal = null, Optional<Vector4?> tangent = null, Optional<int> unique = null, Func<Vertex, Vector3> locationModify = null, Func<Vertex, Vector2> uvModify = null, Func<Vertex, IEnumerable<Weight>> weightsModify = null, Func<Vertex, Color> colorModify = null, Func<Vertex, Vector3?> normalModify = null, Func<Vertex, Vector4?> tangentModify = null, Func<Vertex, int> uniqueModify = null)
+            : this(
+                  locationModify == null ? location ^ original.Location : locationModify(original),
+                  uvModify == null ? uv ^ original.UV : uvModify(original),
+                  weightsModify == null ? weights ^ original.BoneWeights : weightsModify(original),
+                  colorModify == null ? color ^ original.Color : colorModify(original),
+                  normalModify == null ? normal ^ original.Normal : normalModify(original),
+                  tangentModify == null ? tangent ^ original.Tangent : tangentModify(original),
+                  uniqueModify == null ? unique ^ original.Unique : uniqueModify(original)
+                  ) { }
         
 
         public List<BoneWeight1> GetWeight() => new SortedSet<Weight>(Bones,new FuncComparer<Weight>((x,y) => y.Strength.CompareTo(x.Strength))).Cast(x => (BoneWeight1)x);

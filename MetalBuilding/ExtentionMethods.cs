@@ -428,5 +428,7 @@ namespace MoreBuilding
                 t = t.BaseType;
             }
         }
+
+        public static T GetWrapped<T>(this IList<T> list, int index) => list[(index % list.Count) + (index < 0 ? list.Count : 0)];
     }
 }
