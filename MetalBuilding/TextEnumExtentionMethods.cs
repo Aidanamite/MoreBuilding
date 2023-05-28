@@ -16,7 +16,7 @@ namespace MoreBuilding
                 return v.ToString();
             var a = f.GetCustomAttributes(false);
             foreach (var i in a)
-                if (i is TextAttribute t)
+                if (i is TextAttribute t && t)
                     return t.Text;
             return v.ToString();
         }
@@ -118,6 +118,7 @@ namespace MoreBuilding
 
     public enum Localization
     {
+        [Text(Language.french, "Scrap Metal")]
         [Text("Scrap Metal")]
         ScrapMetal,
         [Text("Solid Metal")]
@@ -206,16 +207,51 @@ namespace MoreBuilding
         StairHalf
     }
 
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class TextAttribute : Attribute
     {
+        public static Language? forcedContext;
+        Language? language;
         string text;
         Enum parent;
         object[] children;
         public virtual string Text => children == null || children.Length == 0 ? (parent?.GetText() ?? text) : string.Format((parent?.GetText() ?? text), children.Cast(x => x is Enum e ? e.GetText() : x.ToString()));
         public TextAttribute(string text, params object[] children) => (this.text, this.children) = (text, children);
         public TextAttribute(string text) => this.text = text;
+        public TextAttribute(Language language, string text, params object[] children) => (this.language, this.text, this.children) = (language, text, children);
+        public TextAttribute(Language language, string text) => (this.language, this.text) = (language, text);
+        public TextAttribute(Language language, object parent, params object[] children) => (this.language, this.parent, this.children) = (language, parent as Enum, children);
+        public TextAttribute(Language language, object parent) => (this.language, this.parent) = (language, parent as Enum);
         public TextAttribute(object parent, params object[] children) => (this.parent, this.children) = (parent as Enum, children);
         public TextAttribute(object parent) => this.parent = parent as Enum;
+        public static implicit operator bool(TextAttribute attribute) => attribute.language == null ? true : (forcedContext?.GetText() ?? I2.Loc.LocalizationManager.CurrentLanguage) == attribute.language.GetText();
+    }
+
+    public enum Language
+    {
+        [Text("English")]
+        english,
+        [Text("Svenska")]
+        swedish,
+        [Text("Français")]
+        french,
+        [Text("Italiano")]
+        italian,
+        [Text("Deutsch")]
+        german,
+        [Text("Español")]
+        spanish,
+        [Text("Polski")]
+        polish,
+        [Text("Português-Brasil")]
+        portuguese,
+        [Text("中文")]
+        chinese,
+        [Text("日本語")]
+        japanese,
+        [Text("한국어")]
+        korean,
+        [Text("Pусский")]
+        russian
     }
 }

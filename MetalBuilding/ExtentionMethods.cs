@@ -373,6 +373,14 @@ namespace MoreBuilding
             return r;
         }
 
+        public static T[] Cast<T>(this Array array, Func<object, T> cast)
+        {
+            var r = new T[array.Length];
+            for (int i = 0; i < array.Length; i++)
+                r[i] = cast(array.GetValue(i));
+            return r;
+        }
+
         public static T ReplaceComponent<T>(this Component original, int serializationLayers = 0) where T : Component
         {
             var g = original.gameObject;

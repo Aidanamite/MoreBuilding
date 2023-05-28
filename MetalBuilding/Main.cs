@@ -31,72 +31,72 @@ namespace MoreBuilding
         public static float DiagonalHalfBlockSize = DiagonalMagnitude * HalfBlockSize;
         public ItemCreation[] items = new[]
         {
-            new ItemCreation() { baseIndex = 546, loadIcon = true, uniqueIndex = 160546, uniqueName = UniqueName.Upgrade.ToText(UniqueName.ScrapMetal), isUpgrade = true, localization = Localization.Upgrade.ToText(Localization.ScrapMetal) },
-            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160548, uniqueName = UniqueName.Upgrade.ToText(UniqueName.SolidMetal), isUpgrade = true, localization = Localization.Upgrade.ToText(Localization.SolidMetal) },
-            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160550, uniqueName = UniqueName.Upgrade.ToText(UniqueName.Glass), isUpgrade = true, localization = Localization.Upgrade.ToText(Localization.Glass) },
+            new ItemCreation() { baseIndex = 546, loadIcon = true, uniqueIndex = 160546, uniqueName = UniqueName.Upgrade.ToText(UniqueName.ScrapMetal), isUpgrade = true, localization = () => Localization.Upgrade.ToText(Localization.ScrapMetal) },
+            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160548, uniqueName = UniqueName.Upgrade.ToText(UniqueName.SolidMetal), isUpgrade = true, localization = () => Localization.Upgrade.ToText(Localization.SolidMetal) },
+            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160550, uniqueName = UniqueName.Upgrade.ToText(UniqueName.Glass), isUpgrade = true, localization = () => Localization.Upgrade.ToText(Localization.Glass) },
             new BlockItemCreation() {
-                baseIndex = 382, uniqueIndex = 160002, uniqueName = UniqueName.Foundation.ToText(UniqueName.ScrapMetal), localization = Localization.Foundation.ToText(Localization.ScrapMetal),
+                baseIndex = 382, uniqueIndex = 160002, uniqueName = UniqueName.Foundation.ToText(UniqueName.ScrapMetal), localization = () => Localization.Foundation.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.Foundation } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
                 additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
-                baseIndex = 383, uniqueIndex = 160383, uniqueName = UniqueName.TriangleFoundation.ToText(UniqueName.ScrapMetal), localization = Localization.TriangleFoundation.ToText(Localization.ScrapMetal),
+                baseIndex = 383, uniqueIndex = 160383, uniqueName = UniqueName.TriangleFoundation.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFoundation.ToText(Localization.ScrapMetal),
                 mesh = new[]{new[] { GeneratedMeshes.FoundationTriangle } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
                 additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
-                baseIndex = 387, uniqueIndex = 160387, uniqueName = UniqueName.TriangleFoundationMirrored.ToText(UniqueName.ScrapMetal), localization = Localization.TriangleFoundation.ToText(Localization.ScrapMetal),
+                baseIndex = 387, uniqueIndex = 160387, uniqueName = UniqueName.TriangleFoundationMirrored.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFoundation.ToText(Localization.ScrapMetal),
                 mesh = new[]{new[] { GeneratedMeshes.FoundationTriangleMirrored } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
                 mirroredItem = 160383,
                 additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
-                baseIndex = 384, uniqueIndex = 160384, uniqueName = UniqueName.Floor.ToText(UniqueName.ScrapMetal), localization = Localization.Floor.ToText(Localization.ScrapMetal),
+                baseIndex = 384, uniqueIndex = 160384, uniqueName = UniqueName.Floor.ToText(UniqueName.ScrapMetal), localization = () => Localization.Floor.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.Floor } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 385, uniqueIndex = 160385, uniqueName = UniqueName.TriangleFloor.ToText(UniqueName.ScrapMetal), localization = Localization.TriangleFloor.ToText(Localization.ScrapMetal),
+                baseIndex = 385, uniqueIndex = 160385, uniqueName = UniqueName.TriangleFloor.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFloor.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.FloorTriangle } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 388, uniqueIndex = 160388, uniqueName = UniqueName.TriangleFloorMirrored.ToText(UniqueName.ScrapMetal), localization = Localization.TriangleFloor.ToText(Localization.ScrapMetal),
+                baseIndex = 388, uniqueIndex = 160388, uniqueName = UniqueName.TriangleFloorMirrored.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFloor.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.FloorTriangleMirrored } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
                 mirroredItem = 160385
             },
             new BlockItemCreation() {
-                baseIndex = 409, uniqueIndex = 160409, uniqueName = UniqueName.Wall.ToText(UniqueName.ScrapMetal), localization = Localization.Wall.ToText(Localization.ScrapMetal),
+                baseIndex = 409, uniqueIndex = 160409, uniqueName = UniqueName.Wall.ToText(UniqueName.ScrapMetal), localization = () => Localization.Wall.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.Wall }, new[] { GeneratedMeshes.WallDiagonal } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 410, uniqueIndex = 160410, uniqueName = UniqueName.WallHalf.ToText(UniqueName.ScrapMetal), localization = Localization.WallHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 410, uniqueIndex = 160410, uniqueName = UniqueName.WallHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.WallHalf }, new[] { GeneratedMeshes.WallHalfDiagonal } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 423, uniqueIndex = 160421, uniqueName = UniqueName.WallV.ToText(UniqueName.ScrapMetal), localization = Localization.WallV.ToText(Localization.ScrapMetal),
+                baseIndex = 423, uniqueIndex = 160421, uniqueName = UniqueName.WallV.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallV.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.WallV } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 408, uniqueIndex = 160408, uniqueName = UniqueName.WallSlope.ToText(UniqueName.ScrapMetal), localization = Localization.WallSlope.ToText(Localization.ScrapMetal),
+                baseIndex = 408, uniqueIndex = 160408, uniqueName = UniqueName.WallSlope.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallSlope.ToText(Localization.ScrapMetal),
                 mesh = new[]{new[] { GeneratedMeshes.WallSlope } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 445, uniqueIndex = 160443, uniqueName = UniqueName.WallSlopeInverted.ToText(UniqueName.ScrapMetal), localization = Localization.WallSlope.ToText(Localization.ScrapMetal),
+                baseIndex = 445, uniqueIndex = 160443, uniqueName = UniqueName.WallSlopeInverted.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallSlope.ToText(Localization.ScrapMetal),
                 mesh = new[]{new[] { GeneratedMeshes.WallSlopeInverted } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
                 additionEdits = x => x.transform.Find("model").localPosition = new Vector3(HalfBlockSize,HalfFloorHeight,0)
             },
             new BlockItemCreation() {
-                baseIndex = 386, uniqueIndex = 160085, uniqueName = UniqueName.Fence.ToText(UniqueName.ScrapMetal), localization = Localization.Fence.ToText(Localization.ScrapMetal),
+                baseIndex = 386, uniqueIndex = 160085, uniqueName = UniqueName.Fence.ToText(UniqueName.ScrapMetal), localization = () => Localization.Fence.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.Fence, GeneratedMeshes.FenceConnector, GeneratedMeshes.FenceConnector }, new[] { GeneratedMeshes.FenceDiagonal, GeneratedMeshes.FenceConnector, GeneratedMeshes.FenceConnector } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal,
                 additionEdits = x =>
@@ -109,7 +109,7 @@ namespace MoreBuilding
                 }
             },
             new BlockItemCreation() {
-                baseIndex = 407, uniqueIndex = 160255, uniqueName = UniqueName.Gate.ToText(UniqueName.ScrapMetal), localization = Localization.Gate.ToText(Localization.ScrapMetal),
+                baseIndex = 407, uniqueIndex = 160255, uniqueName = UniqueName.Gate.ToText(UniqueName.ScrapMetal), localization = () => Localization.Gate.ToText(Localization.ScrapMetal),
                 mesh = new[] {
                     new[] { GeneratedMeshes.Gate, GeneratedMeshes.Empty, GeneratedMeshes.Empty },
                     new[] { GeneratedMeshes.GateDiagonal, GeneratedMeshes.Empty, GeneratedMeshes.Empty }
@@ -118,7 +118,7 @@ namespace MoreBuilding
                 additionEdits = x => x.MakeDoorSkinRendered()
             },
             new BlockItemCreation() {
-                baseIndex = 406, uniqueIndex = 160088, uniqueName = UniqueName.Door.ToText(UniqueName.ScrapMetal), localization = Localization.Door.ToText(Localization.ScrapMetal),
+                baseIndex = 406, uniqueIndex = 160088, uniqueName = UniqueName.Door.ToText(UniqueName.ScrapMetal), localization = () => Localization.Door.ToText(Localization.ScrapMetal),
                 mesh = new[] {
                     new[] { GeneratedMeshes.Door, GeneratedMeshes.Empty, GeneratedMeshes.Empty },
                     new[] { GeneratedMeshes.DoorDiagonal, GeneratedMeshes.Empty, GeneratedMeshes.Empty }
@@ -127,17 +127,17 @@ namespace MoreBuilding
                 additionEdits = x => x.MakeDoorSkinRendered()
             },
             new BlockItemCreation() {
-                baseIndex = 411, uniqueIndex = 160411, uniqueName = UniqueName.Window.ToText(UniqueName.ScrapMetal), localization = Localization.Window.ToText(Localization.ScrapMetal),
+                baseIndex = 411, uniqueIndex = 160411, uniqueName = UniqueName.Window.ToText(UniqueName.ScrapMetal), localization = () => Localization.Window.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.Window }, new[] { GeneratedMeshes.WindowDiagonal } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 493, uniqueIndex = 160493, uniqueName = UniqueName.WindowHalf.ToText(UniqueName.ScrapMetal), localization = Localization.WindowHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 493, uniqueIndex = 160493, uniqueName = UniqueName.WindowHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.WindowHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.WindowHalf }, new[] { GeneratedMeshes.WindowHalfDiagonal } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 403, uniqueIndex = 160148, uniqueName = UniqueName.RoofStraight.ToText(UniqueName.ScrapMetal), localization = Localization.RoofStraight.ToText(Localization.ScrapMetal),
+                baseIndex = 403, uniqueIndex = 160148, uniqueName = UniqueName.RoofStraight.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofStraight.ToText(Localization.ScrapMetal),
                 mesh = new[] {
                     new[] { GeneratedMeshes.Roof },
                     new[] { GeneratedMeshes.RoofDiagonal },
@@ -146,77 +146,77 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal, resetModelRotations = new[]{null, new[] { true }, new[] { true } }
             },
             new BlockItemCreation() {
-                baseIndex = 401, uniqueIndex = 160150, uniqueName = UniqueName.RoofCorner.ToText(UniqueName.ScrapMetal), localization = Localization.RoofCorner.ToText(Localization.ScrapMetal),
+                baseIndex = 401, uniqueIndex = 160150, uniqueName = UniqueName.RoofCorner.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofCorner.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.RoofCorner } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 402, uniqueIndex = 160160, uniqueName = UniqueName.RoofCornerInverted.ToText(UniqueName.ScrapMetal), localization = Localization.RoofCornerInverted.ToText(Localization.ScrapMetal),
+                baseIndex = 402, uniqueIndex = 160160, uniqueName = UniqueName.RoofCornerInverted.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofCornerInverted.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.RoofCornerInverted } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 429, uniqueIndex = 160427, uniqueName = UniqueName.RoofV0.ToText(UniqueName.ScrapMetal), localization = Localization.RoofV0.ToText(Localization.ScrapMetal),
+                baseIndex = 429, uniqueIndex = 160427, uniqueName = UniqueName.RoofV0.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV0.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.RoofV0 }},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 426, uniqueIndex = 160424, uniqueName = UniqueName.RoofV1.ToText(UniqueName.ScrapMetal), localization = Localization.RoofV1.ToText(Localization.ScrapMetal),
+                baseIndex = 426, uniqueIndex = 160424, uniqueName = UniqueName.RoofV1.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV1.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] {GeneratedMeshes.RoofV1}},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 432, uniqueIndex = 160430, uniqueName = UniqueName.RoofV2I.ToText(UniqueName.ScrapMetal), localization = Localization.RoofV2I.ToText(Localization.ScrapMetal),
+                baseIndex = 432, uniqueIndex = 160430, uniqueName = UniqueName.RoofV2I.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV2I.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.RoofV2I }},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 500, uniqueIndex = 160502, uniqueName = UniqueName.RoofV2L.ToText(UniqueName.ScrapMetal), localization = Localization.RoofV2L.ToText(Localization.ScrapMetal),
+                baseIndex = 500, uniqueIndex = 160502, uniqueName = UniqueName.RoofV2L.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV2L.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.RoofV2L }},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 490, uniqueIndex = 160488, uniqueName = UniqueName.RoofV3.ToText(UniqueName.ScrapMetal), localization = Localization.RoofV3.ToText(Localization.ScrapMetal),
+                baseIndex = 490, uniqueIndex = 160488, uniqueName = UniqueName.RoofV3.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV3.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] {GeneratedMeshes.RoofV3}},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 499, uniqueIndex = 160497, uniqueName = UniqueName.RoofV4.ToText(UniqueName.ScrapMetal), localization = Localization.RoofV4.ToText(Localization.ScrapMetal),
+                baseIndex = 499, uniqueIndex = 160497, uniqueName = UniqueName.RoofV4.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV4.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] {GeneratedMeshes.RoofV4}},
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 399, uniqueIndex = 160084, uniqueName = UniqueName.Pillar.ToText(UniqueName.ScrapMetal), localization = Localization.Pillar.ToText(Localization.ScrapMetal),
+                baseIndex = 399, uniqueIndex = 160084, uniqueName = UniqueName.Pillar.ToText(UniqueName.ScrapMetal), localization = () => Localization.Pillar.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.Pillar } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 400, uniqueIndex = 160146, uniqueName = UniqueName.PillarHalf.ToText(UniqueName.ScrapMetal), localization = Localization.PillarHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 400, uniqueIndex = 160146, uniqueName = UniqueName.PillarHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.PillarHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.PillarHalf } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 543, uniqueIndex = 160541, uniqueName = UniqueName.PillarHorizontal.ToText(UniqueName.ScrapMetal), localization = Localization.PillarHorizontal.ToText(Localization.ScrapMetal),
+                baseIndex = 543, uniqueIndex = 160541, uniqueName = UniqueName.PillarHorizontal.ToText(UniqueName.ScrapMetal), localization = () => Localization.PillarHorizontal.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.PillarHorizontal } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 544, uniqueIndex = 160542, uniqueName = UniqueName.PillarHorizontalHalf.ToText(UniqueName.ScrapMetal), localization = Localization.PillarHorizontalHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 544, uniqueIndex = 160542, uniqueName = UniqueName.PillarHorizontalHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.PillarHorizontalHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.PillarHorizontalHalf } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 398, uniqueIndex = 160398, uniqueName = UniqueName.Ladder.ToText(UniqueName.ScrapMetal), localization = Localization.Ladder.ToText(Localization.ScrapMetal),
+                baseIndex = 398, uniqueIndex = 160398, uniqueName = UniqueName.Ladder.ToText(UniqueName.ScrapMetal), localization = () => Localization.Ladder.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.Ladder } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 495, uniqueIndex = 160495, uniqueName = UniqueName.LadderHalf.ToText(UniqueName.ScrapMetal), localization = Localization.LadderHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 495, uniqueIndex = 160495, uniqueName = UniqueName.LadderHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.LadderHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] { GeneratedMeshes.LadderHalf } },
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 143, uniqueIndex = 160143, uniqueName = UniqueName.FloorHalf.ToText(UniqueName.ScrapMetal), localization = Localization.FloorHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 143, uniqueIndex = 160143, uniqueName = UniqueName.FloorHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.FloorHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] {
                     new MeshBox(
                         new Vector3(-HalfBlockSize,HalfFloorHeight-0.15f,-HalfBlockSize),
@@ -233,7 +233,7 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 193, uniqueIndex = 160193, uniqueName = UniqueName.TriangleFloorHalf.ToText(UniqueName.ScrapMetal), localization = Localization.TriangleFloorHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 193, uniqueIndex = 160193, uniqueName = UniqueName.TriangleFloorHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFloorHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] {
                     new MeshBox(
                         new Vector3(-HalfBlockSize,HalfFloorHeight-0.15f,-HalfBlockSize),
@@ -250,7 +250,7 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 404, uniqueIndex = 160003, uniqueName = UniqueName.Stair.ToText(UniqueName.ScrapMetal), localization = Localization.Stair.ToText(Localization.ScrapMetal),
+                baseIndex = 404, uniqueIndex = 160003, uniqueName = UniqueName.Stair.ToText(UniqueName.ScrapMetal), localization = () => Localization.Stair.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfFloorHeight,0.15f-HalfBlockSize,-HalfBlockSize),
                     new Vector3(0,0.35f-HalfBlockSize,HalfBlockSize),
@@ -286,7 +286,7 @@ namespace MoreBuilding
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 405, uniqueIndex = 160405, uniqueName = UniqueName.StairHalf.ToText(UniqueName.ScrapMetal), localization = Localization.StairHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 405, uniqueIndex = 160405, uniqueName = UniqueName.StairHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.StairHalf.ToText(Localization.ScrapMetal),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfFloorHeight,0.15f-HalfBlockSize,-HalfBlockSize),
                     new Vector3(0,0.35f-HalfBlockSize,HalfBlockSize),
@@ -323,7 +323,7 @@ namespace MoreBuilding
             },
             /* Glass Blocks */
             new BlockItemCreation() {
-                baseIndex = 2, uniqueIndex = 6970, uniqueName = UniqueName.Foundation.ToText(UniqueName.Glass), localization = Localization.Foundation.ToText(Localization.Glass),
+                baseIndex = 2, uniqueIndex = 6970, uniqueName = UniqueName.Foundation.ToText(UniqueName.Glass), localization = () => Localization.Foundation.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
@@ -332,7 +332,7 @@ namespace MoreBuilding
                 additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
-                baseIndex = 189, uniqueIndex = 6971, uniqueName =  UniqueName.TriangleFoundation.ToText(UniqueName.Glass), localization = Localization.TriangleFoundation.ToText(Localization.Glass),
+                baseIndex = 189, uniqueIndex = 6971, uniqueName =  UniqueName.TriangleFoundation.ToText(UniqueName.Glass), localization = () => Localization.TriangleFoundation.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-HalfFloorHeight / 2,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
@@ -341,7 +341,7 @@ namespace MoreBuilding
                 additionEdits = x => x.MakeAlwaysReinforced()
             },
             new BlockItemCreation() {
-                baseIndex = 1, uniqueIndex = 6973, uniqueName =  UniqueName.Floor.ToText(UniqueName.Glass), localization = Localization.Floor.ToText(Localization.Glass),
+                baseIndex = 1, uniqueIndex = 6973, uniqueName =  UniqueName.Floor.ToText(UniqueName.Glass), localization = () => Localization.Floor.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
@@ -349,7 +349,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 191, uniqueIndex = 6974, uniqueName = UniqueName.TriangleFloor.ToText(UniqueName.Glass), localization = Localization.TriangleFloor.ToText(Localization.Glass),
+                baseIndex = 191, uniqueIndex = 6974, uniqueName = UniqueName.TriangleFloor.ToText(UniqueName.Glass), localization = () => Localization.TriangleFloor.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
@@ -357,7 +357,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 4, uniqueIndex = 6976, uniqueName = UniqueName.Wall.ToText(UniqueName.Glass), localization = Localization.Wall.ToText(Localization.Glass),
+                baseIndex = 4, uniqueIndex = 6976, uniqueName = UniqueName.Wall.ToText(UniqueName.Glass), localization = () => Localization.Wall.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.05f,-0.04f),
                     new Vector3(HalfBlockSize,FullFloorHeight-0.05f,0),
@@ -365,7 +365,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, DiagonalScale }
             },
             new BlockItemCreation() {
-                baseIndex = 144, uniqueIndex = 6977, uniqueName = UniqueName.WallHalf.ToText(UniqueName.Glass), localization = Localization.WallHalf.ToText(Localization.Glass),
+                baseIndex = 144, uniqueIndex = 6977, uniqueName = UniqueName.WallHalf.ToText(UniqueName.Glass), localization = () => Localization.WallHalf.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.05f,0),
                     new Vector3(HalfBlockSize,HalfFloorHeight-0.05f,0.04f),
@@ -373,7 +373,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass, modelScales = new[] { Vector3.one, DiagonalScale }
             },
             new BlockItemCreation() {
-                baseIndex = 152, uniqueIndex = 6978, uniqueName = UniqueName.WallSlope.ToText(UniqueName.Glass), localization = Localization.WallSlope.ToText(Localization.Glass),
+                baseIndex = 152, uniqueIndex = 6978, uniqueName = UniqueName.WallSlope.ToText(UniqueName.Glass), localization = () => Localization.WallSlope.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.04f,0.05f-HalfFloorHeight),
                     new Vector3(HalfBlockSize,0,0.05f),
@@ -381,7 +381,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 421, uniqueIndex = 6979, uniqueName = UniqueName.WallV.ToText(UniqueName.Glass), localization = Localization.WallV.ToText(Localization.Glass),
+                baseIndex = 421, uniqueIndex = 6979, uniqueName = UniqueName.WallV.ToText(UniqueName.Glass), localization = () => Localization.WallV.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.02f,0.05f-HalfFloorHeight / 2),
                     new Vector3(0,0.02f,0.05f),
@@ -401,7 +401,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 443, uniqueIndex = 6980, uniqueName = UniqueName.WallSlopeInverted.ToText(UniqueName.Glass), localization = Localization.WallSlope.ToText(Localization.Glass),
+                baseIndex = 443, uniqueIndex = 6980, uniqueName = UniqueName.WallSlopeInverted.ToText(UniqueName.Glass), localization = () => Localization.WallSlope.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.006f-HalfBlockSize,0,-0.051f-HalfFloorHeight),
                     new Vector3(HalfBlockSize+0.006f,0.04f,-0.051f),
@@ -409,7 +409,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 148, uniqueIndex = 6983, uniqueName = UniqueName.RoofStraight.ToText(UniqueName.Glass), localization = Localization.RoofStraight.ToText(Localization.Glass),
+                baseIndex = 148, uniqueIndex = 6983, uniqueName = UniqueName.RoofStraight.ToText(UniqueName.Glass), localization = () => Localization.RoofStraight.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(HalfBlockSize,0,BlockSize),
@@ -425,7 +425,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass, resetModelRotations = new[]{null, new[] { true }, new[] { true } }
             },
             new BlockItemCreation() {
-                baseIndex = 150, uniqueIndex = 6984, uniqueName = UniqueName.RoofCorner.ToText(UniqueName.Glass), localization = Localization.RoofCorner.ToText(Localization.Glass),
+                baseIndex = 150, uniqueIndex = 6984, uniqueName = UniqueName.RoofCorner.ToText(UniqueName.Glass), localization = () => Localization.RoofCorner.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
@@ -433,7 +433,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 160, uniqueIndex = 6985, uniqueName = UniqueName.RoofCornerInverted.ToText(UniqueName.Glass), localization = Localization.RoofCornerInverted.ToText(Localization.Glass),
+                baseIndex = 160, uniqueIndex = 6985, uniqueName = UniqueName.RoofCornerInverted.ToText(UniqueName.Glass), localization = () => Localization.RoofCornerInverted.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
@@ -441,7 +441,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 430, uniqueIndex = 6986, uniqueName = UniqueName.RoofV2I.ToText(UniqueName.Glass), localization = Localization.RoofV2I.ToText(Localization.Glass),
+                baseIndex = 430, uniqueIndex = 6986, uniqueName = UniqueName.RoofV2I.ToText(UniqueName.Glass), localization = () => Localization.RoofV2I.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(0,-0.15f,-HalfBlockSize),
                     new Vector3(HalfBlockSize,0,HalfBlockSize),
@@ -453,7 +453,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 502, uniqueIndex = 6987, uniqueName = UniqueName.RoofV2L.ToText(UniqueName.Glass), localization = Localization.RoofV2L.ToText(Localization.Glass),
+                baseIndex = 502, uniqueIndex = 6987, uniqueName = UniqueName.RoofV2L.ToText(UniqueName.Glass), localization = () => Localization.RoofV2L.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
@@ -481,7 +481,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 488, uniqueIndex = 6988, uniqueName = UniqueName.RoofV3.ToText(UniqueName.Glass), localization = Localization.RoofV3.ToText(Localization.Glass),
+                baseIndex = 488, uniqueIndex = 6988, uniqueName = UniqueName.RoofV3.ToText(UniqueName.Glass), localization = () => Localization.RoofV3.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
@@ -497,7 +497,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 497, uniqueIndex = 6989, uniqueName = UniqueName.RoofV4.ToText(UniqueName.Glass), localization = Localization.RoofV4.ToText(Localization.Glass),
+                baseIndex = 497, uniqueIndex = 6989, uniqueName = UniqueName.RoofV4.ToText(UniqueName.Glass), localization = () => Localization.RoofV4.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
@@ -533,7 +533,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 424, uniqueIndex = 6990, uniqueName = UniqueName.RoofV1.ToText(UniqueName.Glass), localization = Localization.RoofV1.ToText(Localization.Glass),
+                baseIndex = 424, uniqueIndex = 6990, uniqueName = UniqueName.RoofV1.ToText(UniqueName.Glass), localization = () => Localization.RoofV1.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
@@ -553,7 +553,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 427, uniqueIndex = 6991, uniqueName = UniqueName.RoofV0.ToText(UniqueName.Glass), localization = Localization.RoofV0.ToText(Localization.Glass),
+                baseIndex = 427, uniqueIndex = 6991, uniqueName = UniqueName.RoofV0.ToText(UniqueName.Glass), localization = () => Localization.RoofV0.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-HalfBlockSize,-0.15f,0),
                     new Vector3(0,0,HalfBlockSize),
@@ -573,7 +573,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 84, uniqueIndex = 6992, uniqueName = UniqueName.Pillar.ToText(UniqueName.Glass), localization = Localization.Pillar.ToText(Localization.Glass),
+                baseIndex = 84, uniqueIndex = 6992, uniqueName = UniqueName.Pillar.ToText(UniqueName.Glass), localization = () => Localization.Pillar.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-0.075f, -0.05f, -0.075f),
                     new Vector3(0.075f,FullFloorHeight-0.05f,0.075f),
@@ -585,7 +585,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 146, uniqueIndex = 6993, uniqueName = UniqueName.PillarHalf.ToText(UniqueName.Glass), localization = Localization.PillarHalf.ToText(Localization.Glass),
+                baseIndex = 146, uniqueIndex = 6993, uniqueName = UniqueName.PillarHalf.ToText(UniqueName.Glass), localization = () => Localization.PillarHalf.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(-0.075f, -0.05f, -0.075f),
                     new Vector3(0.075f,HalfFloorHeight-0.05f,0.075f),
@@ -597,7 +597,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 541, uniqueIndex = 6994, uniqueName = UniqueName.PillarHorizontal.ToText(UniqueName.Glass), localization = Localization.PillarHorizontal.ToText(Localization.Glass),
+                baseIndex = 541, uniqueIndex = 6994, uniqueName = UniqueName.PillarHorizontal.ToText(UniqueName.Glass), localization = () => Localization.PillarHorizontal.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.1f, 0, -0.075f),
                     new Vector3(0.25f,BlockSize*2,0.075f),
@@ -609,7 +609,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
-                baseIndex = 542, uniqueIndex = 6995, uniqueName = UniqueName.PillarHorizontalHalf.ToText(UniqueName.Glass), localization = Localization.PillarHorizontalHalf.ToText(Localization.Glass),
+                baseIndex = 542, uniqueIndex = 6995, uniqueName = UniqueName.PillarHorizontalHalf.ToText(UniqueName.Glass), localization = () => Localization.PillarHorizontalHalf.ToText(Localization.Glass),
                 mesh = new[] {new[] {new MeshBox(
                     new Vector3(0.1f, 0, -0.075f),
                     new Vector3(0.25f,BlockSize,0.075f),
@@ -621,7 +621,7 @@ namespace MoreBuilding
                 upgradeItem = 160550, material = () => instance.Glass
             },
             new BlockItemCreation() {
-                baseIndex = 88, uniqueIndex = 6996, uniqueName = UniqueName.Door.ToText(UniqueName.Glass), localization = Localization.Door.ToText(Localization.Glass),
+                baseIndex = 88, uniqueIndex = 6996, uniqueName = UniqueName.Door.ToText(UniqueName.Glass), localization = () => Localization.Door.ToText(Localization.Glass),
                 mesh = new[] {new[] {
                     new[] {
                         new MeshBox(
@@ -734,7 +734,11 @@ namespace MoreBuilding
             language = new LanguageSourceData()
             {
                 mDictionary = new Dictionary<string, TermData>(),
-                mLanguages = new List<LanguageData> { new LanguageData() { Code = "en", Name = "English" } }
+                mLanguages = //new List<LanguageData> { new LanguageData() { Code = "en", Name = "English" } }
+                Enum.GetValues(typeof(Language)).Cast(x => {
+                    var r = ((Language)x).GetText();
+                    return new LanguageData() { Code = LocalizationManager.Sources[0].mLanguages.Find(y => y.Name == r).Code, Name = r };
+                }).ToList()
             };
             LocalizationManager.Sources.Add(language);
 
@@ -832,7 +836,13 @@ namespace MoreBuilding
             item.item.settings_Inventory.LocalizationTerm = "Item/"+item.item.UniqueName;
             if (item.cost != null)
                 item.item.settings_recipe.NewCost = item.cost;
-            language.mDictionary[item.item.settings_Inventory.LocalizationTerm] = new TermData() { Languages = new[] { item.localization } };
+            language.mDictionary[item.item.settings_Inventory.LocalizationTerm] = new TermData() { Languages = Enum.GetValues(typeof(Language)).Cast(x => {
+                var l = (Language)x;
+                TextAttribute.forcedContext = l;
+                var r = item.localization();
+                TextAttribute.forcedContext = null;
+                return r;
+            }) };
             var blockCreation = item as BlockItemCreation;
             if (blockCreation != null)
             {

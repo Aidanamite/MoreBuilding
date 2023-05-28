@@ -12,7 +12,7 @@ namespace MoreBuilding
         public Item_Base item;
         public bool loadIcon;
         public bool isUpgrade;
-        public string localization;
+        public Func<string> localization;
         public CostMultiple[] cost;
     }
 
