@@ -83,20 +83,23 @@ namespace UnityEngine
             for (int i = 0; i < vertices.Length; i++)
             {
                 var w = bones.GetSafe(i);
-                var v = new Vertex(vertices[i], uv.GetSafe(i), weights.Gather(w.start, x => x < w.end, (x, y) => y + 1, (x, y) => (Vertex.Weight)x[y]), colors.GetSafe(i, Color.white), normals.GetSafe(i), tangents.GetSafe(i));
-                if (mergeWithSelf || mergeWithExisting)
-                    while ((!mergeWithExisting && HasVertIndex(v, out _)) || (!mergeWithSelf && hashVert.Contains(v)))
-                    {
-                        v = new Vertex(v, unique: v.Unique + 1);
-                        if (v.Unique == 0)
-                            throw new IndexOutOfRangeException("Could not enforce a unique vertex. Too many of the same vertex exist. There should not be this many");
-                    }
+                var v = modify(new Vertex(vertices[i], uv.GetSafe(i), weights.Gather(w.start, x => x < w.end, (x, y) => y + 1, (x, y) => (Vertex.Weight)x[y]), colors.GetSafe(i, Color.white), normals.GetSafe(i), tangents.GetSafe(i)));
+                if (v != null)
+                    if (mergeWithSelf || mergeWithExisting)
+                        while ((!mergeWithExisting && HasVertIndex(v, out _)) || (!mergeWithSelf && hashVert.Contains(v)))
+                        {
+                            v = new Vertex(v, unique: v.Unique + 1);
+                            if (v.Unique == 0)
+                                throw new IndexOutOfRangeException("Could not enforce a unique vertex. Too many of the same vertex exist. There should not be this many");
+                        }
                 vert.Add(v);
-                hashVert.Add(v);
+                if (v != null)
+                    hashVert.Add(v);
             }
             foreach (var s in submeshes)
                 for (int i = 0; i < s.Length; i += 3)
-                    AddTriangle(vert[s[i]], vert[s[i + 1]], vert[s[i + 2]], modifySubmeshIndex(i));
+                    if (vert[s[i]] != null && vert[s[i + 1]] != null && vert[s[i + 2]] != null)
+                        AddTriangle(vert[s[i]], vert[s[i + 1]], vert[s[i + 2]], modifySubmeshIndex(i));
         }
 
         public Mesh ToMesh(string name = "", bool enforceNormalsIncludeTouchingVerts = false)

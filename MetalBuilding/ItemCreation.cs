@@ -82,6 +82,8 @@ namespace MoreBuilding
                         mesh = getMesh();
                     if (mesh == null && meshboxes != null)
                         mesh = MeshBox.CreateMesh(meshboxes);
+                    if (mesh != null)
+                        Main.createdObjects.Add(mesh);
                 }
                 return mesh;
             }

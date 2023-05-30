@@ -116,32 +116,6 @@ namespace MoreBuilding
         StairHalf
     }
 
-    /*
-        [Text(Language.swedish, "")]
-        [Text(Language.french, "")]
-        [Text(Language.italian, "")]
-        [Text(Language.german, "")]
-        [Text(Language.spanish, "")]
-        [Text(Language.polish, "")]
-        [Text(Language.portuguese, "")]
-        [Text(Language.chinese, "")]
-        [Text(Language.japanese, "")]
-        [Text(Language.korean, "")]
-        [Text(Language.russian, "")]
-
-        [Text(Language.swedish, _Base_, "", "")]
-        [Text(Language.french, _Base_, "", "")]
-        [Text(Language.italian, _Base_, "", "")]
-        [Text(Language.german, _Base_, "", "")]
-        [Text(Language.spanish, _Base_, "", "")]
-        [Text(Language.polish, _Base_, "", "")]
-        [Text(Language.portuguese, _Base_, "", "")]
-        [Text(Language.chinese, _Base_, "", "")]
-        [Text(Language.japanese, _Base_, "", "")]
-        [Text(Language.korean, _Base_, "", "")]
-        [Text(Language.russian, _Base_, "", "")]
-     */
-
     public enum Localization
     {
         [Text("Scrap Metal")]
