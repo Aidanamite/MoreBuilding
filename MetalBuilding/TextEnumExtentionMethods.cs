@@ -8,18 +8,26 @@ namespace MoreBuilding
 {
     public static class TextEnumExtentionMethods
     {
-        public static string ToText(this Enum v, params object[] args) => string.Format(v.GetText(), args.Cast(x => x is Enum e ? e.GetText() : x.ToString()));
-        public static string GetText(this Enum v)
+        public static string ToText(this Enum v, params object[] args)
+        {
+            var t = v.GetText();
+            var i = 0;
+            return string.Format(t, args.Cast(x => x is Enum e ? e.GetText(t, i++) : x.ToString()));
+        }
+        public static string GetText(this Enum v, string parentMsg = null, int index = 0)
         {
             var f = v.GetType().GetField(v.ToString(), ~System.Reflection.BindingFlags.Default);
             if (f == null)
                 return v.ToString();
-            var a = f.GetCustomAttributes(false);
-            foreach (var i in a)
-                if (i is TextAttribute t && t)
-                    return t.Text;
+            foreach (var i in f.GetCustomAttributes(false))
+            {
+                if (i is TextAttribute t && t.ValidFor(parentMsg, index))
+                    return t.GetText(parentMsg,index);
+            }
             return v.ToString();
         }
+
+        public static Func<string, int, bool> GetMethod(this (Type, string) details, object target = null) => details.Item1.GetMethods(~System.Reflection.BindingFlags.Default).FirstOrDefault(x => x.IsStatic && x.Name == details.Item2 && x.ReturnType == typeof(bool) && x.GetParameters().Length == 2 && x.GetParameters()[0].ParameterType == typeof(string) && x.GetParameters()[1].ParameterType == typeof(int))?.CreateDelegate(typeof(Func<string, int, bool>), target) as Func<string, int, bool>;
     }
 
     public enum UniqueName
@@ -118,10 +126,16 @@ namespace MoreBuilding
 
     public enum Localization
     {
+        [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Złomowa")]
+        [Text(Language.polish, "Złomowy")]
         [Text("Scrap Metal")]
         ScrapMetal,
+        [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Metalowa")]
+        [Text(Language.polish, "Metalowy")]
         [Text("Solid Metal")]
         SolidMetal,
+        [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Szklana")]
+        [Text(Language.polish, "Szklany")]
         [Text("Glass")]
         Glass,
         [Text("{0}@{1}")]
@@ -522,22 +536,32 @@ namespace MoreBuilding
     {
         public static Language? forcedContext;
         Language? language;
-        string text;
+        Func<string, int, bool> condition;
+        public readonly string text;
         Enum parent;
         object[] children;
-        public virtual string Text => children == null || children.Length == 0 ? (parent?.GetText() ?? text) : string.Format((parent?.GetText() ?? text), children.Cast(x => x is Enum e ? e.GetText() : x.ToString()));
-        public TextAttribute(string text, params object[] children) => (this.text, this.children) = (text, children);
-        public TextAttribute(string text) => this.text = text;
-        public TextAttribute(Language language, string text, params object[] children) => (this.language, this.text, this.children) = (language, text, children);
-        public TextAttribute(Language language, string text) => (this.language, this.text) = (language, text);
-        public TextAttribute(Language language, object parent, params object[] children) => (this.language, this.parent, this.children) = (language, parent as Enum, children);
-        public TextAttribute(Language language, object parent) => (this.language, this.parent) = (language, parent as Enum);
-        public TextAttribute(object parent, params object[] children) => (this.parent, this.children) = (parent as Enum, children);
-        public TextAttribute(object parent) => this.parent = parent as Enum;
-        public static implicit operator bool(TextAttribute attribute) => attribute.language == null ? true : (forcedContext?.GetText() ?? I2.Loc.LocalizationManager.CurrentLanguage) == attribute.language.GetText();
+        public string GetText(string msg, int index)
+        {
+            if (children == null || children.Length == 0)
+                return parent?.GetText(msg, index) ?? text;
+            int i = 0;
+            var t = parent?.GetText(msg, index) ?? text;
+            return string.Format(t, children.Cast(x => x is Enum e ? e.GetText(t, i++) : x.ToString()));
+        }
+
+        TextAttribute(Language? language, Func<string, int, bool> condition, object textOrEnum, object[] children) => (this.language, this.condition, this.parent, this.text, this.children) = (language, condition, textOrEnum as Enum, textOrEnum as string, children);
+        public TextAttribute(Type type, string method, object textOrEnum, params object[] children) : this(null, (type, method).GetMethod(), textOrEnum, children) { }
+        public TextAttribute(Type type, string method, object textOrEnum) : this(null, (type, method).GetMethod(), textOrEnum, null) { }
+        public TextAttribute(Language language, Type type, string method, object textOrEnum, params object[] children) : this((Language?)language, (type, method).GetMethod(), textOrEnum, children) { }
+        public TextAttribute(Language language, Type type, string method, object textOrEnum) : this((Language?)language, (type, method).GetMethod(), textOrEnum, null) { }
+        public TextAttribute(Language language, object textOrEnum, params object[] children) : this((Language?)language, null, textOrEnum, children) { }
+        public TextAttribute(Language language, object textOrEnum) : this((Language?)language, null, textOrEnum, null) { }
+        public TextAttribute(object textOrEnum, params object[] children) : this(default(Language?), null, textOrEnum, children) { }
+        public TextAttribute(object textOrEnum) : this(default(Language?), null, textOrEnum, null) { }
+        public bool ValidFor(string msg, int index) => (language == null ? true : (forcedContext?.GetText() ?? I2.Loc.LocalizationManager.CurrentLanguage) == language.GetText()) && (!string.IsNullOrEmpty(msg) ? condition?.Invoke(msg, index) ?? true : true);
     }
 
-    public enum Language
+        public enum Language
     {
         [Text("English")]
         english,
@@ -563,5 +587,19 @@ namespace MoreBuilding
         korean,
         [Text("Pусский")]
         russian
+    }
+
+    static class PolishMethods
+    {
+        public static bool IsFeminine(string msg, int index)
+        {
+            var i = msg.IndexOf("{" + index + "}");
+            if (i < 0 || i + 5 >= msg.Length)
+                return false;
+            if (msg[i + 4] == ' ')
+                i++;
+            i = msg.IndexOfAny(new[] { ' ', '@' }, i + 4);
+            return i > 0 && char.ToLowerInvariant(msg[i - 1]) == 'a';
+        }
     }
 }
