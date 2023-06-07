@@ -25,6 +25,11 @@ namespace MoreBuilding
 {
     public class Main : Mod
     {
+        static System.Text.StringBuilder log = new System.Text.StringBuilder();
+        public static void Logg(string message)
+        {
+            log?.AppendLine(message);
+        }
         #region ItemCreation
         public static float DiagonalMagnitude = Vector2.one.magnitude;
         public static Vector3 DiagonalScale = new Vector3(DiagonalMagnitude, 1,1);
@@ -291,17 +296,17 @@ namespace MoreBuilding
                         (0, 0, 1, .1f), (0, 0, 1, .1f),
                         (0, 0, 1, .1f), (0, 0, 1, .1f),
                         modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
-                        generation: ((0, 0, 1, .1f), Axis.Z, Axis.NX)
+                        generation: ((0, 0, 1, .1f), Axis.NZ, Axis.NX)
                     );
                     for (int i = 0; i < 4; i++)
                     {
                         var x = (HalfBlockSize - HalfWallThickness * 1.5f) * ((i % 2 == 0) ? -1 : 1);
                         var z = x * ((i / 2 == 0) ? -1 : 1);
-                        if (z > 0)
+                        if (z < 0)
                         {
                             if (x < 0)
                                 continue;
-                            z -= HalfWallThickness * 2;
+                            z += HalfWallThickness * 2;
                         }
                         else if (x < 0)
                             x += HalfWallThickness * 2;
@@ -311,21 +316,29 @@ namespace MoreBuilding
                             (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
                             (0.9f, 0, 1, 1), (0.9f, 0, 1, 1)
                             );
-                        /*if (x > 0)
-                            builder.AddBox(
-                                new Vector3(-x + HalfWallThickness, HalfFloorHeight / 4 + WallOffset, z - HalfWallThickness), new Vector3(x - HalfWallThickness, HalfFloorHeight * 7 / 12 + WallOffset, z + HalfWallThickness),
-                                (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
-                                (0, 0.3333333f, 0.9f, 0.6666666f), null,
-                                (0, 0.3333333f, 0.9f, 0.6666666f), null
-                                );
-                        if (z < 0)
-                            builder.AddBox(
-                                new Vector3(x - HalfWallThickness, HalfFloorHeight / 4 + WallOffset, z + HalfWallThickness), new Vector3(x + HalfWallThickness, HalfFloorHeight * 7 / 12 + WallOffset, -z - HalfWallThickness),
-                                (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
-                                null, (0, 0.3333333f, 0.9f, 0.6666666f),
-                                null, (0, 0.3333333f, 0.9f, 0.6666666f),
-                                modifyUV: (a,b) => b.ToPositive() == Axis.Y ? a.Rotate(-90) : a
-                                );*/
+                    }
+                    for (int j = 0; j < 2; j++)
+                    {
+                        builder.AddBox(
+                            new Vector3(HalfWallThickness * 4.5f - HalfBlockSize, (HalfFloorHeight-FloorThickness) * (2 + 5 * j) / 12, HalfBlockSize - HalfWallThickness * 2.5f), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, (HalfFloorHeight-FloorThickness) * (6 + 5 * j) / 12, HalfBlockSize - HalfWallThickness * 0.5f),
+                            (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                            (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                            (0, 0.3333333f, 0.9f, 0.6666666f), null
+                            );
+                        builder.AddBox(
+                            new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, (HalfFloorHeight-FloorThickness) * (2 + 5 * j) / 12, HalfWallThickness * 4.5f - HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 0.5f, (HalfFloorHeight-FloorThickness) * (6 + 5 * j) / 12, HalfBlockSize - HalfWallThickness * 2.5f),
+                            (0, 0.9f, 1, 1), (0, 0.9f, 1, 1),
+                            null, (0, 0.3333333f, 0.9f, 0.6666666f),
+                            null, (0, 0.3333333f, 0.9f, 0.6666666f),
+                            modifyUV: (a,b) => b.ToPositive() == Axis.Y ? a.Rotate(90) : a
+                            );
+                        builder.AddBox(
+                            new Vector3((HalfWallThickness * 2.5f - HalfBlockSize) * DiagonalMagnitude, (HalfFloorHeight-FloorThickness) * (2 + 5 * j) / 12 + 0.001f, HalfWallThickness * 0.5f), new Vector3((HalfBlockSize - HalfWallThickness * 2.5f) * DiagonalMagnitude, (HalfFloorHeight-FloorThickness) * (6 + 5 * j) / 12 - 0.001f, HalfWallThickness * 2.5f),
+                            (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                            (0, 0.3333333f, 0.9f, 0.6666666f, 2, 1), null,
+                            (0, 0.3333333f, 0.9f, 0.6666666f, 2, 1), null,
+                            modifyVert: x => Quaternion.Euler(0,45,0) * x
+                            );
                     }
                     return builder.ToMesh("ScrapMetal_TriangularHalfFloor");
                 }),
@@ -333,38 +346,26 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 404, uniqueIndex = 160003, uniqueName = UniqueName.Stair.ToText(UniqueName.ScrapMetal), localization = () => Localization.Stair.ToText(Localization.ScrapMetal),
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfFloorHeight,0.15f-HalfBlockSize,-HalfBlockSize),
-                    new Vector3(0,0.35f-HalfBlockSize,HalfBlockSize),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, DifferentEnds: true ), true, Quaternion.Euler(0,0,-90)),
-                new MeshBox(
-                    new Vector3(-HalfFloorHeight,HalfBlockSize-0.35f,-HalfBlockSize),
-                    new Vector3(0,HalfBlockSize-0.15f,HalfBlockSize),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, DifferentEnds: true ), true, Quaternion.Euler(0,0,-90)),
-                new MeshBox(
-                    new Vector3(0.24f-HalfBlockSize,0,HalfBlockSize*3-0.24f),
-                    new Vector3(0.36f-HalfBlockSize,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
-                new MeshBox(
-                    new Vector3(0.24f-HalfBlockSize,0,HalfBlockSize*3-0.24f),
-                    new Vector3(0.36f-HalfBlockSize,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.36f,0,HalfBlockSize*3-0.24f),
-                    new Vector3(HalfBlockSize-0.24f,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.36f,0,HalfBlockSize*3-0.24f),
-                    new Vector3(HalfBlockSize-0.24f,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.19f,0,-HalfBlockSize),
-                    new Vector3(HalfBlockSize-0.14f,0.3f,HalfBlockSize*3),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), -0.025f, 0.05f, 1.95f, -90 ), x=> x.z > 0 ? x + (Vector3.up * (FullFloorHeight - 0.3f)) : x),
-                new MeshBox(
-                    new Vector3(0.14f-HalfBlockSize,0,-HalfBlockSize),
-                    new Vector3(0.19f-HalfBlockSize,0.3f,HalfBlockSize*3),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), -0.025f, 0.05f, 1.95f, -90 ), x=> x.z > 0 ? x + (Vector3.up * (FullFloorHeight - 0.3f)) : x)}},
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfWallThickness * 5 - HalfBlockSize, FullFloorHeight + WallOffset, HalfBlockSize + BlockSize),
+                        (0, 0.9f, 2, 1), (0, 0.9f, 2, 1),
+                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
+                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((0.9f, 0, 1, 2),Axis.NZ,Axis.Y)
+                        );
+                    builder.AddBox(
+                        new Vector3(HalfBlockSize - HalfWallThickness * 5, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, FullFloorHeight + WallOffset, HalfBlockSize + BlockSize),
+                        (0, 0.9f, 2, 1), (0, 0.9f, 2, 1),
+                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
+                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((0.9f, 0, 1, 2),Axis.NZ,Axis.Y)
+                        );
+                    return builder.ToMesh("ScrapMetal_Stairs");
+                }),
                 upgradeItem = 160546, material = () => instance.ScrapMetal
             },
             new BlockItemCreation() {
@@ -869,6 +870,8 @@ namespace MoreBuilding
             ModUtils_ReloadBuildMenu();
             Traverse.Create(typeof(LocalizationManager)).Field("OnLocalizeEvent").GetValue<LocalizationManager.OnLocalizeCallback>().Invoke();
             Log("Mod has been loaded!");
+            if (log != null)
+                Log(log.ToString());
         }
         public void OnModUnload()
         {
@@ -901,9 +904,10 @@ namespace MoreBuilding
 
         public void CreateItem(ItemCreation item)
         {
+            Logg($"[CreateItem] Creating {item.uniqueName}#{item.uniqueIndex}");
             item.item = item.baseItem.Clone(item.uniqueIndex, item.uniqueName);
             if (item.loadIcon)
-                Debug.Log("not loaded image");// item.item.settings_Inventory.Sprite = LoadImage(item.uniqueName + ".png").ToSprite();
+                Logg("[CreateItem] not loaded image");// item.item.settings_Inventory.Sprite = LoadImage(item.uniqueName + ".png").ToSprite();
             else
             {
                 var t = item.item.settings_Inventory.Sprite.texture.GetReadable(copyArea: item.item.settings_Inventory.Sprite.rect, mipChain: false);
@@ -939,6 +943,7 @@ namespace MoreBuilding
             var blockCreation = item as BlockItemCreation;
             if (blockCreation != null)
             {
+                Logg($"[CreateItem] Block Prefab Creation");
                 var p = item.item.settings_buildable.GetBlockPrefabs().ToArray();
                 for (int i = 0; i < p.Length; i++)
                 {
@@ -979,21 +984,20 @@ namespace MoreBuilding
 
             if (item.baseItem.settings_recipe.NewCost.Length > 0)
             {
-                Item_Base craftingMaterial = ItemManager.GetItemByName("Glass");
-
-                if (item.item.UniqueName.Contains("_ScrapMetal"))
-                {
+                Item_Base craftingMaterial;
+                if (item.item.UniqueName.Contains("_" + UniqueName.ScrapMetal.ToText()))
                     craftingMaterial = ItemManager.GetItemByName("Scrap");
-                }
-                else if (item.item.UniqueName.Contains("_Metal"))
-                {
+                else if (item.item.UniqueName.Contains("_" + UniqueName.SolidMetal.ToText()))
                     craftingMaterial = ItemManager.GetItemByName("MetalIngot");
-                }
-                
-                item.item.SetRecipe(new CostMultiple[] { new CostMultiple(new Item_Base[] { craftingMaterial }, item.baseItem.settings_recipe.NewCost[0].amount) });
+                else
+                    craftingMaterial = ItemManager.GetItemByName("Glass");
+
+                item.item.SetRecipe(new CostMultiple[] { new CostMultiple(new Item_Base[] { craftingMaterial }, (int)Math.Round(item.baseItem.settings_recipe.NewCost.Sum(x => x.amount) / 2d + item.baseItem.settings_recipe.NewCost[0].amount / 2d)) });
+                Logg($"[CreateItem] Set Recipe: {item.item.settings_recipe.NewCost.Join(x => $"\n - {x.amount}x[{x.items.Join(y => y.settings_Inventory.DisplayName)}]", "")}");
             }
 
             ItemManager.GetAllItems().Add(item.item);
+            Logg("[CreateItem] Done");
         }
 
 

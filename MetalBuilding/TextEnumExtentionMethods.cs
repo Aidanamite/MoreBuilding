@@ -591,7 +591,7 @@ namespace MoreBuilding
 
     static class PolishMethods
     {
-        public static bool IsFeminine(string msg, int index)
+        public static bool IsFeminine(string msg, int index) // Determines if the word following {index} ends with an 'a'
         {
             var i = msg.IndexOf("{" + index + "}");
             if (i < 0 || i + 5 >= msg.Length)

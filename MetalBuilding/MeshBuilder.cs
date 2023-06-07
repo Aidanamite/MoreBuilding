@@ -50,7 +50,7 @@ namespace UnityEngine
             AddTriangle(a, b, c, submesh);
             AddTriangle(a, c, d, submesh);
         }
-        public void AddMesh(Mesh mesh, bool mergeWithExisting = true, bool mergeWithSelf = true, Func<Vertex,Vertex> modify = null, Func<int,int> modifySubmeshIndex = null)
+        public void AddMesh(Mesh mesh, bool mergeWithExisting = true, bool mergeWithSelf = true, Func<int,Vertex,Vertex> modify = null, Func<int,int> modifySubmeshIndex = null)
         {
             if (!mesh)
             {
@@ -63,7 +63,7 @@ namespace UnityEngine
                 return;
             }
             if (modify == null)
-                modify = x => x;
+                modify = (y,x) => x;
             if (modifySubmeshIndex == null)
                 modifySubmeshIndex = x => x;
             var vertices = mesh.vertices;
@@ -83,7 +83,7 @@ namespace UnityEngine
             for (int i = 0; i < vertices.Length; i++)
             {
                 var w = bones.GetSafe(i);
-                var v = modify(new Vertex(vertices[i], uv.GetSafe(i), weights.Gather(w.start, x => x < w.end, (x, y) => y + 1, (x, y) => (Vertex.Weight)x[y]), colors.GetSafe(i, Color.white), normals.GetSafe(i), tangents.GetSafe(i)));
+                var v = modify(vert.Count, new Vertex(vertices[i], uv.GetSafe(i), weights.Gather(w.start, x => x < w.end, (x, y) => y + 1, (x, y) => (Vertex.Weight)x[y]), colors.GetSafe(i, Color.white), normals.GetSafe(i), tangents.GetSafe(i)));
                 if (v != null)
                     if (mergeWithSelf || mergeWithExisting)
                         while ((!mergeWithExisting && HasVertIndex(v, out _)) || (!mergeWithSelf && hashVert.Contains(v)))
@@ -213,7 +213,7 @@ namespace UnityEngine
         {
             Location = location;
             UV = uv;
-            Bones = new HashSet<Weight>(weights != null && weights.Any(x => x != null) ? weights.Cast(x => x,x => x != null) as IEnumerable<Weight> : new[] { new Weight(0,1) });
+            Bones = new HashSet<Weight>(weights != null && weights.Any(x => x != null) ? weights.Cast(x => x,x => x != null) as IEnumerable<Weight> : Weight.Defaults);
             Color = color;
             Normal = normal;
             Tangent = tangent;
@@ -259,6 +259,8 @@ namespace UnityEngine
                 BoneIndex = boneIndex;
                 Strength = strength;
             }
+            public static Weight Default => new Weight(0, 1);
+            public static Weight[] Defaults => new[] { Default };
             public static implicit operator Weight((int, float) value) => new Weight(value.Item1, value.Item2);
             public static implicit operator Weight(BoneWeight1 value) => new Weight(value.boneIndex, value.weight);
             public static implicit operator BoneWeight1(Weight value) => new BoneWeight1() { boneIndex = value.BoneIndex, weight = value.Strength };
