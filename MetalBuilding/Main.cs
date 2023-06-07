@@ -25,7 +25,7 @@ namespace MoreBuilding
 {
     public class Main : Mod
     {
-        static System.Text.StringBuilder log = new System.Text.StringBuilder();
+        static System.Text.StringBuilder log = null;//new System.Text.StringBuilder();
         public static void Logg(string message)
         {
             log?.AppendLine(message);
