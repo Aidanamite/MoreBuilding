@@ -851,10 +851,7 @@ namespace MoreBuilding
             {
                 var t = LoadImage("icons/" + item.uniqueName + ".png");
                 if (t)
-                {
-                    item.item.settings_Inventory.Sprite = t.GetReadable(mipChain: false).ToSprite();
-                    Destroy(t);
-                }
+                    item.item.settings_Inventory.Sprite = t.ToSprite();
                 else
                     Logg("[CreateItem] Failed to load item icon");
             }
@@ -986,8 +983,11 @@ namespace MoreBuilding
             if (!loaded) return null;
             var l = new List<(Item_Base, Item_Base, bool)>();
             foreach (var i in items)
-                if (i.baseItem && i.item)
-                    l.Add((i.baseItem, i.item, i.isUpgrade));
+            {
+                var r = i.GetRealInstance();
+                if (r.baseItem && r.item)
+                    l.Add((r.baseItem, r.item, r.isUpgrade));
+            }
             return l;
         }
 

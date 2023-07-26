@@ -215,10 +215,10 @@ namespace MoreBuilding
         {
             return (Index)Enum.Parse(typeof(Index), material + "_Upgrade");
         }
-        public static (UniqueName item, UniqueName material) GetValues(Index index)
+        public static (UniqueName material, UniqueName item) GetValues(Index index)
         {
             var a = index.ToString().Split('_');
-            return ((UniqueName)Enum.Parse(typeof(UniqueName), a[1]), (UniqueName)Enum.Parse(typeof(UniqueName), a[0]));
+            return ((UniqueName)Enum.Parse(typeof(UniqueName), a[0]), (UniqueName)Enum.Parse(typeof(UniqueName), a[1]));
         }
         public static Index GetMirrored(UniqueName material, UniqueName item)
         {
