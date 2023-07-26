@@ -117,7 +117,7 @@ namespace MoreBuilding
         [Text(FloorHalf, Triangle_)]
         TriangleFloorHalf,
         [Text(TriangleFloorHalf, _Mirror)]
-        TriangleHalfFloorMirrored,
+        TriangleFloorHalfMirrored,
         [Text(Base_, "Stair_{0}")]
         Stair,
         [Text(Stair, _Half)]
@@ -126,14 +126,17 @@ namespace MoreBuilding
 
     public enum Localization
     {
+        [Text(Language.german, "Schrott")]
         [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Złomowa")]
         [Text(Language.polish, "Złomowy")]
         [Text("Scrap Metal")]
         ScrapMetal,
+        [Text(Language.german, "Metall")]
         [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Metalowa")]
         [Text(Language.polish, "Metalowy")]
         [Text("Solid Metal")]
         SolidMetal,
+        [Text(Language.german, "Glas")]
         [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Szklana")]
         [Text(Language.polish, "Szklany")]
         [Text("Glass")]

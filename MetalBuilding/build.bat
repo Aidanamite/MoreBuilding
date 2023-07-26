@@ -9,7 +9,7 @@ set foldername=%1
 :: Creating a folder to contain temporary files for the build
 mkdir "build"
 :: Copying the solution directory in the "build" folder except ".csproj, .rmod build.bat" files and "bin, obj, Properties" folders.
-robocopy "%foldername%" "build" /E /XF *.csproj *.rmod build.bat /XD bin obj Properties
+robocopy "%foldername%" "build" /E /XF *.csproj* *.rmod *.psd build.bat /XD bin obj Properties donotbuild
 :: Checking if a .rmod with the same name already exists and if it does, delete it.
 if exist "%foldername%.rmod" ( del "%foldername%.rmod" )
 :: Zipping the "build" folder. (.rmod are just zipped files)

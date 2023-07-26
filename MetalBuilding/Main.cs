@@ -35,91 +35,30 @@ namespace MoreBuilding
         public static Vector3 DiagonalScale = new Vector3(DiagonalMagnitude, 1,1);
         public static float DiagonalBlockSize = DiagonalMagnitude * BlockSize;
         public static float DiagonalHalfBlockSize = DiagonalMagnitude * HalfBlockSize;
+        static Func<T> ItemByIndex<T>(int index) where T : ItemCreation => () => (T)instance.items.First(x => x.uniqueIndex == index);
+        static Func<T> ItemByIndex<T>(Index index) where T : ItemCreation => ItemByIndex<T>((int)index);
         public ItemCreation[] items = new[]
         {
-            new ItemCreation() { baseIndex = 546, loadIcon = true, uniqueIndex = 160546, uniqueName = UniqueName.Upgrade.ToText(UniqueName.ScrapMetal), isUpgrade = true, localization = () => Localization.Upgrade.ToText(Localization.ScrapMetal) },
-            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160548, uniqueName = UniqueName.Upgrade.ToText(UniqueName.SolidMetal), isUpgrade = true, localization = () => Localization.Upgrade.ToText(Localization.SolidMetal) },
-            new ItemCreation() { baseIndex = 548, loadIcon = true, uniqueIndex = 160550, uniqueName = UniqueName.Upgrade.ToText(UniqueName.Glass), isUpgrade = true, localization = () => Localization.Upgrade.ToText(Localization.Glass) },
+            new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.ScrapMetal_Upgrade },
+            new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.SolidMetal_Upgrade },
+            new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.Glass_Upgrade },
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Foundation), x => { x.standardIndexSetup = Index.SolidMetal_Foundation; }),
+            new BlockItemCreation() { baseIndex = 382, standardIndexSetup = Index.ScrapMetal_Foundation, mesh = Foundation, additionEdits = x => x.MakeAlwaysReinforced() },
+            new BlockItemCreation() { baseIndex = 383, standardIndexSetup = Index.ScrapMetal_TriangleFoundation, mesh = FoundationTriangle, additionEdits = x => x.MakeAlwaysReinforced() },
+            new BlockItemCreation() { baseIndex = 387, standardIndexSetup = Index.ScrapMetal_TriangleFoundationMirrored, mesh = FoundationTriangleMirrored, additionEdits = x => x.MakeAlwaysReinforced() },
+            new BlockItemCreation() { baseIndex = 384, standardIndexSetup = Index.ScrapMetal_Floor, mesh = Floor },
+            new BlockItemCreation() { baseIndex = 385, standardIndexSetup = Index.ScrapMetal_TriangleFloor, mesh = FloorTriangle },
+            new BlockItemCreation() { baseIndex = 388, standardIndexSetup = Index.ScrapMetal_TriangleFloorMirrored, mesh = FloorTriangleMirrored },
+            new BlockItemCreation() { baseIndex = 409, standardIndexSetup = Index.ScrapMetal_Wall, mesh = new[] { new[] { Wall }, new[] { WallDiagonal } } },
+            new BlockItemCreation() { baseIndex = 410, standardIndexSetup = Index.ScrapMetal_WallHalf, mesh = new[] { new[] { WallHalf }, new[] { WallHalfDiagonal } } },
+            new BlockItemCreation() { baseIndex = 423, standardIndexSetup = Index.ScrapMetal_WallV, mesh = WallV },
+            new BlockItemCreation() { baseIndex = 408, standardIndexSetup = Index.ScrapMetal_WallSlope, mesh = WallSlope },
             new BlockItemCreation() {
-                baseIndex = 382, uniqueIndex = 320002, uniqueName = UniqueName.Foundation.ToText(UniqueName.SolidMetal), localization = () => Localization.Foundation.ToText(Localization.SolidMetal),
-                mesh = Foundation,
-                upgradeItem = 160548, material = () => instance.Metal,
-                additionEdits = x => x.MakeAlwaysReinforced()
+                baseIndex = 445, standardIndexSetup = Index.ScrapMetal_WallSlopeInverted, mesh = WallSlopeInverted,
+                additionEdits = x => x.transform.Find("model").localPosition = new Vector3(HalfBlockSize, HalfFloorHeight, 0)
             },
             new BlockItemCreation() {
-                baseIndex = 382, uniqueIndex = 160002, uniqueName = UniqueName.Foundation.ToText(UniqueName.ScrapMetal), localization = () => Localization.Foundation.ToText(Localization.ScrapMetal),
-                mesh = Foundation,
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
-                additionEdits = x => x.MakeAlwaysReinforced()
-            },
-            new BlockItemCreation() {
-                baseIndex = 383, uniqueIndex = 160383, uniqueName = UniqueName.TriangleFoundation.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFoundation.ToText(Localization.ScrapMetal),
-                mesh = FoundationTriangle,
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
-                additionEdits = x => x.MakeAlwaysReinforced()
-            },
-            new BlockItemCreation() {
-                baseIndex = 387, uniqueIndex = 160387, uniqueName = UniqueName.TriangleFoundationMirrored.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFoundation.ToText(Localization.ScrapMetal),
-                mesh = FoundationTriangleMirrored,
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
-                mirroredItem = 160383,
-                additionEdits = x => x.MakeAlwaysReinforced()
-            },
-            new BlockItemCreation() {
-                baseIndex = 384, uniqueIndex = 160384, uniqueName = UniqueName.Floor.ToText(UniqueName.ScrapMetal), localization = () => Localization.Floor.ToText(Localization.ScrapMetal),
-                mesh = Floor,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 385, uniqueIndex = 160385, uniqueName = UniqueName.TriangleFloor.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFloor.ToText(Localization.ScrapMetal),
-                mesh = FloorTriangle,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 388, uniqueIndex = 160388, uniqueName = UniqueName.TriangleFloorMirrored.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFloor.ToText(Localization.ScrapMetal),
-                mesh = FloorTriangleMirrored,
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
-                mirroredItem = 160385
-            },
-            new BlockItemCreation() {
-                baseIndex = 409, uniqueIndex = 160409, uniqueName = UniqueName.Wall.ToText(UniqueName.ScrapMetal), localization = () => Localization.Wall.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { Wall },
-                    new[] { WallDiagonal }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 410, uniqueIndex = 160410, uniqueName = UniqueName.WallHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallHalf.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { WallHalf },
-                    new[] { WallHalfDiagonal }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 423, uniqueIndex = 160421, uniqueName = UniqueName.WallV.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallV.ToText(Localization.ScrapMetal),
-                mesh = WallV,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 408, uniqueIndex = 160408, uniqueName = UniqueName.WallSlope.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallSlope.ToText(Localization.ScrapMetal),
-                mesh = WallSlope,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 445, uniqueIndex = 160443, uniqueName = UniqueName.WallSlopeInverted.ToText(UniqueName.ScrapMetal), localization = () => Localization.WallSlope.ToText(Localization.ScrapMetal),
-                mesh = WallSlopeInverted,
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
-                additionEdits = x => x.transform.Find("model").localPosition = new Vector3(HalfBlockSize,HalfFloorHeight,0)
-            },
-            new BlockItemCreation() {
-                baseIndex = 386, uniqueIndex = 160085, uniqueName = UniqueName.Fence.ToText(UniqueName.ScrapMetal), localization = () => Localization.Fence.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { Fence, FenceConnector, FenceConnector },
-                    new[] { FenceDiagonal, FenceConnector, FenceConnector }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                baseIndex = 386, standardIndexSetup = Index.ScrapMetal_Fence, mesh = new[] { new[] { Fence, FenceConnector, FenceConnector }, new[] { FenceDiagonal, FenceConnector, FenceConnector } },
                 additionEdits = x =>
                 {
                     var t = x.transform.Find("knobRight");
@@ -130,120 +69,35 @@ namespace MoreBuilding
                 }
             },
             new BlockItemCreation() {
-                baseIndex = 407, uniqueIndex = 160255, uniqueName = UniqueName.Gate.ToText(UniqueName.ScrapMetal), localization = () => Localization.Gate.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { Gate, Empty, Empty },
-                    new[] { GateDiagonal, Empty, Empty }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                baseIndex = 407, standardIndexSetup = Index.ScrapMetal_Gate, mesh = new[] { new[] { Gate, Empty, Empty }, new[] { GateDiagonal, Empty, Empty } },
                 additionEdits = x => x.MakeDoorSkinRendered()
             },
             new BlockItemCreation() {
-                baseIndex = 406, uniqueIndex = 160088, uniqueName = UniqueName.Door.ToText(UniqueName.ScrapMetal), localization = () => Localization.Door.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { GeneratedMeshes.Door, Empty, Empty },
-                    new[] { DoorDiagonal, Empty, Empty }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal,
+                baseIndex = 406, standardIndexSetup = Index.ScrapMetal_Door, mesh = new[] { new[] { GeneratedMeshes.Door, Empty, Empty }, new[] { DoorDiagonal, Empty, Empty } },
                 additionEdits = x => x.MakeDoorSkinRendered()
             },
+            new BlockItemCreation() { baseIndex = 411, standardIndexSetup = Index.ScrapMetal_Window, mesh = new[] { new[] { Window }, new[] { WindowDiagonal } } },
+            new BlockItemCreation() { baseIndex = 493, standardIndexSetup = Index.ScrapMetal_WindowHalf, mesh = new[] { new[] { WindowHalf }, new[] { WindowHalfDiagonal } } },
             new BlockItemCreation() {
-                baseIndex = 411, uniqueIndex = 160411, uniqueName = UniqueName.Window.ToText(UniqueName.ScrapMetal), localization = () => Localization.Window.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { Window },
-                    new[] { WindowDiagonal }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal
+                baseIndex = 403, standardIndexSetup = Index.ScrapMetal_RoofStraight,
+                mesh = new[] { new[] { Roof }, new[] { RoofDiagonal }, new[] { RoofDiagonalAlt } }, resetModelRotations = new[]{ null, new[] { true }, new[] { true } }
             },
+            new BlockItemCreation() { baseIndex = 401, standardIndexSetup = Index.ScrapMetal_RoofCorner, mesh = RoofCorner },
+            new BlockItemCreation() { baseIndex = 402, standardIndexSetup = Index.ScrapMetal_RoofCornerInverted, mesh = RoofCornerInverted },
+            new BlockItemCreation() { baseIndex = 429, standardIndexSetup = Index.ScrapMetal_RoofV0, mesh = RoofV0 },
+            new BlockItemCreation() { baseIndex = 426, standardIndexSetup = Index.ScrapMetal_RoofV1, mesh = RoofV1 },
+            new BlockItemCreation() { baseIndex = 432, standardIndexSetup = Index.ScrapMetal_RoofV2I, mesh = RoofV2I },
+            new BlockItemCreation() { baseIndex = 500, standardIndexSetup = Index.ScrapMetal_RoofV2L, mesh = RoofV2L },
+            new BlockItemCreation() { baseIndex = 490, standardIndexSetup = Index.ScrapMetal_RoofV3, mesh = RoofV3 },
+            new BlockItemCreation() { baseIndex = 499, standardIndexSetup = Index.ScrapMetal_RoofV4, mesh = RoofV4 },
+            new BlockItemCreation() { baseIndex = 399, standardIndexSetup = Index.ScrapMetal_Pillar, mesh = Pillar },
+            new BlockItemCreation() { baseIndex = 400, standardIndexSetup = Index.ScrapMetal_PillarHalf, mesh = PillarHalf },
+            new BlockItemCreation() { baseIndex = 543, standardIndexSetup = Index.ScrapMetal_PillarHorizontal, mesh = PillarHorizontal },
+            new BlockItemCreation() { baseIndex = 544, standardIndexSetup = Index.ScrapMetal_PillarHorizontalHalf, mesh = PillarHorizontalHalf },
+            new BlockItemCreation() { baseIndex = 398, standardIndexSetup = Index.ScrapMetal_Ladder, mesh = Ladder },
+            new BlockItemCreation() { baseIndex = 495, standardIndexSetup = Index.ScrapMetal_LadderHalf, mesh = LadderHalf },
             new BlockItemCreation() {
-                baseIndex = 493, uniqueIndex = 160493, uniqueName = UniqueName.WindowHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.WindowHalf.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { WindowHalf },
-                    new[] { WindowHalfDiagonal }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 403, uniqueIndex = 160148, uniqueName = UniqueName.RoofStraight.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofStraight.ToText(Localization.ScrapMetal),
-                mesh = new[] {
-                    new[] { Roof },
-                    new[] { RoofDiagonal },
-                    new[] { RoofDiagonalAlt }
-                },
-                upgradeItem = 160546, material = () => instance.ScrapMetal, resetModelRotations = new[]{null, new[] { true }, new[] { true } }
-            },
-            new BlockItemCreation() {
-                baseIndex = 401, uniqueIndex = 160150, uniqueName = UniqueName.RoofCorner.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofCorner.ToText(Localization.ScrapMetal),
-                mesh = RoofCorner,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 402, uniqueIndex = 160160, uniqueName = UniqueName.RoofCornerInverted.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofCornerInverted.ToText(Localization.ScrapMetal),
-                mesh = RoofCornerInverted,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 429, uniqueIndex = 160427, uniqueName = UniqueName.RoofV0.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV0.ToText(Localization.ScrapMetal),
-                mesh = RoofV0,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 426, uniqueIndex = 160424, uniqueName = UniqueName.RoofV1.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV1.ToText(Localization.ScrapMetal),
-                mesh = RoofV1,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 432, uniqueIndex = 160430, uniqueName = UniqueName.RoofV2I.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV2I.ToText(Localization.ScrapMetal),
-                mesh = RoofV2I,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 500, uniqueIndex = 160502, uniqueName = UniqueName.RoofV2L.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV2L.ToText(Localization.ScrapMetal),
-                mesh = RoofV2L,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 490, uniqueIndex = 160488, uniqueName = UniqueName.RoofV3.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV3.ToText(Localization.ScrapMetal),
-                mesh = RoofV3,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 499, uniqueIndex = 160497, uniqueName = UniqueName.RoofV4.ToText(UniqueName.ScrapMetal), localization = () => Localization.RoofV4.ToText(Localization.ScrapMetal),
-                mesh = RoofV4,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 399, uniqueIndex = 160084, uniqueName = UniqueName.Pillar.ToText(UniqueName.ScrapMetal), localization = () => Localization.Pillar.ToText(Localization.ScrapMetal),
-                mesh = Pillar,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 400, uniqueIndex = 160146, uniqueName = UniqueName.PillarHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.PillarHalf.ToText(Localization.ScrapMetal),
-                mesh = PillarHalf,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 543, uniqueIndex = 160541, uniqueName = UniqueName.PillarHorizontal.ToText(UniqueName.ScrapMetal), localization = () => Localization.PillarHorizontal.ToText(Localization.ScrapMetal),
-                mesh = PillarHorizontal,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 544, uniqueIndex = 160542, uniqueName = UniqueName.PillarHorizontalHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.PillarHorizontalHalf.ToText(Localization.ScrapMetal),
-                mesh = PillarHorizontalHalf,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 398, uniqueIndex = 160398, uniqueName = UniqueName.Ladder.ToText(UniqueName.ScrapMetal), localization = () => Localization.Ladder.ToText(Localization.ScrapMetal),
-                mesh = Ladder,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 495, uniqueIndex = 160495, uniqueName = UniqueName.LadderHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.LadderHalf.ToText(Localization.ScrapMetal),
-                mesh = LadderHalf,
-                upgradeItem = 160546, material = () => instance.ScrapMetal
-            },
-            new BlockItemCreation() {
-                baseIndex = 143, uniqueIndex = 160143, uniqueName = UniqueName.FloorHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.FloorHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 143, standardIndexSetup = Index.ScrapMetal_FloorHalf,
                 mesh = new MeshSource(() => {
                     var builder = new MeshBuilder();
                     builder.AddBox(
@@ -283,11 +137,10 @@ namespace MoreBuilding
                         }
                     }
                     return builder.ToMesh("ScrapMetal_HalfFloor");
-                }),
-                upgradeItem = 160546, material = () => instance.ScrapMetal
+                })
             },
             new BlockItemCreation() {
-                baseIndex = 193, uniqueIndex = 160193, uniqueName = UniqueName.TriangleFloorHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.TriangleFloorHalf.ToText(Localization.ScrapMetal),
+                baseIndex = 397, standardIndexSetup = Index.ScrapMetal_TriangleFloorHalf,
                 mesh = new MeshSource(() => {
                     var builder = new MeshBuilder();
                     builder.AddBox(
@@ -341,68 +194,142 @@ namespace MoreBuilding
                             );
                     }
                     return builder.ToMesh("ScrapMetal_TriangularHalfFloor");
-                }),
-                upgradeItem = 160546, material = () => instance.ScrapMetal
+                })
             },
             new BlockItemCreation() {
-                baseIndex = 404, uniqueIndex = 160003, uniqueName = UniqueName.Stair.ToText(UniqueName.ScrapMetal), localization = () => Localization.Stair.ToText(Localization.ScrapMetal),
+                baseIndex = 465, standardIndexSetup = Index.ScrapMetal_TriangleFloorHalfMirrored,
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, HalfFloorHeight-FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, HalfFloorHeight, HalfBlockSize),
+                        (0, 0, 1, 0.9f), (0, 0, 1, 0.9f),
+                        (0, 0, 1, .1f), (0, 0, 1, .1f),
+                        (0, 0, 1, .1f), (0, 0, 1, .1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                        generation: ((0, 0, 1, .1f), Axis.NZ, Axis.NX)
+                    );
+                    for (int i = 0; i < 4; i++)
+                    {
+                        var x = (HalfBlockSize - HalfWallThickness * 1.5f) * ((i % 2 == 0) ? -1 : 1);
+                        var z = x * ((i / 2 == 0) ? -1 : 1);
+                        if (z < 0)
+                        {
+                            if (x < 0)
+                                continue;
+                            z += HalfWallThickness * 2;
+                        }
+                        else if (x < 0)
+                            x += HalfWallThickness * 2;
+                        builder.AddBox(
+                            new Vector3(x - HalfWallThickness, 0, z - HalfWallThickness), new Vector3(x + HalfWallThickness, HalfFloorHeight-FloorThickness, z + HalfWallThickness),
+                            null, (0.9f, 0.9f, 1, 1),
+                            (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                            (0.9f, 0, 1, 1), (0.9f, 0, 1, 1)
+                            );
+                    }
+                    for (int j = 0; j < 2; j++)
+                    {
+                        builder.AddBox(
+                            new Vector3(HalfWallThickness * 4.5f - HalfBlockSize, (HalfFloorHeight-FloorThickness) * (2 + 5 * j) / 12, HalfBlockSize - HalfWallThickness * 2.5f), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, (HalfFloorHeight-FloorThickness) * (6 + 5 * j) / 12, HalfBlockSize - HalfWallThickness * 0.5f),
+                            (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                            (0, 0.3333333f, 0.9f, 0.6666666f), null,
+                            (0, 0.3333333f, 0.9f, 0.6666666f), null
+                            );
+                        builder.AddBox(
+                            new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, (HalfFloorHeight-FloorThickness) * (2 + 5 * j) / 12, HalfWallThickness * 4.5f - HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 0.5f, (HalfFloorHeight-FloorThickness) * (6 + 5 * j) / 12, HalfBlockSize - HalfWallThickness * 2.5f),
+                            (0, 0.9f, 1, 1), (0, 0.9f, 1, 1),
+                            null, (0, 0.3333333f, 0.9f, 0.6666666f),
+                            null, (0, 0.3333333f, 0.9f, 0.6666666f),
+                            modifyUV: (a,b) => b.ToPositive() == Axis.Y ? a.Rotate(90) : a
+                            );
+                        builder.AddBox(
+                            new Vector3((HalfWallThickness * 2.5f - HalfBlockSize) * DiagonalMagnitude, (HalfFloorHeight-FloorThickness) * (2 + 5 * j) / 12 + 0.001f, HalfWallThickness * 0.5f), new Vector3((HalfBlockSize - HalfWallThickness * 2.5f) * DiagonalMagnitude, (HalfFloorHeight-FloorThickness) * (6 + 5 * j) / 12 - 0.001f, HalfWallThickness * 2.5f),
+                            (0.9f, 0, 1, 1), (0.9f, 0, 1, 1),
+                            (0, 0.3333333f, 0.9f, 0.6666666f, 2, 1), null,
+                            (0, 0.3333333f, 0.9f, 0.6666666f, 2, 1), null,
+                            modifyVert: x => Quaternion.Euler(0,45,0) * x
+                            );
+                    }
+                    return builder.ToMesh("ScrapMetal_TriangularHalfFloorMirrored");
+                })
+            },
+            new BlockItemCreation() {
+                baseIndex = 404, standardIndexSetup = Index.ScrapMetal_Stair,
                 mesh = new MeshSource(() => {
                     var builder = new MeshBuilder();
                     builder.AddBox(
                         new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfWallThickness * 5 - HalfBlockSize, FullFloorHeight + WallOffset, HalfBlockSize + BlockSize),
-                        (0, 0.9f, 2, 1), (0, 0.9f, 2, 1),
-                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
-                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
+                        (0, 1.9f, 2, 2), (0, 1.9f, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
                         modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
-                        generation: ((0.9f, 0, 1, 2),Axis.NZ,Axis.Y)
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
                         );
                     builder.AddBox(
                         new Vector3(HalfBlockSize - HalfWallThickness * 5, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, FullFloorHeight + WallOffset, HalfBlockSize + BlockSize),
-                        (0, 0.9f, 2, 1), (0, 0.9f, 2, 1),
-                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
-                        (0.9f, 0, 1, 2), (0, 0, 0.9f, 1, 2, 2),
+                        (0, 1.9f, 2, 2), (0, 1.9f, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
                         modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
-                        generation: ((0.9f, 0, 1, 2),Axis.NZ,Axis.Y)
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
                         );
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.4f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.4f, 0, HalfBlockSize + BlockSize),
+                        (0, 1, 4, 1.9f), (0, 1, 4, 1.9f),
+                        (0, 0, 1, .1f), (0, 0, 4, .1f),
+                        (0, 0, 1, .1f), (0, 0, 4, .1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                        modifyVert: x => new Vector3(x.x, x.y + (x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z)
+                        );
+                    for (int i = 0; i < 12; i++)
+                        builder.AddBox(
+                            new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, FullFloorHeight * (i + 0.8f) / 12, -HalfBlockSize + BlockSize * i / 6), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, FullFloorHeight * (i + 1) / 12, -HalfBlockSize + BlockSize * (i + 1) / 6 - 0.0001f),
+                            (0.3333333f, 0, 0.6666666f, 0.9f, 1, 2), (0.3333333f, 0, 0.6666666f, 0.9f, 1, 2),
+                            (0, 1, 1, 1.1f), (0, 1, 1, 1.1f),
+                            (0, 1, 1, 1.1f), (0, 1, 1, 1.1f),
+                            modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90)
+                            );
                     return builder.ToMesh("ScrapMetal_Stairs");
-                }),
-                upgradeItem = 160546, material = () => instance.ScrapMetal
+                })
             },
             new BlockItemCreation() {
-                baseIndex = 405, uniqueIndex = 160405, uniqueName = UniqueName.StairHalf.ToText(UniqueName.ScrapMetal), localization = () => Localization.StairHalf.ToText(Localization.ScrapMetal),
-                mesh = new[] {new[] {new MeshBox(
-                    new Vector3(-HalfFloorHeight,0.15f-HalfBlockSize,-HalfBlockSize),
-                    new Vector3(0,0.35f-HalfBlockSize,HalfBlockSize),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, DifferentEnds: true ), true, Quaternion.Euler(0,0,-90)),
-                new MeshBox(
-                    new Vector3(-HalfFloorHeight,HalfBlockSize-0.35f,-HalfBlockSize),
-                    new Vector3(0,HalfBlockSize-0.15f,HalfBlockSize),
-                    new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90, DifferentEnds: true ), true, Quaternion.Euler(0,0,-90)),
-                new MeshBox(
-                    new Vector3(0.24f-HalfBlockSize,0,HalfBlockSize*3-0.24f),
-                    new Vector3(0.36f-HalfBlockSize,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
-                new MeshBox(
-                    new Vector3(0.24f-HalfBlockSize,0,HalfBlockSize*3-0.24f),
-                    new Vector3(0.36f-HalfBlockSize,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.36f,0,HalfBlockSize*3-0.24f),
-                    new Vector3(HalfBlockSize-0.24f,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0, 0.9f, 0.1f ), Faces: new FaceChanges() { excludeN = true, excludeS = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.36f,0,HalfBlockSize*3-0.24f),
-                    new Vector3(HalfBlockSize-0.24f,FullFloorHeight-0.2f,HalfBlockSize*3-0.12f),
-                    new UVData(new Vector4(0.9f,0,1,0.1f), new Vector2(0,2), 0.9f, 0.1f, 0.9f ), Faces: new FaceChanges() { excludeE = true, excludeW = true, excludeD = true, excludeU = true }),
-                new MeshBox(
-                    new Vector3(HalfBlockSize-0.19f,0,-HalfBlockSize),
-                    new Vector3(HalfBlockSize-0.14f,0.3f,HalfBlockSize*3),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), -0.025f, 0.05f, 1.95f, -90 ), x=> x.z > 0 ? x + (Vector3.up * (FullFloorHeight - 0.3f)) : x),
-                new MeshBox(
-                    new Vector3(0.14f-HalfBlockSize,0,-HalfBlockSize),
-                    new Vector3(0.19f-HalfBlockSize,0.3f,HalfBlockSize*3),
-                    new UVData(new Vector4(0.9f,0,1,1), new Vector2(0,0.1f), -0.025f, 0.05f, 1.95f, -90 ), x=> x.z > 0 ? x + (Vector3.up * (FullFloorHeight - 0.3f)) : x)}},
-                upgradeItem = 160546, material = () => instance.ScrapMetal
+                baseIndex = 405, standardIndexSetup = Index.ScrapMetal_StairHalf,
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfWallThickness * 5 - HalfBlockSize, HalfFloorHeight + WallOffset, HalfBlockSize),
+                        (0, 1.9f, 1, 2), (0, 1.9f, 1, 2),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
+                        );
+                    builder.AddBox(
+                        new Vector3(HalfBlockSize - HalfWallThickness * 5, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, HalfFloorHeight + WallOffset, HalfBlockSize),
+                        (0, 1.9f, 1, 2), (0, 1.9f, 1, 2),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
+                        );
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.4f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.4f, 0, HalfBlockSize),
+                        (0, 1, 2, 1.9f), (0, 1, 2, 1.9f),
+                        (0, 0, 1, .1f), (0, 0, 2, .1f),
+                        (0, 0, 1, .1f), (0, 0, 2, .1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                        modifyVert: x => new Vector3(x.x, x.y + (x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z)
+                        );
+                    for (int i = 0; i < 6; i++)
+                        builder.AddBox(
+                            new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, FullFloorHeight * (i + 0.8f) / 12, -HalfBlockSize + BlockSize * i / 6), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, FullFloorHeight * (i + 1) / 12, -HalfBlockSize + BlockSize * (i + 1) / 6 - 0.0001f),
+                            (0.3333333f, 0, 0.6666666f, 0.9f, 1, 2), (0.3333333f, 0, 0.6666666f, 0.9f, 1, 2),
+                            (0, 1, 1, 1.1f), (0, 1, 1, 1.1f),
+                            (0, 1, 1, 1.1f), (0, 1, 1, 1.1f),
+                            modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90)
+                            );
+                    return builder.ToMesh("ScrapMetal_HalfStairs");
+                })
             },
             /* Glass Blocks */
             new BlockItemCreation() {
@@ -790,9 +717,9 @@ namespace MoreBuilding
         };
         #endregion
 
-        Material Glass;
-        Material ScrapMetal;
-        Material Metal;
+        public Material Glass;
+        public Material ScrapMetal;
+        public Material Metal;
         public LanguageSourceData language;
         public static List<Object> createdObjects = new List<Object>();
         Harmony harmony;
@@ -838,32 +765,45 @@ namespace MoreBuilding
             {
                 var t = LoadImage("scrapMetal_Specular.png");
                 var p = t.GetPixels();
+                var t2 = new Texture2D(t.width * 2, t.height);
+                createdObjects.Add(t2);
                 for (int i = 0; i < p.Length; i++)
                     p[i] = new Color(0, 1 - Mathf.Pow(Mathf.Abs(p[i].r * 2 - 1f), 2), 0, 1 - Mathf.Abs(p[i].r * 2 - 1f));
-                t.SetPixels(p);
-                t.Apply();
-                ScrapMetal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t);
+                t2.SetPixels(0,0,t.width,t.height,p);
+                for (int i = 0; i < p.Length; i++)
+                    p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
+                t2.SetPixels(t.width, 0, t.width, t.height, p);
+                t2.Apply();
+                ScrapMetal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t2);
+                ScrapMetal.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f,1));
             }
             Metal.SetTexture("_Diffuse", LoadImage("metal.png"));
             Metal.SetTexture("_Normal", LoadImage("metal_Normal.png"));
             {
                 var t = LoadImage("metal_Specular.png");
                 var p = t.GetPixels();
+                var t2 = new Texture2D(t.width * 2, t.height);
+                createdObjects.Add(t2);
                 for (int i = 0; i < p.Length; i++)
-                    p[i] = new Color(0, 1, 0, p[i].r);
-                t.SetPixels(p);
-                t.Apply();
-                Metal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t);
+                    p[i] = new Color(0, p[i].r * 0.75f, 0, p[i].r);
+                t2.SetPixels(0, 0, t.width, t.height, p);
+                for (int i = 0; i < p.Length; i++)
+                    p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
+                t2.SetPixels(t.width, 0, t.width, t.height, p);
+                t2.Apply();
+                Metal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t2);
+                Metal.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f, 1));
             }
 
 
             foreach (var item in items)
             {
-                var baseItem = ItemManager.GetItemByIndex(item.baseIndex);
+                var i = item.GetRealInstance();
+                var baseItem = ItemManager.GetItemByIndex(i.baseIndex);
                 if (baseItem)
                 {
-                    item.baseItem = baseItem;
-                    CreateItem(item);
+                    i.baseItem = baseItem;
+                    CreateItem(i);
                 }
             }
             (harmony = new Harmony("com.aidanamite.MetalBuilding")).PatchAll();
@@ -904,10 +844,20 @@ namespace MoreBuilding
 
         public void CreateItem(ItemCreation item)
         {
+
             Logg($"[CreateItem] Creating {item.uniqueName}#{item.uniqueIndex}");
             item.item = item.baseItem.Clone(item.uniqueIndex, item.uniqueName);
             if (item.loadIcon)
-                Logg("[CreateItem] not loaded image");// item.item.settings_Inventory.Sprite = LoadImage(item.uniqueName + ".png").ToSprite();
+            {
+                var t = LoadImage("icons/" + item.uniqueName + ".png");
+                if (t)
+                {
+                    item.item.settings_Inventory.Sprite = t.GetReadable(mipChain: false).ToSprite();
+                    Destroy(t);
+                }
+                else
+                    Logg("[CreateItem] Failed to load item icon");
+            }
             else
             {
                 var t = item.item.settings_Inventory.Sprite.texture.GetReadable(copyArea: item.item.settings_Inventory.Sprite.rect, mipChain: false);
@@ -954,7 +904,7 @@ namespace MoreBuilding
                     for (int j = 0; j < r.Length; j++)
                         if (me.Length > j && me[j] != null)
                         {
-                            r[j].sharedMaterial = blockCreation.materials[i];
+                            r[j].sharedMaterials = blockCreation.materials[i];
                             if (r[j] is SkinnedMeshRenderer)
                                 (r[j] as SkinnedMeshRenderer).sharedMesh = me.GetSafe(j);
                             else
@@ -982,7 +932,7 @@ namespace MoreBuilding
                 if (q.IgnoresBlock(item.baseItem))
                     Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().Add(item.item);
 
-            if (item.baseItem.settings_recipe.NewCost.Length > 0)
+            if (item.cost == null && item.baseItem.settings_recipe.NewCost.Length > 0)
             {
                 Item_Base craftingMaterial;
                 if (item.item.UniqueName.Contains("_" + UniqueName.ScrapMetal.ToText()))
@@ -1000,19 +950,30 @@ namespace MoreBuilding
             Logg("[CreateItem] Done");
         }
 
-
-        public Texture2D LoadImage(string filename, bool leaveReadable = true)
+        public override byte[] GetEmbeddedFileBytes(string path)
         {
-            var t = new Texture2D(0, 0);
-            t.LoadImage(GetEmbeddedFileBytes(filename), !leaveReadable);
-            if (leaveReadable)
-                t.Apply();
+            if (modlistEntry.modinfo.modFiles.TryGetValue(path, out var r))
+                return r;
+            return null;
+        }
+
+        Dictionary<(string, bool, bool), Texture2D> loadedImages = new Dictionary<(string, bool, bool), Texture2D>();
+        public Texture2D LoadImage(string filename, bool mipChain = true, bool leaveReadable = true)
+        {
+            if (loadedImages.TryGetValue((filename, mipChain, leaveReadable), out var i) && i)
+                return i;
+            var b = GetEmbeddedFileBytes(filename);
+            if (b == null)
+                return null;
+            var t = new Texture2D(0, 0, TextureFormat.RGBA32, mipChain);
+            t.LoadImage(b, !leaveReadable);
+            loadedImages[(filename, mipChain, leaveReadable)] = t;
             createdObjects.Add(t);
             return t;
         }
-        public static Texture2D LoadAbsoluteImage(string filename, bool leaveReadable = true)
+        public static Texture2D LoadAbsoluteImage(string filename, bool mipChain = true, bool leaveReadable = true)
         {
-            var t = new Texture2D(0, 0);
+            var t = new Texture2D(0, 0, TextureFormat.RGBA32, mipChain);
             t.LoadImage(System.IO.File.ReadAllBytes(filename), !leaveReadable);
             if (leaveReadable)
                 t.Apply();
@@ -1033,12 +994,13 @@ namespace MoreBuilding
         [MethodImpl(MethodImplOptions.NoInlining)]
         void ModUtils_ReloadBuildMenu() { }
 
-        [ConsoleCommand("loadMetal")]
+        //[ConsoleCommand("loadMetal")]
         public static string Comm(string[] args)
         {
             instance.ScrapMetal.SetTexture("_Normal", LoadAbsoluteImage(args[0]));
             return "Done";
         }
+
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
