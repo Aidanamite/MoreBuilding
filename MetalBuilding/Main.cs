@@ -25,6 +25,19 @@ namespace MoreBuilding
 {
     public class Main : Mod
     {
+        class ReInit
+        {
+            static bool loadedOnce = false;
+            public ReInit()
+            {
+                if (loadedOnce)
+                    foreach (var t in Assembly.GetExecutingAssembly().GetTypes())
+                        if (!t.ContainsGenericParameters)
+                            t.TypeInitializer?.Invoke(null, null);
+                loadedOnce = true;
+            }
+        }
+        ReInit ______________ = new ReInit();
         static System.Text.StringBuilder log = null;//new System.Text.StringBuilder();
         public static void Logg(string message)
         {
@@ -35,7 +48,7 @@ namespace MoreBuilding
         public static Vector3 DiagonalScale = new Vector3(DiagonalMagnitude, 1,1);
         public static float DiagonalBlockSize = DiagonalMagnitude * BlockSize;
         public static float DiagonalHalfBlockSize = DiagonalMagnitude * HalfBlockSize;
-        static Func<T> ItemByIndex<T>(int index) where T : ItemCreation => () => (T)instance.items.First(x => x.uniqueIndex == index);
+        static Func<T> ItemByIndex<T>(int index) where T : ItemCreation => () => instance.LookupCreation(index) as T;
         static Func<T> ItemByIndex<T>(Index index) where T : ItemCreation => ItemByIndex<T>((int)index);
         public ItemCreation[] items = new[]
         {
@@ -726,9 +739,8 @@ namespace MoreBuilding
         Transform prefabHolder;
         public static Main instance;
         bool loaded = false;
-        public void Start()
+        public void Awake()
         {
-            AssetBundle.GetAllLoadedAssetBundles();
             if (SceneManager.GetActiveScene().name == Raft_Network.GameSceneName && ComponentManager<Raft_Network>.Value.remoteUsers.Count > 1)
             {
                 Debug.LogError($"[{name}]: This cannot be loaded while in a multiplayer");
@@ -822,12 +834,12 @@ namespace MoreBuilding
             if (items != null)
             {
                 foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
-                    Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
+                    Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.GetRealInstance().uniqueIndex == x.UniqueIndex));
                 foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockCollisionMask>())
-                    Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
-                ItemManager.GetAllItems().RemoveAll(x => items.Any(y => y.item?.UniqueIndex == x.UniqueIndex));
+                    Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.GetRealInstance().uniqueIndex == x.UniqueIndex));
+                ItemManager.GetAllItems().RemoveAll(x => items.Any(y => y.GetRealInstance().uniqueIndex == x.UniqueIndex || y.GetRealInstance().uniqueName == x.UniqueName));
                 foreach (var b in GetPlacedBlocks())
-                    if (b && b.buildableItem && items.Any(y => y.item?.UniqueIndex == b.buildableItem.UniqueIndex))
+                    if (b && b.buildableItem && items.Any(y => y.GetRealInstance().uniqueIndex == b.buildableItem.UniqueIndex))
                         RemoveBlock(b, null, false);
             }
             foreach (var o in createdObjects)
@@ -839,12 +851,13 @@ namespace MoreBuilding
                         Destroy(o);
                 }
             createdObjects.Clear();
+            lookup.Clear();
+            upgradeCheck.Clear();
             Log("Mod has been unloaded!");
         }
 
         public void CreateItem(ItemCreation item)
         {
-
             Logg($"[CreateItem] Creating {item.uniqueName}#{item.uniqueIndex}");
             item.item = item.baseItem.Clone(item.uniqueIndex, item.uniqueName);
             if (item.loadIcon)
@@ -853,7 +866,7 @@ namespace MoreBuilding
                 if (t)
                     item.item.settings_Inventory.Sprite = t.ToSprite();
                 else
-                    Logg("[CreateItem] Failed to load item icon");
+                    Logg("Failed to load item icon");
             }
             else
             {
@@ -890,7 +903,7 @@ namespace MoreBuilding
             var blockCreation = item as BlockItemCreation;
             if (blockCreation != null)
             {
-                Logg($"[CreateItem] Block Prefab Creation");
+                Logg($"Block Prefab Creation. Found {item.item.settings_buildable.GetBlockPrefabs().Length} prefabs to modify");
                 var p = item.item.settings_buildable.GetBlockPrefabs().ToArray();
                 for (int i = 0; i < p.Length; i++)
                 {
@@ -898,6 +911,7 @@ namespace MoreBuilding
                     p[i] = Instantiate(p[i], prefabHolder, false);
                     p[i].name = item.item.UniqueName + ((p.Length == 1 || p[i].dpsType == DPS.Default) ? "" : $"_{p[i].dpsType}");
                     var r = p[i].GetComponentsInChildren<Renderer>(true);
+                    Logg($"Found {r.Length} renderers on prefab {i}");
                     for (int j = 0; j < r.Length; j++)
                         if (me.Length > j && me[j] != null)
                         {
@@ -940,10 +954,15 @@ namespace MoreBuilding
                     craftingMaterial = ItemManager.GetItemByName("Glass");
 
                 item.item.SetRecipe(new CostMultiple[] { new CostMultiple(new Item_Base[] { craftingMaterial }, (int)Math.Round(item.baseItem.settings_recipe.NewCost.Sum(x => x.amount) / 2d + item.baseItem.settings_recipe.NewCost[0].amount / 2d)) });
-                Logg($"[CreateItem] Set Recipe: {item.item.settings_recipe.NewCost.Join(x => $"\n - {x.amount}x[{x.items.Join(y => y.settings_Inventory.DisplayName)}]", "")}");
+                Logg($"Set Recipe: {item.item.settings_recipe.NewCost.Join(x => $"\n - {x.amount}x[{x.items.Join(y => y.settings_Inventory.DisplayName)}]", "")}");
             }
 
             ItemManager.GetAllItems().Add(item.item);
+            if (item.isUpgrade)
+                upgradeCheck[item.uniqueIndex] = (item.item, upgradeCheck.TryGetValue(item.uniqueIndex, out var t) ? t.list : new List<BlockItemCreation>());
+            if (blockCreation?.upgradeItem > 0)
+                (upgradeCheck.TryGetValue(blockCreation.upgradeItem, out var t) ? t : (upgradeCheck[blockCreation.upgradeItem] = (null, new List<BlockItemCreation>()))).list.Add(blockCreation);
+            lookup[item.uniqueIndex] = item;
             Logg("[CreateItem] Done");
         }
 
@@ -978,17 +997,16 @@ namespace MoreBuilding
             return t;
         }
 
-        List<(Item_Base, Item_Base, bool)> ModUtils_BuildMenuItems()
+        IEnumerable<(Item_Base, Item_Base, bool)> ModUtils_BuildMenuItems()
         {
-            if (!loaded) return null;
-            var l = new List<(Item_Base, Item_Base, bool)>();
+            if (!loaded) yield break;
             foreach (var i in items)
             {
                 var r = i.GetRealInstance();
                 if (r.baseItem && r.item)
-                    l.Add((r.baseItem, r.item, r.isUpgrade));
+                    yield return (r.baseItem, r.item, r.isUpgrade);
             }
-            return l;
+            yield break;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -1008,38 +1026,78 @@ namespace MoreBuilding
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
         }
+
+        public Dictionary<int,(Item_Base item, List<BlockItemCreation> list)> upgradeCheck = new Dictionary<int, (Item_Base, List<BlockItemCreation>)>();
+        Dictionary<int, ItemCreation> lookup = new Dictionary<int, ItemCreation>();
+        public ItemCreation LookupCreation(int index)
+        {
+            if (lookup.TryGetValue(index, out var i))
+                return i;
+            lookup[index] = i = items.FirstOrDefault(x => x.uniqueIndex == index);
+            return i;
+        }
+
+        public override bool CanUnload(ref string message)
+        {
+            if (loaded && SceneManager.GetActiveScene().name == Raft_Network.GameSceneName && ComponentManager<Raft_Network>.Value.remoteUsers.Count > 1)
+            {
+                message = "Cannot unload while in a multiplayer";
+                return false;
+            }
+            return base.CanUnload(ref message);
+        }
     }
+
+
 
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
     static class Patch_GetUpgradeItem
     {
+        static ConditionalWeakTable<ItemInstance_Buildable.Upgrade, Dictionary<int, WeakReference<Item_Base>>> resultCache = new ConditionalWeakTable<ItemInstance_Buildable.Upgrade, Dictionary<int, WeakReference<Item_Base>>>();
         static void Postfix(ItemInstance_Buildable.Upgrade __instance, Item_Base buildableItem, ref Item_Base __result)
         {
-            var i = buildableItem == null ? null : instance.items.FirstOrDefault(x => x.isUpgrade && x.item?.UniqueIndex == buildableItem.UniqueIndex)?.baseItem;
-            if (i)
+            if (!buildableItem)
+                return;
+            if (resultCache.TryGetValue(__instance,out var d) && d.TryGetValue(buildableItem.UniqueIndex,out var r))
             {
-                foreach (var p in instance.items)
-                    if ((p as BlockItemCreation)?.upgradeItem == buildableItem.UniqueIndex && p.item && p.baseItem?.settings_buildable?.Upgrades == __instance)
+                if (r.TryGetTarget(out var v))
+                {
+                    __result = v;
+                    return;
+                }
+                else
+                    d.Remove(buildableItem.UniqueIndex);
+            }
+            if (instance.upgradeCheck.TryGetValue(buildableItem.UniqueIndex, out var l))
+            {
+                foreach (var p in l.list)
+                    if (p.item && p.baseItem?.settings_buildable?.Upgrades == __instance)
                     {
                         __result = p.item;
-                        return;
+                        goto result;
                     }
-                foreach (var p in instance.items)
-                    if ((p as BlockItemCreation)?.upgradeItem == buildableItem.UniqueIndex && p.item && (p.baseItem?.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x => x?.settings_buildable?.Upgrades == __instance) ?? false))
+                foreach (var p in l.list)
+                    if (p.item && (p.baseItem?.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x => x?.settings_buildable?.Upgrades == __instance) ?? false))
                     {
                         __result = p.item;
-                        return;
+                        goto result;
                     }
-                var b = __instance.GetNewItemFromUpgradeItem(i);
-                foreach (var p in instance.items)
-                    if ((p as BlockItemCreation)?.upgradeItem == buildableItem.UniqueIndex && p.item && (
+                var b = __instance.GetNewItemFromUpgradeItem(l.item);
+                foreach (var p in l.list)
+                    if (p.item && (
                         p.baseItem?.settings_buildable?.Upgrades == b.settings_buildable.Upgrades
                         || (p.baseItem?.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x => x?.settings_buildable?.Upgrades == b.settings_buildable.Upgrades) ?? false)))
                     {
                         __result = p.item;
-                        return;
+                        goto result;
                     }
             }
+            return;
+        result:
+            if (d == null)
+                resultCache.Add(__instance, d = new Dictionary<int, WeakReference<Item_Base>>());
+            d[buildableItem.UniqueIndex] = new WeakReference<Item_Base>(__result);
+            return;
         }
     }
 
@@ -1048,7 +1106,7 @@ namespace MoreBuilding
     {
         static void Postfix(Item_Base buildableItem, ref bool __result)
         {
-            if (!__result && buildableItem != null && instance.items.Any(x => x.isUpgrade && x.item?.UniqueIndex == buildableItem.UniqueIndex))
+            if (!__result && buildableItem && instance.upgradeCheck.ContainsKey(buildableItem.UniqueIndex))
                 __result = true;
         }
     }
@@ -1058,12 +1116,14 @@ namespace MoreBuilding
     {
         static void Postfix(Block __instance, ref bool __result)
         {
-            foreach (var p in instance.items)
-                if (p.item && p.item.UniqueIndex == __instance.buildableItem?.UniqueIndex)
-                {
-                    __result = p.baseItem.settings_buildable.GetBlockPrefab(0).IsWalkable();
-                    return;
-                }
+            if (!__instance.buildableItem)
+                return;
+            var p = instance.LookupCreation(__instance.buildableItem.UniqueIndex);
+            if (p?.item)
+            {
+                __result = p.baseItem.settings_buildable.GetBlockPrefab(0).IsWalkable();
+                return;
+            }
         }
     }
 
@@ -1074,20 +1134,6 @@ namespace MoreBuilding
         {
             if (__result == -1 && __instance == instance.language)
                 __result = 0;
-        }
-    }
-
-    [HarmonyPatch(typeof(BaseModHandler), "UnloadMod")]
-    static class Patch_UnloadMod
-    {
-        static bool Prefix(ModData moddata)
-        {
-            if (moddata?.modinfo?.mainClass is Main && SceneManager.GetActiveScene().name == Raft_Network.GameSceneName && ComponentManager<Raft_Network>.Value.remoteUsers.Count > 1)
-            {
-                Debug.LogError($"[{moddata.jsonmodinfo.name}]: This cannot be unloaded while in a multiplayer");
-                return false;
-            }
-            return true;
         }
     }
 }

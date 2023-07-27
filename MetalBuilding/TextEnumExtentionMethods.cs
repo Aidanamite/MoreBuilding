@@ -129,16 +129,19 @@ namespace MoreBuilding
         [Text(Language.german, "Schrott")]
         [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Złomowa")]
         [Text(Language.polish, "Złomowy")]
+        [Text(Language.russian, "металлолом")]
         [Text("Scrap Metal")]
         ScrapMetal,
         [Text(Language.german, "Metall")]
         [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Metalowa")]
         [Text(Language.polish, "Metalowy")]
-        [Text("Solid Metal")]
+        [Text(Language.russian, "металл")]
+        [Text("Metal")]
         SolidMetal,
         [Text(Language.german, "Glas")]
         [Text(Language.polish, typeof(PolishMethods), nameof(PolishMethods.IsFeminine), "Szklana")]
         [Text(Language.polish, "Szklany")]
+        [Text(Language.russian, "Стекло")]
         [Text("Glass")]
         Glass,
         [Text("{0}@{1}")]
