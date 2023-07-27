@@ -55,7 +55,6 @@ namespace MoreBuilding
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.ScrapMetal_Upgrade },
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.SolidMetal_Upgrade },
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.Glass_Upgrade },
-            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Foundation), x => { x.standardIndexSetup = Index.SolidMetal_Foundation; }),
             new BlockItemCreation() { baseIndex = 382, standardIndexSetup = Index.ScrapMetal_Foundation, mesh = Foundation, additionEdits = x => x.MakeAlwaysReinforced() },
             new BlockItemCreation() { baseIndex = 383, standardIndexSetup = Index.ScrapMetal_TriangleFoundation, mesh = FoundationTriangle, additionEdits = x => x.MakeAlwaysReinforced() },
             new BlockItemCreation() { baseIndex = 387, standardIndexSetup = Index.ScrapMetal_TriangleFoundationMirrored, mesh = FoundationTriangleMirrored, additionEdits = x => x.MakeAlwaysReinforced() },
@@ -93,7 +92,7 @@ namespace MoreBuilding
             new BlockItemCreation() { baseIndex = 493, standardIndexSetup = Index.ScrapMetal_WindowHalf, mesh = new[] { new[] { WindowHalf }, new[] { WindowHalfDiagonal } } },
             new BlockItemCreation() {
                 baseIndex = 403, standardIndexSetup = Index.ScrapMetal_RoofStraight,
-                mesh = new[] { new[] { Roof }, new[] { RoofDiagonal }, new[] { RoofDiagonalAlt } }, resetModelRotations = new[]{ null, new[] { true }, new[] { true } }
+                mesh = new[] { new[] { Roof }, new[] { RoofDiagonal }, new[] { RoofDiagonalAlt } }, modelRotations = new[]{ null, new[] { Quaternion.identity }, new[] { Quaternion.identity } }
             },
             new BlockItemCreation() { baseIndex = 401, standardIndexSetup = Index.ScrapMetal_RoofCorner, mesh = RoofCorner },
             new BlockItemCreation() { baseIndex = 402, standardIndexSetup = Index.ScrapMetal_RoofCornerInverted, mesh = RoofCornerInverted },
@@ -145,7 +144,7 @@ namespace MoreBuilding
                                     (0, 0.9f, 1, 1), (0, 0.9f, 1, 1),
                                     null, (0, 0.3333333f, 0.9f, 0.6666666f),
                                     null, (0, 0.3333333f, 0.9f, 0.6666666f),
-                                    modifyUV: (a,b) => b.ToPositive() == Axis.Y ? a.Rotate(-90) : a
+                                    modifyUV: (a,b) => b.ToPositive() == Axis.Y ? a.Rotate(90) : a
                                     );
                         }
                     }
@@ -153,7 +152,7 @@ namespace MoreBuilding
                 })
             },
             new BlockItemCreation() {
-                baseIndex = 397, standardIndexSetup = Index.ScrapMetal_TriangleFloorHalf,
+                baseIndex = 397, standardIndexSetup = Index.ScrapMetal_TriangleFloorHalf, modelRotations = new[] { new[] { Quaternion.Euler(0, 180, 0) } },
                 mesh = new MeshSource(() => {
                     var builder = new MeshBuilder();
                     builder.AddBox(
@@ -210,7 +209,7 @@ namespace MoreBuilding
                 })
             },
             new BlockItemCreation() {
-                baseIndex = 465, standardIndexSetup = Index.ScrapMetal_TriangleFloorHalfMirrored,
+                baseIndex = 465, standardIndexSetup = Index.ScrapMetal_TriangleFloorHalfMirrored, modelRotations = new[] { new[] { Quaternion.Euler(0, 180, 0) } },
                 mesh = new MeshSource(() => {
                     var builder = new MeshBuilder();
                     builder.AddBox(
@@ -344,6 +343,205 @@ namespace MoreBuilding
                     return builder.ToMesh("ScrapMetal_HalfStairs");
                 })
             },
+            /* Solid Metal Blocks */
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Foundation), x => { x.standardIndexSetup = Index.SolidMetal_Foundation; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundation), x => { x.standardIndexSetup = Index.SolidMetal_TriangleFoundation; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundationMirrored), x => { x.standardIndexSetup = Index.SolidMetal_TriangleFoundationMirrored; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Floor), x => { x.standardIndexSetup = Index.SolidMetal_Floor; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFloor), x => { x.standardIndexSetup = Index.SolidMetal_TriangleFloor; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFloorMirrored), x => { x.standardIndexSetup = Index.SolidMetal_TriangleFloorMirrored; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Wall), x => { x.standardIndexSetup = Index.SolidMetal_Wall; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallHalf), x => { x.standardIndexSetup = Index.SolidMetal_WallHalf; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallV), x => { x.standardIndexSetup = Index.SolidMetal_WallV; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallSlope), x => { x.standardIndexSetup = Index.SolidMetal_WallSlope; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallSlopeInverted), x => { x.standardIndexSetup = Index.SolidMetal_WallSlopeInverted; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Fence), x => { x.standardIndexSetup = Index.SolidMetal_Fence; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Gate), x => { x.standardIndexSetup = Index.SolidMetal_Gate; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Door), x => { x.standardIndexSetup = Index.SolidMetal_Door; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Window), x => { x.standardIndexSetup = Index.SolidMetal_Window; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WindowHalf), x => { x.standardIndexSetup = Index.SolidMetal_WindowHalf; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofStraight), x => { x.standardIndexSetup = Index.SolidMetal_RoofStraight; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofCorner), x => { x.standardIndexSetup = Index.SolidMetal_RoofCorner; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofCornerInverted), x => { x.standardIndexSetup = Index.SolidMetal_RoofCornerInverted; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV0), x => { x.standardIndexSetup = Index.SolidMetal_RoofV0; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV1), x => { x.standardIndexSetup = Index.SolidMetal_RoofV1; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV2I), x => { x.standardIndexSetup = Index.SolidMetal_RoofV2I; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV2L), x => { x.standardIndexSetup = Index.SolidMetal_RoofV2L; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV3), x => { x.standardIndexSetup = Index.SolidMetal_RoofV3; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV4), x => { x.standardIndexSetup = Index.SolidMetal_RoofV4; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Pillar), x => { x.standardIndexSetup = Index.SolidMetal_Pillar; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHalf), x => { x.standardIndexSetup = Index.SolidMetal_PillarHalf; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHorizontal), x => { x.standardIndexSetup = Index.SolidMetal_PillarHorizontal; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHorizontalHalf), x => { x.standardIndexSetup = Index.SolidMetal_PillarHorizontalHalf; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Ladder), x => { x.standardIndexSetup = Index.SolidMetal_Ladder; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_LadderHalf), x => { x.standardIndexSetup = Index.SolidMetal_LadderHalf; }),
+            new BlockItemCreation() {
+                baseIndex = 396, standardIndexSetup = Index.SolidMetal_FloorHalf,
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, HalfFloorHeight - FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, HalfFloorHeight, HalfBlockSize),
+                        (0, 0, 0.9f, 1), null,
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90)
+                        );
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, HalfFloorHeight - FloorThickness, HalfBlockSize),
+                        null, null,
+                        (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                        (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1)
+                        );
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, 0, -HalfBlockSize), new Vector3(HalfBlockSize, FloorThickness, HalfBlockSize),
+                        null, (0, 0, 0.9f, 1),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90)
+                        );
+                    return builder.ToMesh("SolidMetal_HalfFloor");
+                })
+            },
+            new BlockItemCreation() {
+                baseIndex = 397, standardIndexSetup = Index.SolidMetal_TriangleFloorHalf, modelRotations = new[] { new[] { Quaternion.Euler(0, 90, 0) } },
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, HalfFloorHeight - FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, HalfFloorHeight, HalfBlockSize),
+                        (0, 0, 0.9f, 1), null,
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                        generation: ((0, 0, 1, 0.1f), Axis.Z, Axis.NX)
+                        );
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, HalfFloorHeight - FloorThickness, HalfBlockSize),
+                        null, null,
+                        (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                        (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                        generation: ((0, 0.3333333f, 0.9f, 1, 2, 1), Axis.Z, Axis.NX)
+                        );
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, 0, -HalfBlockSize), new Vector3(HalfBlockSize, FloorThickness, HalfBlockSize),
+                        null, (0, 0, 0.9f, 1),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                        generation: ((0, 0, 1, 0.1f), Axis.Z, Axis.NX)
+                        );
+                    return builder.ToMesh("SolidMetal_TriangularHalfFloor");
+                })
+            },
+            new BlockItemCreation() {
+                baseIndex = 465, standardIndexSetup = Index.SolidMetal_TriangleFloorHalfMirrored, modelRotations = new[] { new[] { Quaternion.identity } },
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, HalfFloorHeight - FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, HalfFloorHeight, HalfBlockSize),
+                        (0, 0, 0.9f, 1), null,
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                        generation: ((0, 0, 1, 0.1f), Axis.Z, Axis.X)
+                        );
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, HalfFloorHeight - FloorThickness, HalfBlockSize),
+                        null, null,
+                        (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                        (0, 0.3333333f, 0.9f, 1), (0, 0.3333333f, 0.9f, 1),
+                        generation: ((0, 0.3333333f, 0.9f, 1, 2, 1), Axis.Z, Axis.X)
+                        );
+                    builder.AddBox(
+                        new Vector3(-HalfBlockSize, 0, -HalfBlockSize), new Vector3(HalfBlockSize, FloorThickness, HalfBlockSize),
+                        null, (0, 0, 0.9f, 1),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        (0, 0, 1, 0.1f), (0, 0, 1, 0.1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x : x.Rotate(-90),
+                        generation: ((0, 0, 1, 0.1f), Axis.Z, Axis.X)
+                        );
+                    return builder.ToMesh("SolidMetal_TriangularHalfFloorMirrored");
+                })
+            },
+            new BlockItemCreation() {
+                baseIndex = 404, standardIndexSetup = Index.SolidMetal_Stair,
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfWallThickness * 5 - HalfBlockSize, FullFloorHeight + WallOffset, HalfBlockSize + BlockSize),
+                        (0, 1.9f, 2, 2), (0, 1.9f, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
+                        );
+                    builder.AddBox(
+                        new Vector3(HalfBlockSize - HalfWallThickness * 5, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, FullFloorHeight + WallOffset, HalfBlockSize + BlockSize),
+                        (0, 1.9f, 2, 2), (0, 1.9f, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
+                        (1.9f, 0, 2, 2), (1, 0, 1.9f, 1, 2, 2),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
+                        );
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, 0, HalfBlockSize + BlockSize),
+                        null, (0, 1, 4, 1.9f),
+                        (0, 0, 1, .1f), (0, 0, 4, .1f),
+                        (0, 0, 1, .1f), (0, 0, 4, .1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                        modifyVert: x => new Vector3(x.x, x.y + (x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z)
+                        );
+                    for (int i = 0; i < 12; i++)
+                        builder.AddBox(
+                            new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, FullFloorHeight * i / 12, -HalfBlockSize + BlockSize * i / 6), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, FullFloorHeight * (i + 1) / 12, -HalfBlockSize + BlockSize * (i + 1) / 6 - 0.0001f),
+                            (0, 0, 0.3333333f, 0.9f, 1, 2), (0, 0, 0.3333333f, 0.9f, 1, 2),
+                            (0, 0, 0.9f, 0.3333333f, 2, 1), (0, 0.3333333f, 0.3f, 0.6666666f),
+                            (0, 0, 0.9f, 0.3333333f, 2, 1), (0.6f, 0.3333333f, 0.9f, 0.6666666f),
+                            modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                            generation: (null,Axis.NY,Axis.Z)
+                            );
+                    return builder.ToMesh("SolidMetal_Stairs");
+                })
+            },
+            new BlockItemCreation() {
+                baseIndex = 405, standardIndexSetup = Index.SolidMetal_StairHalf,
+                mesh = new MeshSource(() => {
+                    var builder = new MeshBuilder();
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfWallThickness * 5 - HalfBlockSize, HalfFloorHeight + WallOffset, HalfBlockSize),
+                        (0, 1.9f, 1, 2), (0, 1.9f, 1, 2),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
+                        );
+                    builder.AddBox(
+                        new Vector3(HalfBlockSize - HalfWallThickness * 5, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, HalfFloorHeight + WallOffset, HalfBlockSize),
+                        (0, 1.9f, 1, 2), (0, 1.9f, 1, 2),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        (1.9f, 0, 2, 1), (1, 0, 1.9f, 1),
+                        modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                        generation: ((1.9f, 0, 2, 2),Axis.NZ,Axis.Y)
+                        );
+                    builder.AddBox(
+                        new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, WallOffset, -HalfBlockSize), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, 0, HalfBlockSize),
+                        null, (0, 1, 2, 1.9f),
+                        (0, 0, 1, .1f), (0, 0, 2, .1f),
+                        (0, 0, 1, .1f), (0, 0, 2, .1f),
+                        modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                        modifyVert: x => new Vector3(x.x, x.y + (x.z / BlockSize + 0.5f) * HalfFloorHeight, x.z)
+                        );
+                    for (int i = 0; i < 6; i++)
+                        builder.AddBox(
+                            new Vector3(HalfWallThickness * 2.5f - HalfBlockSize, FullFloorHeight * i / 12, -HalfBlockSize + BlockSize * i / 6), new Vector3(HalfBlockSize - HalfWallThickness * 2.5f, FullFloorHeight * (i + 1) / 12, -HalfBlockSize + BlockSize * (i + 1) / 6 - 0.0001f),
+                            (0, 0, 0.3333333f, 0.9f, 1, 2), (0, 0, 0.3333333f, 0.9f, 1, 2),
+                            (0, 0, 0.9f, 0.3333333f, 2, 1), (0, 0.3333333f, 0.3f, 0.6666666f),
+                            (0, 0, 0.9f, 0.3333333f, 2, 1), (0.6f, 0.3333333f, 0.9f, 0.6666666f),
+                            modifyUV: (x,y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x,
+                            generation: (null,Axis.NY,Axis.Z)
+                            );
+                    return builder.ToMesh("SolidMetal_HalfStairs");
+                })
+            },
             /* Glass Blocks */
             new BlockItemCreation() {
                 baseIndex = 2, uniqueIndex = 6970, uniqueName = UniqueName.Foundation.ToText(UniqueName.Glass), localization = () => Localization.Foundation.ToText(Localization.Glass),
@@ -445,7 +643,7 @@ namespace MoreBuilding
                     new Vector3(-BlockSize,-0.15f,-BlockSize),
                     new Vector3(0,0,0),
                     new UVData(new Vector4(0,1,0.9f,0), new Vector2(0,0.1f), 0, 1, 1, -90 ), x => Quaternion.Euler(0,-45,0) * (x.x != x.z ? x + Vector3.up * HalfFloorHeight : x), true)}},
-                upgradeItem = 160550, material = () => instance.Glass, resetModelRotations = new[]{null, new[] { true }, new[] { true } }
+                upgradeItem = 160550, material = () => instance.Glass, modelRotations = new[] {null, new[] { Quaternion.identity }, new[] { Quaternion.identity } }
             },
             new BlockItemCreation() {
                 baseIndex = 150, uniqueIndex = 6984, uniqueName = UniqueName.RoofCorner.ToText(UniqueName.Glass), localization = () => Localization.RoofCorner.ToText(Localization.Glass),
@@ -862,7 +1060,7 @@ namespace MoreBuilding
             item.item = item.baseItem.Clone(item.uniqueIndex, item.uniqueName);
             if (item.loadIcon)
             {
-                var t = LoadImage("icons/" + item.uniqueName + ".png");
+                var t = LoadImage("icons/" + item.uniqueName + ".png", false);
                 if (t)
                     item.item.settings_Inventory.Sprite = t.ToSprite();
                 else
@@ -920,8 +1118,8 @@ namespace MoreBuilding
                                 (r[j] as SkinnedMeshRenderer).sharedMesh = me.GetSafe(j);
                             else
                                 r[j].GetComponent<MeshFilter>().sharedMesh = me.GetSafe(j);
-                            if (blockCreation.resetModelRotations?.Length > i && blockCreation.resetModelRotations[i]?.Length > j && blockCreation.resetModelRotations[i][j])
-                                r[j].transform.localRotation = default;
+                            if (blockCreation.modelRotations?.Length > i && blockCreation.modelRotations[i]?.Length > j)
+                                r[j].transform.localRotation = blockCreation.modelRotations[i][j] == default ? Quaternion.identity : blockCreation.modelRotations[i][j];
                         }
                     if (blockCreation.modelScales?.Length > i)
                         r[0].transform.localScale = blockCreation.modelScales[i];

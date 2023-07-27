@@ -60,7 +60,7 @@ namespace MoreBuilding
         public Materials materials;
         public Func<Material> material { set => materials = value; }
         public Vector3[] modelScales;
-        public bool[][] resetModelRotations;
+        public Quaternion[][] modelRotations;
         public Action<Block> additionEdits;
         public int mirroredItem = -1;
         public Index MirroredItem { set => mirroredItem = (int)value; }
@@ -81,7 +81,7 @@ namespace MoreBuilding
             i.upgradeItem = upgradeItem;
             i.materials = materials;
             i.modelScales = modelScales;
-            i.resetModelRotations = resetModelRotations;
+            i.modelRotations = modelRotations;
             i.additionEdits = additionEdits;
             return i;
         }

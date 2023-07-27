@@ -855,23 +855,23 @@ namespace MoreBuilding
                 var builder = new MeshBuilder();
                 builder.AddBox(
                     new Vector3(-HalfBlockSize * 0.4f, WallOffset, -0.2f), new Vector3(-HalfBlockSize * 0.4f + HalfWallThickness, FullFloorHeight + WallOffset, 0),
-                    (0.5f, 1.9f, 1, 2), (0.5f, 1.9f, 1, 2),
+                    (0.6666666f, 1.9f, 1, 2), (0.6666666f, 1.9f, 1, 2),
                     null, (0.3333333f, 1, 0.6666666f, 1.9f, 1, 4),
-                    (1.9f, 0, 2, 0.5f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 4),
+                    (1.9f, 0, 2, 1.3333333f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 4),
                     modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x : x.Rotate(90)
                     );
                 builder.AddBox(
                     new Vector3(HalfBlockSize * 0.4f - HalfWallThickness, WallOffset, -0.2f), new Vector3(HalfBlockSize * 0.4f, FullFloorHeight + WallOffset, 0),
-                    (0.5f, 1.9f, 1, 2), (0.5f, 1.9f, 1, 2),
+                    (0.6666666f, 1.9f, 1, 2), (0.6666666f, 1.9f, 1, 2),
                     null, (0.3333333f, 1, 0.6666666f, 1.9f, 1, 4),
-                    (1.9f, 0, 2, 0.5f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 4),
+                    (1.9f, 0, 2, 1.3333333f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 4),
                     modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x : x.Rotate(90)
                     );
                 builder.AddBox(
                     new Vector3(-HalfBlockSize * 0.4f, WallOffset + 0.0001f, -HalfWallThickness / 2), new Vector3(HalfBlockSize * 0.4f, FullFloorHeight + WallOffset - 0.0001f, 0),
                     (1.9f, 0, 2, 1), (1.9f, 0, 2, 1),
-                    (1, 0, 1.6f, 2), null,
-                    (1, 0, 1.6f, 2), null
+                    (1, 0, 1.9f, 4), null,
+                    (1, 0, 1.9f, 4), null
                     );
                 var n = 6;
                 for (var i = 0.5f; i < n; i++)
@@ -891,23 +891,23 @@ namespace MoreBuilding
                 var builder = new MeshBuilder();
                 builder.AddBox(
                     new Vector3(-HalfBlockSize * 0.4f, WallOffset, -0.2f), new Vector3(-HalfBlockSize * 0.4f + HalfWallThickness, HalfFloorHeight + WallOffset, 0),
-                    (0.5f, 1.9f, 1, 2), (0.5f, 1.9f, 1, 2),
+                    (0.6666666f, 1.9f, 1, 2), (0.6666666f, 1.9f, 1, 2),
                     null, (0.3333333f, 1, 0.6666666f, 1.9f, 1, 2),
-                    (1.9f, 0, 2, 0.5f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 2),
+                    (1.9f, 0, 2, 0.6666666f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 2),
                     modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x : x.Rotate(90)
                     );
                 builder.AddBox(
                     new Vector3(HalfBlockSize * 0.4f - HalfWallThickness, WallOffset, -0.2f), new Vector3(HalfBlockSize * 0.4f, HalfFloorHeight + WallOffset, 0),
-                    (0.5f, 1.9f, 1, 2), (0.5f, 1.9f, 1, 2),
+                    (0.6666666f, 1.9f, 1, 2), (0.6666666f, 1.9f, 1, 2),
                     null, (0.3333333f, 1, 0.6666666f, 1.9f, 1, 2),
-                    (1.9f, 0, 2, 0.5f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 2),
+                    (1.9f, 0, 2, 0.6666666f), (0.3333333f, 1, 0.6666666f, 1.9f, 1, 2),
                     modifyUV: (x, y) => y.ToPositive() == Axis.Z ? x : x.Rotate(90)
                     );
                 builder.AddBox(
                     new Vector3(-HalfBlockSize * 0.4f, WallOffset + 0.0001f, -HalfWallThickness / 2), new Vector3(HalfBlockSize * 0.4f, HalfFloorHeight + WallOffset - 0.0001f, 0),
                     (1.9f, 0, 2, 1), (1.9f, 0, 2, 1),
-                    (1, 0, 1.6f, 1), null,
-                    (1, 0, 1.6f, 1), null
+                    (1, 0, 1.9f, 2), null,
+                    (1, 0, 1.9f, 2), null
                     );
                 var n = 3;
                 for (var i = 0.5f; i < n; i++)
