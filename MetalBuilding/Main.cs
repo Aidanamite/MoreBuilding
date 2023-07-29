@@ -1388,11 +1388,8 @@ namespace MoreBuilding
             if (block.buildableItem)
             {
                 var c = instance.LookupCreation(block.buildableItem.UniqueIndex);
-                if (c is BlockItemCreation b && Main.instance.upgradeCheck.TryGetValue(b.upgradeItem, out var t) && t.breakParticle?.Invoke())
-                {
-                    Debug.Log("Replacing particle for " + block);
+                if (c is BlockItemCreation b && instance.upgradeCheck.TryGetValue(b.upgradeItem, out var t) && t.breakParticle?.Invoke())
                     return t.breakParticle();
-                }
             }
             return original;
         }
