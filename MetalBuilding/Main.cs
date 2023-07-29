@@ -1148,6 +1148,8 @@ namespace MoreBuilding
                 Logg($"Set Recipe: {item.item.settings_recipe.NewCost.Join(x => $"\n - {x.amount}x[{x.items.Join(y => y.settings_Inventory.DisplayName)}]", "")}");
             }
 
+            item.finalize?.Invoke(item.item);
+
             ItemManager.GetAllItems().Add(item.item);
             if (item.isUpgrade)
                 upgradeCheck[item.uniqueIndex] = (item.item, CreateParticles(StandardItemSetup.GetPrimaryMaterial(StandardItemSetup.GetValues((Index)item.uniqueIndex).material)(), Particle), upgradeCheck.TryGetValue(item.uniqueIndex, out var t) ? t.list : new List<BlockItemCreation>());

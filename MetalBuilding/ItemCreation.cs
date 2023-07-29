@@ -16,6 +16,7 @@ namespace MoreBuilding
         public bool isUpgrade;
         public Func<string> localization;
         public CostMultiple[] cost;
+        public Action<Item_Base> finalize;
         public virtual Index standardIndexSetup
         {
             set
@@ -46,6 +47,7 @@ namespace MoreBuilding
             i.isUpgrade = isUpgrade;
             i.localization = localization;
             i.cost = cost;
+            i.finalize = finalize;
             return i;
         }
 
