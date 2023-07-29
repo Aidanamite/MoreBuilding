@@ -201,15 +201,16 @@ namespace MoreBuilding
                 s = s.Remove(s.Length - 8);
             return (Localization)Enum.Parse(typeof(Localization), s);
         }
-        public static Materials GetMaterials(UniqueName material)
+        public static Materials GetMaterials(UniqueName material) => GetPrimaryMaterial(material);
+        public static Func<Material> GetPrimaryMaterial(UniqueName material)
         {
             if (material == UniqueName.ScrapMetal)
-                return (Materials)(() => Main.instance.ScrapMetal);
+                return () => Main.instance.ScrapMetal;
             if (material == UniqueName.SolidMetal)
-                return (Materials)(() => Main.instance.Metal);
-            if (material == UniqueName.ScrapMetal)
-                return (Materials)(() => Main.instance.Glass);
-            throw new NullReferenceException();
+                return () => Main.instance.Metal;
+            if (material == UniqueName.Glass)
+                return () => Main.instance.Glass;
+            throw new NullReferenceException(material.ToString());
         }
         public static Index GetUpgradeIndex(UniqueName material)
         {
@@ -226,6 +227,16 @@ namespace MoreBuilding
             if (s.EndsWith("Mirrored"))
                 return (Index)Enum.Parse(typeof(Index), material + "_" + s.Remove(s.Length - 8));
             return (Index)(-1);
+        }
+        public static Item_Base GetCraftingMaterial(int upgradeItemIndex)
+        {
+            if (upgradeItemIndex == (int)Index.ScrapMetal_Upgrade)
+                return Main.LookupItemByName("Scrap");
+            if (upgradeItemIndex == (int)Index.SolidMetal_Upgrade)
+                return Main.LookupItemByName("MetalIngot");
+            if (upgradeItemIndex == (int)Index.Glass_Upgrade)
+                return Main.LookupItemByName("Glass");
+            throw new NullReferenceException();
         }
     }
 }

@@ -995,7 +995,7 @@ namespace MoreBuilding
                 var t2 = new Texture2D(t.width * 2, t.height);
                 createdObjects.Add(t2);
                 for (int i = 0; i < p.Length; i++)
-                    p[i] = new Color(0, p[i].r * 0.75f, 0, p[i].r);
+                    p[i] = new Color(0, p[i].r * 0.85f, 0, p[i].r);
                 t2.SetPixels(0, 0, t.width, t.height, p);
                 for (int i = 0; i < p.Length; i++)
                     p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
@@ -1141,25 +1141,18 @@ namespace MoreBuilding
                 if (q.IgnoresBlock(item.baseItem))
                     Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().Add(item.item);
 
-            if (item.cost == null && item.baseItem.settings_recipe.NewCost.Length > 0)
+            if (blockCreation != null && item.cost == null && item.baseItem.settings_recipe.NewCost.Length > 0)
             {
-                Item_Base craftingMaterial;
-                if (item.item.UniqueName.Contains("_" + UniqueName.ScrapMetal.ToText()))
-                    craftingMaterial = ItemManager.GetItemByName("Scrap");
-                else if (item.item.UniqueName.Contains("_" + UniqueName.SolidMetal.ToText()))
-                    craftingMaterial = ItemManager.GetItemByName("MetalIngot");
-                else
-                    craftingMaterial = ItemManager.GetItemByName("Glass");
-
+                Item_Base craftingMaterial = StandardItemSetup.GetCraftingMaterial(blockCreation.upgradeItem);
                 item.item.SetRecipe(new CostMultiple[] { new CostMultiple(new Item_Base[] { craftingMaterial }, (int)Math.Round(item.baseItem.settings_recipe.NewCost.Sum(x => x.amount) / 2d + item.baseItem.settings_recipe.NewCost[0].amount / 2d)) });
                 Logg($"Set Recipe: {item.item.settings_recipe.NewCost.Join(x => $"\n - {x.amount}x[{x.items.Join(y => y.settings_Inventory.DisplayName)}]", "")}");
             }
 
             ItemManager.GetAllItems().Add(item.item);
             if (item.isUpgrade)
-                upgradeCheck[item.uniqueIndex] = (item.item, upgradeCheck.TryGetValue(item.uniqueIndex, out var t) ? t.list : new List<BlockItemCreation>());
+                upgradeCheck[item.uniqueIndex] = (item.item, CreateParticles(StandardItemSetup.GetPrimaryMaterial(StandardItemSetup.GetValues((Index)item.uniqueIndex).material)(), Particle), upgradeCheck.TryGetValue(item.uniqueIndex, out var t) ? t.list : new List<BlockItemCreation>());
             if (blockCreation?.upgradeItem > 0)
-                (upgradeCheck.TryGetValue(blockCreation.upgradeItem, out var t) ? t : (upgradeCheck[blockCreation.upgradeItem] = (null, new List<BlockItemCreation>()))).list.Add(blockCreation);
+                (upgradeCheck.TryGetValue(blockCreation.upgradeItem, out var t2) ? t2 : (upgradeCheck[blockCreation.upgradeItem] = (null, null, new List<BlockItemCreation>()))).list.Add(blockCreation);
             lookup[item.uniqueIndex] = item;
             Logg("[CreateItem] Done");
         }
@@ -1225,7 +1218,18 @@ namespace MoreBuilding
                              .ToArray();
         }
 
-        public Dictionary<int,(Item_Base item, List<BlockItemCreation> list)> upgradeCheck = new Dictionary<int, (Item_Base, List<BlockItemCreation>)>();
+        static Dictionary<string, WeakReference<Item_Base>> lookupIM = new Dictionary<string, WeakReference<Item_Base>>();
+        public static Item_Base LookupItemByName(string uniqueName)
+        {
+            if (lookupIM.TryGetValue(uniqueName, out var r) && r.TryGetTarget(out var i) && i)
+                return i;
+            i = ItemManager.GetItemByName(uniqueName);
+            if (i)
+                lookupIM[uniqueName] = new WeakReference<Item_Base>(i);
+            return i;
+        }
+
+        public Dictionary<int,(Item_Base item, Func<ParticleSystem> breakParticle, List<BlockItemCreation> list)> upgradeCheck = new Dictionary<int, (Item_Base, Func<ParticleSystem>, List<BlockItemCreation>)>();
         Dictionary<int, ItemCreation> lookup = new Dictionary<int, ItemCreation>();
         public ItemCreation LookupCreation(int index)
         {
@@ -1244,9 +1248,36 @@ namespace MoreBuilding
             }
             return base.CanUnload(ref message);
         }
+
+        public static Func<ParticleSystem> CreateParticles(Material mat, Mesh mesh)
+        {
+            ParticleSystem v = null;
+            return () => {
+                if (v)
+                    return v;
+                var p = GetBreakParticles();
+                if (!p)
+                    return null;
+                var n = Instantiate(p, p.transform.parent, false);
+                var r = n.GetComponent<ParticleSystemRenderer>();
+                var a = r.sharedMaterials.ToArray();
+                for (int i = 0; i < a.Length; i++)
+                    if (a[i])
+                        a[i] = mat;
+                r.sharedMaterials = a;
+                var ma = new Mesh[r.meshCount];
+                for (int i = 0; i < ma.Length; i++)
+                    ma[i] = mesh;
+                r.SetMeshes(ma);
+                n.gameObject.SetActive(false); // Deactivation then reactivation is required for mesh to update
+                n.gameObject.SetActive(true);
+                return v = n;
+            };
+        }
+
+        static FieldInfo _bp = typeof(BlockCreator).GetField("blockBreakParticlesStatic", ~BindingFlags.Default);
+        public static ParticleSystem GetBreakParticles() => (ParticleSystem)_bp.GetValue(null);
     }
-
-
 
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
     static class Patch_GetUpgradeItem
@@ -1332,6 +1363,38 @@ namespace MoreBuilding
         {
             if (__result == -1 && __instance == instance.language)
                 __result = 0;
+        }
+    }
+
+    [HarmonyPatch]
+    static class Patch_ReplaceBreakParticles
+    {
+        static MethodBase TargetMethod() => typeof(BlockCreator).GetNestedTypes(~BindingFlags.Default).First(x => x.Name.Contains("<DestroyBlock>")).GetMethod("MoveNext", ~BindingFlags.Default);
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+        {
+            var code = instructions.ToList();
+            for (int i = code.Count - 1; i >= 0; i--)
+                if (code[i].opcode == OpCodes.Ldsfld && code[i].operand is FieldInfo f && f.Name == "blockBreakParticlesStatic")
+                    code.InsertRange(i + 1, new[]
+                    {
+                        new CodeInstruction(OpCodes.Ldarg_0),
+                        new CodeInstruction(OpCodes.Ldfld, method.DeclaringType.GetField("block",~BindingFlags.Default)),
+                        new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_ReplaceBreakParticles),nameof(ReplaceSystem)))
+                    });
+            return code;
+        }
+        static ParticleSystem ReplaceSystem(ParticleSystem original, Block block)
+        {
+            if (block.buildableItem)
+            {
+                var c = instance.LookupCreation(block.buildableItem.UniqueIndex);
+                if (c is BlockItemCreation b && Main.instance.upgradeCheck.TryGetValue(b.upgradeItem, out var t) && t.breakParticle?.Invoke())
+                {
+                    Debug.Log("Replacing particle for " + block);
+                    return t.breakParticle();
+                }
+            }
+            return original;
         }
     }
 }

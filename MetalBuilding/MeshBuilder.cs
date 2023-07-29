@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,25 +63,35 @@ namespace UnityEngine
                 Debug.LogError("Cannot add mesh to meshbuilder. Mesh is not readable");
                 return;
             }
+            AddMesh(
+                mesh.vertices,
+                mesh.uv,
+                mesh.GetAllBoneWeights(),
+                mesh.GetBonesPerVertex(),
+                mesh.normals.GetNullable(),
+                mesh.tangents.GetNullable(),
+                mesh.colors,
+                mesh.subMeshCount == 0 ? new List<int[]> { mesh.triangles } : mesh.Gather(0, x => x < mesh.subMeshCount, (x, y) => y + 1, (x, y) => x.GetTriangles(y)),
+                mergeWithExisting,
+                mergeWithSelf,
+                modify,
+                modifySubmeshIndex);
+        }
+
+        void AddMesh(IList<Vector3> vertices, IList<Vector2> uv, NativeArray<BoneWeight1> weights, IEnumerable<byte> bonesPerVertex, IList<Vector3?> normals, IList<Vector4?> tangents, IList<Color> colors, IList<int[]> submeshes, bool mergeWithExisting = true, bool mergeWithSelf = true, Func<int, Vertex, Vertex> modify = null, Func<int, int> modifySubmeshIndex = null)
+        {
             if (modify == null)
-                modify = (y,x) => x;
+                modify = (y, x) => x;
             if (modifySubmeshIndex == null)
                 modifySubmeshIndex = x => x;
-            var vertices = mesh.vertices;
-            var uv = mesh.uv;
-            var weights = mesh.GetAllBoneWeights();
-            var bones = new List<(int start,int end)>();
+            var bones = new List<(int start, int end)>();
             var c = 0;
-            foreach (var b in mesh.GetBonesPerVertex())
-                bones.Add((c, c += b));
-            var normals = mesh.normals;
-            var tangents = mesh.tangents;
-            var triangles = mesh.triangles;
-            var colors = mesh.colors;
-            var submeshes = mesh.subMeshCount == 0 ? new List<int[]> { mesh.triangles } : mesh.Gather(0, x => x < mesh.subMeshCount, (x, y) => y + 1, (x, y) => x.GetTriangles(y));
+            if (bonesPerVertex != null)
+                foreach (var b in bonesPerVertex)
+                    bones.Add((c, c += b));
             var vert = new List<Vertex>();
             var hashVert = new HashSet<Vertex>();
-            for (int i = 0; i < vertices.Length; i++)
+            for (int i = 0; i < vertices.Count; i++)
             {
                 var w = bones.GetSafe(i);
                 var v = modify(vert.Count, new Vertex(vertices[i], uv.GetSafe(i), weights.Gather(w.start, x => x < w.end, (x, y) => y + 1, (x, y) => (Vertex.Weight)x[y]), colors.GetSafe(i, Color.white), normals.GetSafe(i), tangents.GetSafe(i)));
@@ -96,10 +107,14 @@ namespace UnityEngine
                 if (v != null)
                     hashVert.Add(v);
             }
+            var j = 0;
             foreach (var s in submeshes)
+            {
                 for (int i = 0; i < s.Length; i += 3)
                     if (vert[s[i]] != null && vert[s[i + 1]] != null && vert[s[i + 2]] != null)
-                        AddTriangle(vert[s[i]], vert[s[i + 1]], vert[s[i + 2]], modifySubmeshIndex(i));
+                        AddTriangle(vert[s[i]], vert[s[i + 1]], vert[s[i + 2]], modifySubmeshIndex(j));
+                j++;
+            }
         }
 
         public Mesh ToMesh(string name = "", bool enforceNormalsIncludeTouchingVerts = false)
@@ -364,6 +379,8 @@ namespace UnityEngine
                 }
             return l;
         }
+
+        public static IList<T?> GetNullable<T>(this IList<T> source) where T : struct => source == null ? null : new NullableIList<T>(source);
     }
 }
 public class Optional<T>
@@ -381,5 +398,31 @@ public class FuncComparer<T> : IComparer<T>
     public int Compare(T a, T b) => comparison(a, b);
     public static implicit operator FuncComparer<T>(Comparison<T> v) => new FuncComparer<T>(v);
     public static implicit operator Comparison<T>(FuncComparer<T> v) => v.comparison;
-
+}
+public class NullableIList<T> : IList<T?> where T : struct
+{
+    IList<T> source;
+    public NullableIList(IList<T> source) => this.source = source;
+    public int IndexOf(T? item) => item == null ? -1 : source.IndexOf(item.Value);
+    public void Insert(int index, T? item) => source.Insert(index, item.Value);
+    public void RemoveAt(int index) => source.RemoveAt(index);
+    public T? this[int index]
+    {
+        get => source[index];
+        set => source[index] = value.Value;
+    }
+    public void Add(T? item) => source.Add(item.Value);
+    public void Clear() => source.Clear();
+    public bool Contains(T? item) => item == null ? false : source.Contains(item.Value);
+    void ICollection<T?>.CopyTo(T?[] array, int arrayIndex) => throw new NotSupportedException();
+    public bool Remove(T? item) => item == null ? false : source.Remove(item.Value);
+    public int Count => source.Count;
+    public bool IsReadOnly => source.IsReadOnly;
+    public IEnumerator<T?> GetEnumerator()
+    {
+        foreach (var i in source)
+            yield return i;
+        yield break;
+    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
