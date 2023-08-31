@@ -246,7 +246,7 @@ namespace UnityEngine
                   ) { }
         
 
-        public List<BoneWeight1> GetWeight() => new SortedSet<Weight>(Bones,new FuncComparer<Weight>((x,y) => y.Strength.CompareTo(x.Strength))).Cast(x => (BoneWeight1)x);
+        public List<BoneWeight1> GetWeight() => new SortedSet<Weight>(Bones,new FuncComparer<Weight>((x,y) => y.Strength == x.Strength ? -1 : y.Strength.CompareTo(x.Strength))).Cast(x => (BoneWeight1)x);
 
         public static implicit operator Vertex(Vector3 value) => new Vertex(value);
         public static implicit operator Vertex((Vector3, Vector2) value) => new Vertex(value.Item1, value.Item2);
@@ -332,7 +332,7 @@ namespace UnityEngine
             for (var current = start; condition(current); current = step(obj,current))
             {
                 var item = get(obj, current);
-                if (itemCondition(obj, current, item))
+                if (itemCondition == null || itemCondition(obj, current, item))
                     list.Add(item);
             }
             return list;
