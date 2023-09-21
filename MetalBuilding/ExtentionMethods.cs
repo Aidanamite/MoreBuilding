@@ -98,7 +98,7 @@ namespace MoreBuilding
             while (t != typeof(Object) && t != typeof(object))
             {
                 foreach (var f in t.GetFields(~BindingFlags.Default))
-                    if (!f.IsStatic && f.GetValue(obj).Equals(value))
+                    if (!f.IsStatic && Equals(f.GetValue(obj),value))
                         return true;
                 t = t.BaseType;
             }
@@ -110,7 +110,7 @@ namespace MoreBuilding
             while (t != typeof(Object) && t != typeof(object))
             {
                 foreach (var f in t.GetFields(~BindingFlags.Default))
-                    if (!f.IsStatic && f.GetValue(obj) is T && (predicate == null || predicate((T)f.GetValue(obj))))
+                    if (!f.IsStatic && f.GetValue(obj) is T v && (predicate == null || predicate(v)))
                         return true;
                 t = t.BaseType;
             }

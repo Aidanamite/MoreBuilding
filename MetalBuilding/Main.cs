@@ -795,7 +795,7 @@ namespace MoreBuilding
 
             item.finalize?.Invoke(item.item);
 
-            ItemManager.GetAllItems().Add(item.item);
+            RAPI.RegisterItem(item.item, true);
             if (item.isUpgrade)
                 upgradeCheck[item.uniqueIndex] = (item.item, CreateParticles(StandardItemSetup.GetPrimaryMaterial(StandardItemSetup.GetValues((Index)item.uniqueIndex).material)(), Particle), upgradeCheck.TryGetValue(item.uniqueIndex, out var t) ? t.list : new List<BlockItemCreation>());
             if (blockCreation?.upgradeItem > 0)
@@ -932,7 +932,7 @@ namespace MoreBuilding
         static ConditionalWeakTable<ItemInstance_Buildable.Upgrade, Dictionary<int, WeakReference<Item_Base>>> resultCache = new ConditionalWeakTable<ItemInstance_Buildable.Upgrade, Dictionary<int, WeakReference<Item_Base>>>();
         static void Postfix(ItemInstance_Buildable.Upgrade __instance, Item_Base buildableItem, ref Item_Base __result)
         {
-            if (!buildableItem)
+            if (!buildableItem || __result)
                 return;
             if (resultCache.TryGetValue(__instance,out var d) && d.TryGetValue(buildableItem.UniqueIndex,out var r))
             {
@@ -945,29 +945,17 @@ namespace MoreBuilding
                     d.Remove(buildableItem.UniqueIndex);
             }
             if (instance.upgradeCheck.TryGetValue(buildableItem.UniqueIndex, out var l))
-            {
                 foreach (var p in l.list)
-                    if (p.item && p.baseItem?.settings_buildable?.Upgrades == __instance)
+                    if (p.item
+                        && (
+                            p.item.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x =>
+                                x?.settings_buildable?.Upgrades != null
+                                && (x.settings_buildable.Upgrades == __instance || __instance.HasFieldWithValue(x)))
+                            ?? false))
                     {
                         __result = p.item;
                         goto result;
                     }
-                foreach (var p in l.list)
-                    if (p.item && (p.baseItem?.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x => x?.settings_buildable?.Upgrades == __instance) ?? false))
-                    {
-                        __result = p.item;
-                        goto result;
-                    }
-                var b = __instance.GetNewItemFromUpgradeItem(l.item);
-                foreach (var p in l.list)
-                    if (p.item && (
-                        p.baseItem?.settings_buildable?.Upgrades == b.settings_buildable.Upgrades
-                        || (p.baseItem?.settings_buildable?.Upgrades?.HasFieldValueMatch<Item_Base>(x => x?.settings_buildable?.Upgrades == b.settings_buildable.Upgrades) ?? false)))
-                    {
-                        __result = p.item;
-                        goto result;
-                    }
-            }
             return;
         result:
             if (d == null)
