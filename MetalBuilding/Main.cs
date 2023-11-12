@@ -573,10 +573,10 @@ namespace MoreBuilding
         };
         #endregion
 
+        public static Dictionary<string, Dictionary<string, string>> lang = new Dictionary<string, Dictionary<string, string>>();
         public Material Glass;
         public Material ScrapMetal;
         public Material Metal;
-        public LanguageSourceData language;
         public static List<Object> createdObjects = new List<Object>();
         Harmony harmony;
         Transform prefabHolder;
@@ -596,16 +596,6 @@ namespace MoreBuilding
             prefabHolder.gameObject.SetActive(false);
             createdObjects.Add(prefabHolder.gameObject);
             DontDestroyOnLoad(prefabHolder.gameObject);
-            language = new LanguageSourceData()
-            {
-                mDictionary = new Dictionary<string, TermData>(),
-                mLanguages = //new List<LanguageData> { new LanguageData() { Code = "en", Name = "English" } }
-                Enum.GetValues(typeof(Language)).Cast(x => {
-                    var r = ((Language)x).GetText();
-                    return new LanguageData() { Code = LocalizationManager.Sources[0].mLanguages.Find(y => y.Name == r).Code, Name = r };
-                }).ToList()
-            };
-            LocalizationManager.Sources.Add(language);
 
             var assetBundle = AssetBundle.LoadFromMemory(GetEmbeddedFileBytes("glasswalls.assets"));
             createdObjects.Add(assetBundle);
@@ -673,7 +663,6 @@ namespace MoreBuilding
             loaded = false;
             ModUtils_ReloadBuildMenu();
             harmony?.UnpatchAll(harmony.Id);
-            LocalizationManager.Sources.Remove(language);
             if (items != null)
             {
                 foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
@@ -736,13 +725,12 @@ namespace MoreBuilding
             item.item.settings_Inventory.LocalizationTerm = "Item/"+item.item.UniqueName;
             if (item.cost != null)
                 item.item.settings_recipe.NewCost = item.cost;
-            language.mDictionary[item.item.settings_Inventory.LocalizationTerm] = new TermData() { Languages = Enum.GetValues(typeof(Language)).Cast(x => {
-                var l = (Language)x;
-                TextAttribute.forcedContext = l;
+            lang[item.item.settings_Inventory.LocalizationTerm] = (Enum.GetValues(typeof(Language)) as Language[]).ToDictionary(x => x.GetText(),x => {
+                TextAttribute.forcedContext = x;
                 var r = item.localization();
                 TextAttribute.forcedContext = null;
                 return r;
-            }) };
+            });
             var blockCreation = item as BlockItemCreation;
             if (blockCreation != null)
             {
@@ -991,16 +979,6 @@ namespace MoreBuilding
         }
     }
 
-    [HarmonyPatch(typeof(LanguageSourceData), "GetLanguageIndex")]
-    static class Patch_GetLanguageIndex
-    {
-        static void Postfix(LanguageSourceData __instance, ref int __result)
-        {
-            if (__result == -1 && __instance == instance.language)
-                __result = 0;
-        }
-    }
-
     [HarmonyPatch]
     static class Patch_ReplaceBreakParticles
     {
@@ -1054,6 +1032,28 @@ namespace MoreBuilding
             foreach (var i in block.GetComponents<IBlockPainter>())
                 if (i != null)
                     i.OnPaintRenderer(renderer, block, propBlock, primary, secondary, paintSide, patternIndex);
+        }
+    }
+
+    [HarmonyPatch(typeof(LocalizationManager), "TryGetTranslation")]
+    static class Patch_Localization
+    {
+        static string defaultLang = Language.english.GetText();
+        static bool Prefix(string Term, ref string Translation, bool FixForRTL, int maxLineLengthForRTL, bool ignoreRTLnumbers, bool applyParameters, GameObject localParametersRoot, string overrideLanguage, ref bool __result)
+        {
+            if (Term != null && Main.lang.TryGetValue(Term, out var value))
+            {
+                var lang =  overrideLanguage ?? LocalizationManager.CurrentLanguage;
+                if (!(!string.IsNullOrEmpty(lang) && value.TryGetValue(lang, out Translation)) && !value.TryGetValue(defaultLang, out Translation))
+                    Translation = value.FirstOrDefault().Value;
+                if (applyParameters)
+                    LocalizationManager.ApplyLocalizationParams(ref Translation, localParametersRoot, true);
+                if (LocalizationManager.IsRight2Left && FixForRTL)
+                    Translation = LocalizationManager.ApplyRTLfix(Translation, maxLineLengthForRTL, ignoreRTLnumbers);
+                __result = true;
+                return false;
+            }
+            return true;
         }
     }
 }
