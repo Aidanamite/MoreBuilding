@@ -55,9 +55,9 @@ namespace MoreBuilding
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.ScrapMetal_Upgrade },
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.SolidMetal_Upgrade },
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.Glass_Upgrade },
-            new BlockItemCreation() { baseIndex = 382, standardIndexSetup = Index.ScrapMetal_Foundation, mesh = Foundation, additionEdits = x => x.MakeAlwaysReinforced() },
-            new BlockItemCreation() { baseIndex = 383, standardIndexSetup = Index.ScrapMetal_TriangleFoundation, mesh = FoundationTriangle, additionEdits = x => x.MakeAlwaysReinforced() },
-            new BlockItemCreation() { baseIndex = 387, standardIndexSetup = Index.ScrapMetal_TriangleFoundationMirrored, mesh = FoundationTriangleMirrored, additionEdits = x => x.MakeAlwaysReinforced() },
+            new BlockItemCreation() { baseIndex = 382, standardIndexSetup = Index.ScrapMetal_Foundation, mesh = Foundation, addAdditionalEdits = x => x.MakeAlwaysReinforced() },
+            new BlockItemCreation() { baseIndex = 383, standardIndexSetup = Index.ScrapMetal_TriangleFoundation, mesh = FoundationTriangle, addAdditionalEdits = x => x.MakeAlwaysReinforced() },
+            new BlockItemCreation() { baseIndex = 387, standardIndexSetup = Index.ScrapMetal_TriangleFoundationMirrored, mesh = FoundationTriangleMirrored, addAdditionalEdits = x => x.MakeAlwaysReinforced() },
             new BlockItemCreation() { baseIndex = 384, standardIndexSetup = Index.ScrapMetal_Floor, mesh = Floor },
             new BlockItemCreation() { baseIndex = 385, standardIndexSetup = Index.ScrapMetal_TriangleFloor, mesh = FloorTriangle },
             new BlockItemCreation() { baseIndex = 388, standardIndexSetup = Index.ScrapMetal_TriangleFloorMirrored, mesh = FloorTriangleMirrored },
@@ -67,11 +67,11 @@ namespace MoreBuilding
             new BlockItemCreation() { baseIndex = 408, standardIndexSetup = Index.ScrapMetal_WallSlope, mesh = WallSlope },
             new BlockItemCreation() {
                 baseIndex = 445, standardIndexSetup = Index.ScrapMetal_WallSlopeInverted, mesh = WallSlopeInverted,
-                additionEdits = x => x.transform.Find("model").localPosition = new Vector3(HalfBlockSize, HalfFloorHeight, 0)
+                addAdditionalEdits = x => x.transform.Find("model").localPosition = new Vector3(HalfBlockSize, HalfFloorHeight, 0)
             },
             new BlockItemCreation() {
                 baseIndex = 386, standardIndexSetup = Index.ScrapMetal_Fence, mesh = new[] { new[] { Fence, FenceConnector, FenceConnector }, new[] { FenceDiagonal, FenceConnector, FenceConnector } },
-                additionEdits = x =>
+                addAdditionalEdits = x =>
                 {
                     var t = x.transform.Find("knobRight");
                     t.localPosition += new Vector3(0, -t.localPosition.y, 0);
@@ -82,11 +82,11 @@ namespace MoreBuilding
             },
             new BlockItemCreation() {
                 baseIndex = 407, standardIndexSetup = Index.ScrapMetal_Gate, mesh = new[] { new[] { Gate, Empty, Empty }, new[] { GateDiagonal, Empty, Empty } },
-                additionEdits = x => x.MakeDoorSkinRendered()
+                addAdditionalEdits = x => x.MakeDoorSkinRendered()
             },
             new BlockItemCreation() {
                 baseIndex = 406, standardIndexSetup = Index.ScrapMetal_Door, mesh = new[] { new[] { GeneratedMeshes.Door, Empty, Empty }, new[] { DoorDiagonal, Empty, Empty } },
-                additionEdits = x => x.MakeDoorSkinRendered()
+                addAdditionalEdits = x => x.MakeDoorSkinRendered()
             },
             new BlockItemCreation() { baseIndex = 411, standardIndexSetup = Index.ScrapMetal_Window, mesh = new[] { new[] { Window }, new[] { WindowDiagonal } } },
             new BlockItemCreation() { baseIndex = 493, standardIndexSetup = Index.ScrapMetal_WindowHalf, mesh = new[] { new[] { WindowHalf }, new[] { WindowHalfDiagonal } } },
@@ -769,7 +769,7 @@ namespace MoreBuilding
                     if (blockCreation.modelScales?.Length > i)
                         r[0].transform.localScale = blockCreation.modelScales[i];
                     p[i].ReplaceValues(item.baseItem, item.item);
-                    blockCreation.additionEdits?.Invoke(p[i]);
+                    blockCreation.additionalEdits?.Invoke(p[i]);
                     var mirror = ItemManager.GetItemByIndex(blockCreation.mirroredItem);
                     if (mirror)
                     {
@@ -1027,6 +1027,33 @@ namespace MoreBuilding
                     return t.breakParticle();
             }
             return original;
+        }
+    }
+
+    [HarmonyPatch(typeof(Block), "SetInstanceColorAndPattern")]
+    static class Patch_SetBlockColor
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var code = instructions.ToList();
+            code.InsertRange(code.FindIndex(x => x.opcode == OpCodes.Callvirt && x.operand is MethodInfo m && m.Name == "GetPropertyBlock") + 1, new[] {
+                new CodeInstruction(OpCodes.Dup),
+                new CodeInstruction(OpCodes.Ldarg_0),
+                new CodeInstruction(OpCodes.Ldarg_0),
+                new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Block),"matPropBlock")),
+                new CodeInstruction(OpCodes.Ldarg_1),
+                new CodeInstruction(OpCodes.Ldarg_2),
+                new CodeInstruction(OpCodes.Ldarg_3),
+                new CodeInstruction(OpCodes.Ldarg_S,4),
+                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_SetBlockColor),nameof(EditPropBlock)))
+            });
+            return code;
+        }
+        static void EditPropBlock(Renderer renderer, Block block, MaterialPropertyBlock propBlock, SO_ColorValue primary, SO_ColorValue secondary, int paintSide, uint patternIndex)
+        {
+            foreach (var i in block.GetComponents<IBlockPainter>())
+                if (i != null)
+                    i.OnPaintRenderer(renderer, block, propBlock, primary, secondary, paintSide, patternIndex);
         }
     }
 }

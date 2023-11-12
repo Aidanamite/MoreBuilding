@@ -36,6 +36,13 @@ namespace MoreBuilding
                 isUpgrade = value.item == UniqueName.Upgrade;
             }
         }
+        public Action<Item_Base> addFinalize
+        {
+            set
+            {
+                finalize += value;
+            }
+        }
 
         public virtual ItemCreation Clone()
         {
@@ -63,7 +70,7 @@ namespace MoreBuilding
         public Func<Material> material { set => materials = value; }
         public Vector3[] modelScales;
         public Quaternion[][] modelRotations;
-        public Action<Block> additionEdits;
+        public Action<Block> additionalEdits;
         public int mirroredItem = -1;
         public Index MirroredItem { set => mirroredItem = (int)value; }
         public override (UniqueName material, UniqueName item) standardSetup
@@ -74,6 +81,16 @@ namespace MoreBuilding
                 materials = StandardItemSetup.GetMaterials(value.material);
                 UpgradeItem = StandardItemSetup.GetUpgradeIndex(value.material);
                 MirroredItem = StandardItemSetup.GetMirrored(value.material, value.item);
+                if (value.material == UniqueName.Glass)
+                {
+                    finalize += NonSidedPaints;
+                    additionalEdits += x =>
+                    {
+                        x.gameObject.AddComponent<GlassBlockPainter>();
+                        foreach (var r in x.GetComponentsInChildren<Renderer>())
+                            r.gameObject.layer = 21;
+                    };
+                }
             }
         }
         public override ItemCreation Clone()
@@ -84,8 +101,20 @@ namespace MoreBuilding
             i.materials = materials;
             i.modelScales = modelScales;
             i.modelRotations = modelRotations;
-            i.additionEdits = additionEdits;
+            i.additionalEdits = additionalEdits;
             return i;
+        }
+        public Action<Block> addAdditionalEdits
+        {
+            set
+            {
+                additionalEdits += value;
+            }
+        }
+        public static void NonSidedPaints(Item_Base item)
+        {
+            if (item.settings_buildable.PrimaryPaintAxis != Axis.None)
+                item.settings_buildable.SetPrimaryPaintAxis(Axis.All);
         }
     }
 

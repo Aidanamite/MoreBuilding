@@ -7,7 +7,7 @@
   "icon": "icon.png",
   "banner": "banner.jpg",
   "gameVersion": "1.0",
-  "requiredByAllPlayers": false,
+  "requiredByAllPlayers": true,
   "updateUrl": "https://www.raftmodding.com/api/v1/mods/more-building/version.txt",
   "isModPermanent": false,
   "excludedFiles": []

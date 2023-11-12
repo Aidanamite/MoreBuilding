@@ -438,5 +438,8 @@ namespace MoreBuilding
         }
 
         public static T GetWrapped<T>(this IList<T> list, int index) => list[(index % list.Count) + (index < 0 ? list.Count : 0)];
+
+        static FieldInfo _primaryPaintAxis = typeof(ItemInstance_Buildable).GetField("primaryPaintAxis", ~BindingFlags.Default);
+        public static void SetPrimaryPaintAxis(this ItemInstance_Buildable iib, Axis value) => _primaryPaintAxis.SetValue(iib, value);
     }
 }
