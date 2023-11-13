@@ -85,10 +85,10 @@ namespace MoreBuilding
         SolidMetal_StairHalf,
         Glass_Foundation = 6970,
         Glass_TriangleFoundation,
-        Glass_TriangleFoundationMirrored,
+        Glass_TriangleFoundationMirrored, // Legacy from glass walls mod. Not used
         Glass_Floor,
         Glass_TriangleFloor,
-        Glass_TriangleFloorMirrored,
+        Glass_TriangleFloorMirrored, // Legacy from glass walls mod. Not used
         Glass_Wall,
         Glass_WallHalf,
         Glass_WallSlope,

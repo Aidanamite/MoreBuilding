@@ -545,10 +545,10 @@ namespace MoreBuilding
             /* Glass Blocks */
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Foundation), x => { x.standardIndexSetup = Index.Glass_Foundation; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundation), x => { x.standardIndexSetup = Index.Glass_TriangleFoundation; }),
-            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundationMirrored), x => { x.standardIndexSetup = Index.Glass_TriangleFoundationMirrored; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundationMirrored), x => { x.standardIndexSetup = Index.Glass_TriangleFoundationMirrored; }), Removed!
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Floor), x => { x.standardIndexSetup = Index.Glass_Floor; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFloor), x => { x.standardIndexSetup = Index.Glass_TriangleFloor; }),
-            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFloorMirrored), x => { x.standardIndexSetup = Index.Glass_TriangleFloorMirrored; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFloorMirrored), x => { x.standardIndexSetup = Index.Glass_TriangleFloorMirrored; }), Removed!
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Wall), x => { x.standardIndexSetup = Index.Glass_Wall; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallHalf), x => { x.standardIndexSetup = Index.Glass_WallHalf; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallSlope), x => { x.standardIndexSetup = Index.Glass_WallSlope; }),
@@ -665,14 +665,21 @@ namespace MoreBuilding
             harmony?.UnpatchAll(harmony.Id);
             if (items != null)
             {
+                var names = new HashSet<string>();
+                var indecies = new HashSet<int>();
+                foreach (var i in items)
+                {
+                    names.Add(i.GetRealInstance().uniqueName);
+                    indecies.Add(i.GetRealInstance().uniqueIndex);
+                }
                 foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
-                    Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.GetRealInstance().uniqueIndex == x.UniqueIndex));
+                    Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
                 foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockCollisionMask>())
-                    Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().RemoveAll(x => items.Any(y => y.GetRealInstance().uniqueIndex == x.UniqueIndex));
-                ItemManager.GetAllItems().RemoveAll(x => items.Any(y => y.GetRealInstance().uniqueIndex == x.UniqueIndex || y.GetRealInstance().uniqueName == x.UniqueName));
+                    Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
+                ItemManager.GetAllItems().RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
                 foreach (var b in GetPlacedBlocks())
-                    if (b && b.buildableItem && items.Any(y => y.GetRealInstance().uniqueIndex == b.buildableItem.UniqueIndex))
-                        RemoveBlock(b, null, false);
+                    if (b && b.buildableItem && (names.Contains(b.buildableItem.UniqueName) || indecies.Contains(b.buildableItem.UniqueIndex)))
+                        RemoveBlock(b, null, true);
             }
             foreach (var o in createdObjects)
                 if (o)
@@ -725,7 +732,7 @@ namespace MoreBuilding
             item.item.settings_Inventory.LocalizationTerm = "Item/"+item.item.UniqueName;
             if (item.cost != null)
                 item.item.settings_recipe.NewCost = item.cost;
-            lang[item.item.settings_Inventory.LocalizationTerm] = (Enum.GetValues(typeof(Language)) as Language[]).ToDictionary(x => x.GetText(),x => {
+            lang[item.item.settings_Inventory.LocalizationTerm] = (Enum.GetValues(typeof(Language)) as Language[]).ToDictionary(x => x.ToText(),x => {
                 TextAttribute.forcedContext = x;
                 var r = item.localization();
                 TextAttribute.forcedContext = null;
@@ -764,6 +771,8 @@ namespace MoreBuilding
                         Traverse.Create(item.item.settings_buildable).Field("mirroredVersion").SetValue(mirror);
                         Traverse.Create(mirror.settings_buildable).Field("mirroredVersion").SetValue(item.item);
                     }
+                    else
+                        Traverse.Create(item.item.settings_buildable).Field("mirroredVersion").SetValue(null);
                 }
                 Traverse.Create(item.item.settings_buildable).Field("blockPrefabs").SetValue(p);
             }
@@ -1038,7 +1047,7 @@ namespace MoreBuilding
     [HarmonyPatch(typeof(LocalizationManager), "TryGetTranslation")]
     static class Patch_Localization
     {
-        static string defaultLang = Language.english.GetText();
+        static string defaultLang = Language.english.ToText();
         static bool Prefix(string Term, ref string Translation, bool FixForRTL, int maxLineLengthForRTL, bool ignoreRTLnumbers, bool applyParameters, GameObject localParametersRoot, string overrideLanguage, ref bool __result)
         {
             if (Term != null && Main.lang.TryGetValue(Term, out var value))
@@ -1054,6 +1063,36 @@ namespace MoreBuilding
                 return false;
             }
             return true;
+        }
+    }
+
+    // Reverse compatibility with the glass walls mod
+    [HarmonyPatch(typeof(ItemManager))]
+    static class Patch_ItemManager_GetItem
+    {
+        static Dictionary<string, string> uniqueNameCorrection = new Dictionary<string, string>()
+        {
+            { UniqueName.TriangleFoundationMirrored.ToText(UniqueName.Glass), UniqueName.TriangleFoundation.ToText(UniqueName.Glass) },
+            { UniqueName.TriangleFloorMirrored.ToText(UniqueName.Glass), UniqueName.TriangleFloor.ToText(UniqueName.Glass) }
+        };
+        static Dictionary<int, int> uniqueIndexCorrection = new Dictionary<int, int>()
+        {
+            { (int)Index.Glass_TriangleFoundationMirrored, (int)Index.Glass_TriangleFoundation },
+            { (int)Index.Glass_TriangleFloorMirrored, (int)Index.Glass_TriangleFloor }
+        };
+        [HarmonyPatch(nameof(ItemManager.GetItemByName))]
+        [HarmonyPrefix]
+        static void GetItemByName(ref string uniqueName)
+        {
+            if (uniqueNameCorrection.TryGetValue(uniqueName, out var replace))
+                uniqueName = replace;
+        }
+        [HarmonyPatch(nameof(ItemManager.GetItemByIndex))]
+        [HarmonyPrefix]
+        static void GetItemByIndex(ref int uniqueIndex)
+        {
+            if (uniqueIndexCorrection.TryGetValue(uniqueIndex, out var replace))
+                uniqueIndex = replace;
         }
     }
 }
