@@ -98,7 +98,7 @@ namespace MoreBuilding
             while (t != typeof(Object) && t != typeof(object))
             {
                 foreach (var f in t.GetFields(~BindingFlags.Default))
-                    if (!f.IsStatic && Equals(f.GetValue(obj),value))
+                    if (!f.IsStatic && Equals(f.GetValue(obj), value))
                         return true;
                 t = t.BaseType;
             }
@@ -137,52 +137,71 @@ namespace MoreBuilding
             return s;
         }
 
-        public static Texture2D GetReadable(this Texture2D source, GraphicsFormat targetFormat, bool mipChain = true, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default) =>
-            source.CopyTo(
-                new Texture2D(
-                    (int)(copyArea?.width ?? source.width),
-                    (int)(copyArea?.height ?? source.height),
-                    targetFormat,
-                    mipChain ? TextureCreationFlags.MipChain : TextureCreationFlags.None),
-                copyArea,
-                format,
-                readWrite);
-
-        public static Texture2D GetReadable(this Texture2D source, TextureFormat? targetFormat = null, bool mipChain = true, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default) =>
-            source.CopyTo(
-                new Texture2D(
-                    (int)(copyArea?.width ?? source.width),
-                    (int)(copyArea?.height ?? source.height),
-                    targetFormat ?? TextureFormat.ARGB32,
-                    mipChain),
-                copyArea,
-                format,
-                readWrite);
-
-        static Texture2D CopyTo(this Texture2D source, Texture2D texture, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default)
+        public static Texture2D GetReadable(this Texture2D source, GraphicsFormat targetFormat, bool mipChain = true, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default)
         {
-            var temp = RenderTexture.GetTemporary(source.width, source.height, 0, format, readWrite);
-            Graphics.Blit(source, temp);
-            temp.filterMode = FilterMode.Point;
+            var t = new Texture2D(
+                        (int)(copyArea?.width ?? source.width),
+                        (int)(copyArea?.height ?? source.height),
+                        targetFormat,
+                        mipChain ? TextureCreationFlags.MipChain : TextureCreationFlags.None);
+            createdObjects.Add(t);
+            source.CopyTo(
+                t,
+                copyArea,
+                format,
+                readWrite,
+                new Rect(0, 0, t.width, t.height));
+            return t;
+        }
+
+        public static Texture2D GetReadable(this Texture2D source, TextureFormat? targetFormat = null, bool mipChain = true, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default)
+        {
+            var t = new Texture2D(
+                        (int)(copyArea?.width ?? source.width),
+                        (int)(copyArea?.height ?? source.height),
+                        targetFormat ?? TextureFormat.ARGB32,
+                        mipChain);
+            createdObjects.Add(t);
+            source.CopyTo(
+                t,
+                copyArea,
+                format,
+                readWrite,
+                new Rect(0,0,t.width,t.height));
+            return t;
+        }
+
+        public static Texture2D CopyTo(this Texture2D source, Texture2D texture, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default, Rect? targetArea = null, FilterMode filterMode = FilterMode.Point, bool apply = true)
+        {
             var prev = RenderTexture.active;
+            var area = copyArea ?? new Rect(0, 0, source.width, source.height);
+            var target = targetArea ?? area;
+            var temp = RenderTexture.GetTemporary((int)target.width, (int)target.height, 0, format, readWrite);
             RenderTexture.active = temp;
-            var area = copyArea ?? new Rect(0, 0, temp.width, temp.height);
-            texture.ReadPixels(area, 0, 0);
-            texture.Apply();
+            Graphics.Blit(source, temp, new Vector2(area.width / source.width, area.height / source.height), new Vector2(area.x / source.width, area.y / source.width));
+            temp.filterMode = filterMode;
+            texture.ReadPixels(new Rect(0, 0, target.width, target.height), (int)target.x, (int)target.y, false);
+            if (apply)
+                texture.Apply(true);
             RenderTexture.active = prev;
             RenderTexture.ReleaseTemporary(temp);
-            createdObjects.Add(texture);
             return texture;
         }
-        public static void Edit(this Texture2D baseImg)
+
+        public static Texture2D GetAdjustedReadable(this Texture2D source, TextureFormat? targetFormat = null, bool mipChain = true, Rect? copyArea = null, RenderTextureFormat format = RenderTextureFormat.Default, RenderTextureReadWrite readWrite = RenderTextureReadWrite.Default)
         {
-            var w = baseImg.width - 1;
-            var h = baseImg.height - 1;
-            for (var x = 0; x <= w; x++)
-                for (var y = 0; y <= h; y++)
-                    Debug.Log("ExecutionEngineException");//baseImg.SetPixel(x, y, baseImg.GetPixel(x, y).Overlay(Main.instance.overlay.GetPixelBilinear((float)x / w, (float)y / h)));
-            baseImg.Apply();
+            var area = copyArea ?? new Rect(0, 0, source.width, source.height);
+            var nt = new Texture2D(
+                    (int)area.width * 10 / 9,
+                    (int)area.height,
+                    targetFormat ?? TextureFormat.ARGB32,
+                    mipChain);
+            createdObjects.Add(nt);
+            source.CopyTo(nt, area, targetArea: new Rect(0, 0, area.width, area.height), apply: false);
+            source.CopyTo(nt, new Rect(area.x, area.y, area.width / 10, area.height), targetArea: new Rect(area.width, 0, nt.width / 10, area.height), filterMode: FilterMode.Bilinear);
+            return nt;
         }
+
         public static Color Overlay(this Color a, Color b)
         {
             if (a.a <= 0)

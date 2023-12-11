@@ -241,6 +241,8 @@ namespace MoreBuilding
                 return () => Main.instance.Metal;
             if (material == UniqueName.Glass)
                 return () => Main.instance.Glass;
+            if (material == UniqueName.Brick)
+                return () => Main.instance.Brick;
             throw new NullReferenceException(material.ToString());
         }
         public static Index GetUpgradeIndex(UniqueName material)
@@ -267,6 +269,8 @@ namespace MoreBuilding
                 return Main.LookupItemByName("MetalIngot");
             if (upgradeItemIndex == (int)Index.Glass_Upgrade)
                 return Main.LookupItemByName("Glass");
+            if (upgradeItemIndex == (int)Index.Brick_Upgrade)
+                return Main.LookupItemByName("Brick_Dry");
             throw new NullReferenceException();
         }
     }

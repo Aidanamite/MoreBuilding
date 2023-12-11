@@ -212,11 +212,11 @@ namespace MoreBuilding
             {
                 var builder = new MeshBuilder();
                 builder.AddBox(
-                    new Vector3(-HalfBlockSize, -WallOffset, -HalfWallThickness), new Vector3(HalfBlockSize, HalfFloorHeight - WallOffset, HalfWallThickness),
+                    new Vector3(-HalfBlockSize, WallOffset, -HalfWallThickness), new Vector3(HalfBlockSize, HalfFloorHeight + WallOffset, HalfWallThickness),
                     (0.9f, 0, 1, 1, Axis.NX), (0.9f, 0, 1, 1, Axis.X),
-                    (0, 0, 0.9f, 1), (0.9f, 0, 1, 1, Axis.X),
-                    (1, 0, 1.9f, 1), (0.9f, 0, 1, 1, Axis.NX),
-                    generation: ((0.9f, 0, 1, 1, Axis.X), Axis.Y, Axis.X)
+                    (0.9f, 0, 0, 1), (0.9f, 0, 1, 1, Axis.X),
+                    (1.9f, 0, 1, 1), (0.9f, 0, 1, 1, Axis.NX),
+                    generation: ((0.9f, 0, 1, 1, Axis.NX), Axis.NY, Axis.NX)
                     );
                 createdObjects.Add(WallSlopeInverted = builder.ToMesh("WallSlopeInverted"));
             }
@@ -557,11 +557,11 @@ namespace MoreBuilding
                 var builder = new MeshBuilder();
                 builder.AddBox(
                     new Vector3(-HalfBlockSize, -FloorThickness, -HalfBlockSize), new Vector3(HalfBlockSize, 0, HalfBlockSize),
-                    (1, 0, 1.9f, 1), (0, 0, 0.9f, 1),
+                    (1f, 0, 1.9f, 1), (0, 0, 0.9f, 1),
                     (0, 0, 1, .1f, Axis.Y), (0, 0, 1, .1f, Axis.Y),
                     (0, 0, 1, .1f, Axis.Y), (0, 0, 1, .1f, Axis.Y),
                     modifyVert: x => new Vector3(x.x, x.y + (new Vector2(x.z / DiagonalHalfBlockSize, x.x / DiagonalHalfBlockSize).Magnitude(Vector2.one) * HalfFloorHeight), x.z).Rotate(0,135,0),
-                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.ModifyAround(y.IsNegative() ? new Vector2(0.45f, 0.5f) : new Vector2(1.45f, 0.5f), z => (z / new Vector2(0.9f, 1) / DiagonalMagnitude).Rotate(y.IsNegative() ? 135 : 45) * new Vector2(0.9f, 2)) + new Vector2(0,0.5f) : x.Rotate(-90),
+                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.ModifyAround(y.IsNegative() ? new Vector2(0.45f, 0.5f) : new Vector2(1.45f, 0.5f), z => (z / new Vector2(0.9f, 1) / DiagonalMagnitude).Rotate(y.IsNegative() ? -45 : 45) * new Vector2(0.9f, 2)) + new Vector2(0,0.5f) : x.Rotate(-90),
                     generation: ((0, 0, 1, .1f, Axis.Y), Axis.NX,Axis.NZ)
                     );
                 createdObjects.Add(RoofDiagonal = builder.ToMesh("RoofDiagonal"));
@@ -570,20 +570,20 @@ namespace MoreBuilding
                 var builder = new MeshBuilder();
                 builder.AddBox(
                     new Vector3(-DiagonalHalfBlockSize, -FloorThickness, -DiagonalHalfBlockSize), new Vector3(0, 0, 0),
-                    (0, 1.45f, 1, 1.9f), (0, 0.45f, 1, 0.9f),
+                    (0, 0.55f, 1, 1f), (0, 0.45f, 1, 0.9f),
                     (0, 0, 1, .1f, Axis.Y), null,
                     (0, 0, 1, .1f, Axis.Y), (0, 0, 1, .1f, Axis.Y),
                     modifyVert: x => new Vector3(x.x, x.y +( -x.z / DiagonalHalfBlockSize * HalfFloorHeight), x.z),
-                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                    modifyUV: (x, y) => y == Axis.NY ? x.Rotate(90) : x.Rotate(-90),
                     generation: ((0, 0, 1, .1f, Axis.Y), Axis.NX, Axis.Z)
                     );
                 builder.AddBox(
                     new Vector3(0, -FloorThickness, -DiagonalHalfBlockSize), new Vector3(DiagonalHalfBlockSize, 0, 0),
-                    (0, 1, 1, 1.45f), (0, 0, 1, 0.45f),
+                    (0, 0.1f, 1, 0.55f), (0, -0f, 1, 0.45f),
                     (0, 0, 1, .1f, Axis.Y), (0, 0, 1, .1f, Axis.Y),
                     (0, 0, 1, .1f, Axis.Y), null,
                     modifyVert: x => new Vector3(x.x, x.y + (-x.z / DiagonalHalfBlockSize * HalfFloorHeight), x.z),
-                    modifyUV: (x, y) => y.ToPositive() == Axis.Y ? x.Rotate(90) : x.Rotate(-90),
+                    modifyUV: (x, y) => y == Axis.NY ? x.Rotate(90) : x.Rotate(-90),
                     generation: ((0, 0, 1, .1f, Axis.Y), Axis.X, Axis.Z)
                     );
                 createdObjects.Add(RoofDiagonalAlt = builder.ToMesh("RoofDiagonalAlt"));

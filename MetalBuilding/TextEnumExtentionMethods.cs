@@ -29,7 +29,7 @@ namespace MoreBuilding
 
         public static Func<string, int, bool> GetMethod(this (Type, string) details, object target = null) => details.Item1.GetMethods(~System.Reflection.BindingFlags.Default).FirstOrDefault(x => x.IsStatic && x.Name == details.Item2 && x.ReturnType == typeof(bool) && x.GetParameters().Length == 2 && x.GetParameters()[0].ParameterType == typeof(string) && x.GetParameters()[1].ParameterType == typeof(int))?.CreateDelegate(typeof(Func<string, int, bool>), target) as Func<string, int, bool>;
     }
-
+    // Potential Additions: Palm Wood (plank), Birch Wood (plank), Adobe (dirt + clay), Cobblestone (stone), Stone Brick (stone), Ice (?), Bamboo (wood?), Plastic (plastic), Weave (seavine), 
     public enum UniqueName
     {
         [Text("ScrapMetal")]
@@ -38,6 +38,8 @@ namespace MoreBuilding
         SolidMetal,
         [Text("Glass")]
         Glass,
+        [Text("Brick")]
+        Brick,
         [Text("Block_{0}")]
         Base_,
         [Text("{0}_Mirrored")]
@@ -147,6 +149,8 @@ namespace MoreBuilding
         [Text(Language.russian, "Стекло")]
         [Text("Glass")]
         Glass,
+        [Text("Brick")]
+        Brick,
         [Text("{0}@{1}")]
         _Base_,
         [Text(Language.swedish, "Triangulärt {0}")]

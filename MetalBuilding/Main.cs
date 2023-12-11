@@ -3,6 +3,7 @@ using HMLLibrary;
 using RaftModLoader;
 using Steamworks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,6 +56,7 @@ namespace MoreBuilding
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.ScrapMetal_Upgrade },
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.SolidMetal_Upgrade },
             new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.Glass_Upgrade },
+            new ItemCreation() { baseIndex = 548, standardIndexSetup = Index.Brick_Upgrade },
             new BlockItemCreation() { baseIndex = 382, standardIndexSetup = Index.ScrapMetal_Foundation, mesh = Foundation, addAdditionalEdits = x => x.MakeAlwaysReinforced() },
             new BlockItemCreation() { baseIndex = 383, standardIndexSetup = Index.ScrapMetal_TriangleFoundation, mesh = FoundationTriangle, addAdditionalEdits = x => x.MakeAlwaysReinforced() },
             new BlockItemCreation() { baseIndex = 387, standardIndexSetup = Index.ScrapMetal_TriangleFoundationMirrored, mesh = FoundationTriangleMirrored, addAdditionalEdits = x => x.MakeAlwaysReinforced() },
@@ -67,7 +69,11 @@ namespace MoreBuilding
             new BlockItemCreation() { baseIndex = 408, standardIndexSetup = Index.ScrapMetal_WallSlope, mesh = WallSlope },
             new BlockItemCreation() {
                 baseIndex = 445, standardIndexSetup = Index.ScrapMetal_WallSlopeInverted, mesh = WallSlopeInverted,
-                addAdditionalEdits = x => x.transform.Find("model").localPosition = new Vector3(HalfBlockSize, HalfFloorHeight, 0)
+                addAdditionalEdits = x =>{
+                    var t = x.transform.Find("model");
+                    t.localPosition = new Vector3(HalfBlockSize, 0, 0);
+                    t.localRotation = Quaternion.Euler(0,0,180);
+                    }
             },
             new BlockItemCreation() {
                 baseIndex = 386, standardIndexSetup = Index.ScrapMetal_Fence, mesh = new[] { new[] { Fence, FenceConnector, FenceConnector }, new[] { FenceDiagonal, FenceConnector, FenceConnector } },
@@ -570,6 +576,36 @@ namespace MoreBuilding
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Ladder), x => { x.standardIndexSetup = Index.Glass_Ladder; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_LadderHalf), x => { x.standardIndexSetup = Index.Glass_LadderHalf; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Door), x => { x.standardIndexSetup = Index.Glass_Door; }),
+            /* Brick Blocks */
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Foundation), x => { x.standardIndexSetup = Index.Brick_Foundation; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundation), x => { x.standardIndexSetup = Index.Brick_TriangleFoundation; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundationMirrored), x => { x.standardIndexSetup = Index.Brick_TriangleFoundationMirrored; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Floor), x => { x.standardIndexSetup = Index.Brick_Floor; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFloor), x => { x.standardIndexSetup = Index.Brick_TriangleFloor; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFloorMirrored), x => { x.standardIndexSetup = Index.Brick_TriangleFloorMirrored; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Wall), x => { x.standardIndexSetup = Index.Brick_Wall; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallHalf), x => { x.standardIndexSetup = Index.Brick_WallHalf; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallV), x => { x.standardIndexSetup = Index.Brick_WallV; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallSlope), x => { x.standardIndexSetup = Index.Brick_WallSlope; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallSlopeInverted), x => { x.standardIndexSetup = Index.Brick_WallSlopeInverted; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Fence), x => { x.standardIndexSetup = Index.Brick_Fence; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Gate), x => { x.standardIndexSetup = Index.Brick_Gate; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Door), x => { x.standardIndexSetup = Index.SolidMetal_Door; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Window), x => { x.standardIndexSetup = Index.SolidMetal_Window; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WindowHalf), x => { x.standardIndexSetup = Index.Brick_WindowHalf; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofStraight), x => { x.standardIndexSetup = Index.Brick_RoofStraight; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofCorner), x => { x.standardIndexSetup = Index.Brick_RoofCorner; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofCornerInverted), x => { x.standardIndexSetup = Index.Brick_RoofCornerInverted; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV0), x => { x.standardIndexSetup = Index.Brick_RoofV0; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV1), x => { x.standardIndexSetup = Index.Brick_RoofV1; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV2I), x => { x.standardIndexSetup = Index.Brick_RoofV2I; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV2L), x => { x.standardIndexSetup = Index.Brick_RoofV2L; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV3), x => { x.standardIndexSetup = Index.Brick_RoofV3; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV4), x => { x.standardIndexSetup = Index.Brick_RoofV4; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Pillar), x => { x.standardIndexSetup = Index.SolidMetal_Pillar; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHalf), x => { x.standardIndexSetup = Index.SolidMetal_PillarHalf; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHorizontal), x => { x.standardIndexSetup = Index.SolidMetal_PillarHorizontal; }),
+            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHorizontalHalf), x => { x.standardIndexSetup = Index.SolidMetal_PillarHorizontalHalf; }),
         };
         #endregion
 
@@ -577,86 +613,133 @@ namespace MoreBuilding
         public Material Glass;
         public Material ScrapMetal;
         public Material Metal;
+        public Material Brick;
         public static List<Object> createdObjects = new List<Object>();
         Harmony harmony;
         Transform prefabHolder;
         public static Main instance;
         bool loaded = false;
+        bool errored = false;
+        void Start()
+        {
+            if (errored)
+                modlistEntry.modinfo.unloadBtn.GetComponent<Button>().onClick.Invoke();
+        }
         public void Awake()
         {
             if (SceneManager.GetActiveScene().name == Raft_Network.GameSceneName && ComponentManager<Raft_Network>.Value.remoteUsers.Count > 1)
             {
                 Debug.LogError($"[{name}]: This cannot be loaded while in a multiplayer");
-                modlistEntry.modinfo.unloadBtn.GetComponent<Button>().onClick.Invoke();
+                errored = true;
                 return;
             }
-            loaded = true;
-            instance = this;
-            prefabHolder = new GameObject("prefabHolder").transform;
-            prefabHolder.gameObject.SetActive(false);
-            createdObjects.Add(prefabHolder.gameObject);
-            DontDestroyOnLoad(prefabHolder.gameObject);
-
-            var assetBundle = AssetBundle.LoadFromMemory(GetEmbeddedFileBytes("glasswalls.assets"));
-            createdObjects.Add(assetBundle);
-            Glass = Instantiate(assetBundle.LoadAsset<Material>("Glass_Mat"));
-            createdObjects.Add(Glass);
-            Metal = Instantiate(ItemManager.GetItemByIndex(1).settings_buildable.GetBlockPrefab(0).GetComponentInChildren<MeshRenderer>().material);
-            createdObjects.Add(Metal);
-            ScrapMetal = Instantiate(Metal);
-            createdObjects.Add(ScrapMetal);
-            ScrapMetal.SetTexture("_Diffuse", LoadImage("scrapMetal_Diffuse.png"));
-            ScrapMetal.SetTexture("_Normal", LoadImage("scrapMetal_Normal.png"));
+            try
             {
-                var t = LoadImage("scrapMetal_Specular.png");
-                var p = t.GetPixels();
-                var t2 = new Texture2D(t.width * 2, t.height);
-                createdObjects.Add(t2);
-                for (int i = 0; i < p.Length; i++)
-                    p[i] = new Color(0, 1 - Mathf.Pow(Mathf.Abs(p[i].r * 2 - 1f), 2), 0, 1 - Mathf.Abs(p[i].r * 2 - 1f));
-                t2.SetPixels(0,0,t.width,t.height,p);
-                for (int i = 0; i < p.Length; i++)
-                    p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
-                t2.SetPixels(t.width, 0, t.width, t.height, p);
-                t2.Apply();
-                ScrapMetal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t2);
-                ScrapMetal.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f,1));
-            }
-            Metal.SetTexture("_Diffuse", LoadImage("metal.png"));
-            Metal.SetTexture("_Normal", LoadImage("metal_Normal.png"));
-            {
-                var t = LoadImage("metal_Specular.png");
-                var p = t.GetPixels();
-                var t2 = new Texture2D(t.width * 2, t.height);
-                createdObjects.Add(t2);
-                for (int i = 0; i < p.Length; i++)
-                    p[i] = new Color(0, p[i].r * 0.85f, 0, p[i].r);
-                t2.SetPixels(0, 0, t.width, t.height, p);
-                for (int i = 0; i < p.Length; i++)
-                    p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
-                t2.SetPixels(t.width, 0, t.width, t.height, p);
-                t2.Apply();
-                Metal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t2);
-                Metal.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f, 1));
-            }
+                loaded = true;
+                instance = this;
+                harmony = new Harmony("com.aidanamite.MetalBuilding");
+                prefabHolder = new GameObject("prefabHolder").transform;
+                prefabHolder.gameObject.SetActive(false);
+                createdObjects.Add(prefabHolder.gameObject);
+                DontDestroyOnLoad(prefabHolder.gameObject);
 
-
-            foreach (var item in items)
-            {
-                var i = item.GetRealInstance();
-                var baseItem = ItemManager.GetItemByIndex(i.baseIndex);
-                if (baseItem)
+                var assetBundle = AssetBundle.LoadFromMemory(GetEmbeddedFileBytes("glasswalls.assets"));
+                createdObjects.Add(assetBundle);
+                Glass = Instantiate(assetBundle.LoadAsset<Material>("Glass_Mat"));
+                createdObjects.Add(Glass);
+                Metal = Instantiate(ItemManager.GetItemByIndex(1).settings_buildable.GetBlockPrefab(0).GetComponentInChildren<MeshRenderer>().material);
+                createdObjects.Add(Metal);
+                ScrapMetal = Instantiate(Metal);
+                createdObjects.Add(ScrapMetal);
+                Brick = Instantiate(Metal);
+                createdObjects.Add(Brick);
+                ScrapMetal.SetTexture("_Diffuse", LoadImage("scrapMetal_Diffuse.png"));
+                ScrapMetal.SetTexture("_Normal", LoadImage("scrapMetal_Normal.png"));
                 {
-                    i.baseItem = baseItem;
-                    CreateItem(i);
+                    var t = LoadImage("scrapMetal_Specular.png");
+                    var p = t.GetPixels(0);
+                    var t2 = new Texture2D(t.width * 2, t.height);
+                    createdObjects.Add(t2);
+                    for (int i = 0; i < p.Length; i++)
+                        p[i] = new Color(0, 1 - Mathf.Pow(Mathf.Abs(p[i].r * 2 - 1f), 2), 0, 1 - Mathf.Abs(p[i].r * 2 - 1f));
+                    t2.SetPixels(0, 0, t.width, t.height, p, 0);
+                    for (int i = 0; i < p.Length; i++)
+                        p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
+                    t2.SetPixels(t.width, 0, t.width, t.height, p, 0);
+                    t2.Apply(true);
+                    ScrapMetal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t2);
+                    ScrapMetal.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f, 1));
                 }
+                Metal.SetTexture("_Diffuse", LoadImage("metal.png"));
+                Metal.SetTexture("_Normal", LoadImage("metal_Normal.png"));
+                {
+                    var t = LoadImage("metal_Specular.png");
+                    var p = t.GetPixels(0);
+                    var t2 = new Texture2D(t.width * 2, t.height);
+                    createdObjects.Add(t2);
+                    for (int i = 0; i < p.Length; i++)
+                        p[i] = new Color(0, p[i].r * 0.85f, 0, p[i].r);
+                    t2.SetPixels(0, 0, t.width, t.height, p, 0);
+                    for (int i = 0; i < p.Length; i++)
+                        p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
+                    t2.SetPixels(t.width, 0, t.width, t.height, p, 0);
+                    t2.Apply(true);
+                    Metal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t2);
+                    Metal.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f, 1));
+                }
+                StartCoroutine(UseScene("50#Landmark_Tangaroa#", () =>
+                { // Fix texture proportions
+                    var brickBase = Resources.FindObjectsOfTypeAll<Texture2D>().Where(x => x.name.StartsWith("TangaroaMortarBrickWall_"));
+                    Brick.SetTexture("_Normal", brickBase.First(x => x.name == "TangaroaMortarBrickWall_normal").GetAdjustedReadable());
+                    var brickColor = brickBase.First(x => x.name == "TangaroaMortarBrickWall_basecolor").GetAdjustedReadable();
+                    Brick.SetTexture("_Diffuse", brickColor);
+                    var brickMetallic = brickBase.First(x => x.name == "TangaroaMortarBrickWall_Metallic_Roughness").GetAdjustedReadable();
+                    var t = new Texture2D(brickMetallic.width * 2, brickMetallic.height);
+                    createdObjects.Add(t);
+                    var p = brickMetallic.GetPixels(0);
+                    for (int i = 0; i < p.Length; i++)
+                    {
+                        var c = brickColor.GetPixel(i % brickMetallic.width * 2, i / brickMetallic.width * 2);
+                        p[i] = new Color(p[i].r, (float)Math.Pow(1 - c.b, 0.5), 0, p[i].r);
+                    }
+                    t.SetPixels(0, 0, brickMetallic.width, brickMetallic.height, p, 0);
+                    for (int i = 0; i < p.Length; i++)
+                        p[i] = new Color(p[i].r, p[i].g, 1, p[i].a);
+                    t.SetPixels(brickMetallic.width, 0, brickMetallic.width, brickMetallic.height, p, 0);
+                    t.Apply(true);
+                    Brick.SetTexture("_MetallicRPaintMaskGSmoothnessA", t);
+                    Brick.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f, 1));
+                    Destroy(brickMetallic);
+                }));
+
+
+                foreach (var item in items)
+                {
+                    var i = item.GetRealInstance();
+                    var baseItem = ItemManager.GetItemByIndex(i.baseIndex);
+                    if (baseItem)
+                    {
+                        i.baseItem = baseItem;
+                        CreateItem(i);
+                    }
+                }
+                harmony.PatchAll();
+                ModUtils_ReloadBuildMenu();
+                Traverse.Create(typeof(LocalizationManager)).Field("OnLocalizeEvent").GetValue<LocalizationManager.OnLocalizeCallback>().Invoke();
+                Log("Mod has been loaded!");
             }
-            (harmony = new Harmony("com.aidanamite.MetalBuilding")).PatchAll();
-            ModUtils_ReloadBuildMenu();
-            Traverse.Create(typeof(LocalizationManager)).Field("OnLocalizeEvent").GetValue<LocalizationManager.OnLocalizeCallback>().Invoke();
-            Log("Mod has been loaded!");
-            if (log != null)
-                Log(log.ToString());
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                errored = true;
+                Log("Mod load failed due to error");
+                return;
+            }
+            finally
+            {
+                if (log != null)
+                    Log(log.ToString());
+            }
         }
         public void OnModUnload()
         {
@@ -692,7 +775,8 @@ namespace MoreBuilding
             createdObjects.Clear();
             lookup.Clear();
             upgradeCheck.Clear();
-            Log("Mod has been unloaded!");
+            if (!errored)
+                Log("Mod has been unloaded!");
         }
 
         public void CreateItem(ItemCreation item)
@@ -710,11 +794,11 @@ namespace MoreBuilding
             else
             {
                 var t = item.item.settings_Inventory.Sprite.texture.GetReadable(copyArea: item.item.settings_Inventory.Sprite.rect, mipChain: false);
-                var p = t.GetPixels();
+                var p = t.GetPixels(0);
                 for (int i = 0; i < p.Length; i++)
                     p[i] = new Color(p[i].grayscale, p[i].grayscale, p[i].grayscale, p[i].a);
-                t.SetPixels(p);
-                t.Apply();
+                t.SetPixels(p, 0);
+                t.Apply(true);
                 item.item.settings_Inventory.Sprite = t.ToSprite();
             }
             var up = new ItemInstance_Buildable.Upgrade();
@@ -786,7 +870,7 @@ namespace MoreBuilding
             if (blockCreation != null && item.cost == null && item.baseItem.settings_recipe.NewCost.Length > 0)
             {
                 Item_Base craftingMaterial = StandardItemSetup.GetCraftingMaterial(blockCreation.upgradeItem);
-                item.item.SetRecipe(new CostMultiple[] { new CostMultiple(new Item_Base[] { craftingMaterial }, (int)Math.Round(item.baseItem.settings_recipe.NewCost.Sum(x => x.amount) / 2d + item.baseItem.settings_recipe.NewCost[0].amount / 2d)) });
+                item.item.SetRecipe(new CostMultiple[] { new CostMultiple(new Item_Base[] { craftingMaterial }, (int)Math.Round(item.baseItem.settings_recipe.NewCost.Sum(x => x.amount) / 2d + item.baseItem.settings_recipe.NewCost[0].amount / 2d)) }, CraftingCategory.Hidden);
                 Logg($"Set Recipe: {item.item.settings_recipe.NewCost.Join(x => $"\n - {x.amount}x[{x.items.Join(y => y.settings_Inventory.DisplayName)}]", "")}");
             }
 
@@ -921,6 +1005,33 @@ namespace MoreBuilding
 
         static FieldInfo _bp = typeof(BlockCreator).GetField("blockBreakParticlesStatic", ~BindingFlags.Default);
         public static ParticleSystem GetBreakParticles() => (ParticleSystem)_bp.GetValue(null);
+
+        IEnumerator UseScene(string sceneName, Action onComplete)
+        {
+            if (SceneManager.GetSceneByName(sceneName).isLoaded)
+            {
+                onComplete();
+                yield break;
+            }
+            var async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            async.allowSceneActivation = false;
+            async.completed += delegate
+            {
+                harmony.Unpatch(typeof(RConsole).GetMethod("HandleUnityLog", BindingFlags.Instance | BindingFlags.NonPublic), HarmonyPatchType.Prefix, harmony.Id);
+                try { onComplete(); }
+                finally
+                {
+                    foreach (var g in SceneManager.GetSceneByName(sceneName).GetRootGameObjects())
+                        DestroyImmediate(g);
+                    SceneManager.UnloadSceneAsync(sceneName);
+                }
+            };
+            while (async.progress < 0.9f)
+                yield return null;
+            harmony.Patch(typeof(RConsole).GetMethod("HandleUnityLog", BindingFlags.Instance | BindingFlags.NonPublic), new HarmonyMethod(typeof(Patch_Log), nameof(Patch_Log.Prefix)));
+            async.allowSceneActivation = true;
+            yield break;
+        }
     }
 
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
@@ -972,10 +1083,12 @@ namespace MoreBuilding
         }
     }
 
-    [HarmonyPatch(typeof(Block), "IsWalkable")]
+    [HarmonyPatch(typeof(Block))]
     static class Patch_Block
     {
-        static void Postfix(Block __instance, ref bool __result)
+        [HarmonyPatch("IsWalkable")]
+        [HarmonyPostfix]
+        static void IsWalkable(Block __instance, ref bool __result)
         {
             if (!__instance.buildableItem)
                 return;
@@ -983,6 +1096,66 @@ namespace MoreBuilding
             if (p?.item)
             {
                 __result = p.baseItem.settings_buildable.GetBlockPrefab(0).IsWalkable();
+                return;
+            }
+        }
+
+        [HarmonyPatch("IsBlockIndexFoundation")]
+        [HarmonyPostfix]
+        static void IsBlockIndexFoundation(int uniqueBlockIndex, ref bool __result)
+        {
+            var p = instance.LookupCreation(uniqueBlockIndex);
+            if (p?.item)
+            {
+                __result = Block.IsBlockIndexFoundation(p.baseItem.UniqueIndex);
+                return;
+            }
+        }
+
+        [HarmonyPatch("IsBlockIndexFoundationTriangular")]
+        [HarmonyPostfix]
+        static void IsBlockIndexFoundationTriangular(int uniqueBlockIndex, ref bool __result)
+        {
+            var p = instance.LookupCreation(uniqueBlockIndex);
+            if (p?.item)
+            {
+                __result = Block.IsBlockIndexFoundationTriangular(p.baseItem.UniqueIndex);
+                return;
+            }
+        }
+
+        [HarmonyPatch("IsBlockIndexRaisedFloor")]
+        [HarmonyPostfix]
+        static void IsBlockIndexRaisedFloor(int uniqueBlockIndex, ref bool __result)
+        {
+            var p = instance.LookupCreation(uniqueBlockIndex);
+            if (p?.item)
+            {
+                __result = Block.IsBlockIndexRaisedFloor(p.baseItem.UniqueIndex);
+                return;
+            }
+        }
+
+        [HarmonyPatch("IsBlockIndexCollectionNet")]
+        [HarmonyPostfix]
+        static void IsBlockIndexCollectionNet(int uniqueBlockIndex, ref bool __result)
+        {
+            var p = instance.LookupCreation(uniqueBlockIndex);
+            if (p?.item)
+            {
+                __result = Block.IsBlockIndexCollectionNet(p.baseItem.UniqueIndex);
+                return;
+            }
+        }
+
+        [HarmonyPatch("IsBlockIndexFloor")]
+        [HarmonyPostfix]
+        static void IsBlockIndexFloor(int uniqueBlockIndex, ref bool __result)
+        {
+            var p = instance.LookupCreation(uniqueBlockIndex);
+            if (p?.item)
+            {
+                __result = Block.IsBlockIndexFloor(p.baseItem.UniqueIndex);
                 return;
             }
         }
@@ -1094,5 +1267,10 @@ namespace MoreBuilding
             if (uniqueIndexCorrection.TryGetValue(uniqueIndex, out var replace))
                 uniqueIndex = replace;
         }
+    }
+
+    class Patch_Log
+    {
+        public static bool Prefix() => false;
     }
 }
