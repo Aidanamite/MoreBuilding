@@ -576,7 +576,7 @@ namespace MoreBuilding
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Ladder), x => { x.standardIndexSetup = Index.Glass_Ladder; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_LadderHalf), x => { x.standardIndexSetup = Index.Glass_LadderHalf; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Door), x => { x.standardIndexSetup = Index.Glass_Door; }),
-            /* Brick Blocks */
+            /* Brick Blocks WIP */
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Foundation), x => { x.standardIndexSetup = Index.Brick_Foundation; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundation), x => { x.standardIndexSetup = Index.Brick_TriangleFoundation; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_TriangleFoundationMirrored), x => { x.standardIndexSetup = Index.Brick_TriangleFoundationMirrored; }),
@@ -588,11 +588,6 @@ namespace MoreBuilding
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallV), x => { x.standardIndexSetup = Index.Brick_WallV; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallSlope), x => { x.standardIndexSetup = Index.Brick_WallSlope; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WallSlopeInverted), x => { x.standardIndexSetup = Index.Brick_WallSlopeInverted; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Fence), x => { x.standardIndexSetup = Index.Brick_Fence; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Gate), x => { x.standardIndexSetup = Index.Brick_Gate; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Door), x => { x.standardIndexSetup = Index.SolidMetal_Door; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Window), x => { x.standardIndexSetup = Index.SolidMetal_Window; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_WindowHalf), x => { x.standardIndexSetup = Index.Brick_WindowHalf; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofStraight), x => { x.standardIndexSetup = Index.Brick_RoofStraight; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofCorner), x => { x.standardIndexSetup = Index.Brick_RoofCorner; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofCornerInverted), x => { x.standardIndexSetup = Index.Brick_RoofCornerInverted; }),
@@ -601,11 +596,7 @@ namespace MoreBuilding
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV2I), x => { x.standardIndexSetup = Index.Brick_RoofV2I; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV2L), x => { x.standardIndexSetup = Index.Brick_RoofV2L; }),
             new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV3), x => { x.standardIndexSetup = Index.Brick_RoofV3; }),
-            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV4), x => { x.standardIndexSetup = Index.Brick_RoofV4; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_Pillar), x => { x.standardIndexSetup = Index.SolidMetal_Pillar; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHalf), x => { x.standardIndexSetup = Index.SolidMetal_PillarHalf; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHorizontal), x => { x.standardIndexSetup = Index.SolidMetal_PillarHorizontal; }),
-            //new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_PillarHorizontalHalf), x => { x.standardIndexSetup = Index.SolidMetal_PillarHorizontalHalf; }),
+            new MimicItemCreation<BlockItemCreation>(ItemByIndex<BlockItemCreation>(Index.ScrapMetal_RoofV4), x => { x.standardIndexSetup = Index.Brick_RoofV4; })
         };
         #endregion
 
