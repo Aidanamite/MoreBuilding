@@ -1269,6 +1269,24 @@ namespace MoreBuilding
         }
     }
 
+    [HarmonyPatch(typeof(AI_State_Attack_Block), "FindBlockToAttack")]
+    static class Patch_FindBlockTarget
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var code = instructions.ToList();
+            var ind = code.FindIndex(x => x.opcode == OpCodes.Stloc_S && ((x.operand is LocalBuilder l && l.LocalIndex == 5) || (x.operand is int li && li == 5))) + 1;
+            code.RemoveRange(ind, code.FindIndex(ind, x => x.opcode == OpCodes.Bne_Un_S) - ind);
+            code[ind].opcode = OpCodes.Brfalse_S;
+            code.InsertRange(ind, new[] {
+                new CodeInstruction(OpCodes.Ldloc_S,5),
+                new CodeInstruction(OpCodes.Call,AccessTools.Method(typeof(Patch_FindBlockTarget),nameof(IsAttackable)))
+            });
+            return code;
+        }
+        static bool IsAttackable(int blockIndex) => Block.IsBlockIndexFoundation(blockIndex) || Block.IsBlockIndexCollectionNet(blockIndex);
+    }
+
     class Patch_Log
     {
         public static bool Prefix() => false;
