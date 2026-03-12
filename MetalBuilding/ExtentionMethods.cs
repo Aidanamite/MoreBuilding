@@ -8,6 +8,8 @@ using UnityEngine.Experimental.Rendering;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 using static MoreBuilding.Main;
+using UnityEngine.UI;
+using System.Linq;
 
 
 namespace MoreBuilding
@@ -63,8 +65,11 @@ namespace MoreBuilding
             while (t1 != typeof(Object) && t1 != typeof(object))
             {
                 foreach (var p in t1.GetProperties(~BindingFlags.Default))
-                    if (p.GetGetMethod() != null && p.GetSetMethod() != null && !p.GetGetMethod().IsStatic)
-                        p.SetValue(value, p.GetValue(source));
+                    if (p.GetGetMethod(true) != null && p.GetSetMethod(true) != null && !p.GetGetMethod(true).IsStatic && !p.CustomAttributes.Any(x => !typeof(ObsoleteAttribute).IsAssignableFrom(x.AttributeType)))
+                        try
+                        {
+                            p.SetValue(value, p.GetValue(source));
+                        } catch { }
                 t1 = t1.BaseType;
             }
         }
@@ -402,6 +407,8 @@ namespace MoreBuilding
 
         public static T ReplaceComponent<T>(this Component original, int serializationLayers = 0) where T : Component
         {
+            if (!original)
+                throw new ArgumentNullException(nameof(original));
             var g = original.gameObject;
             var n = g.AddComponent<T>();
             n.CopyFieldsOf(original);

@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using HMLLibrary;
 using RaftModLoader;
-using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,6 +19,9 @@ using Object = UnityEngine.Object;
 using static BlockCreator;
 using static MoreBuilding.Main;
 using static MoreBuilding.GeneratedMeshes;
+using System.Threading.Tasks;
+using AssetsTools.NET.Extra;
+using AssetsTools.NET;
 
 
 namespace MoreBuilding
@@ -29,7 +31,7 @@ namespace MoreBuilding
         class ReInit
         {
             static bool loadedOnce = false;
-            public ReInit()
+            public ReInit() // reruns the static initializers when mod is loaded again
             {
                 if (loadedOnce)
                     foreach (var t in Assembly.GetExecutingAssembly().GetTypes())
@@ -83,7 +85,7 @@ namespace MoreBuilding
                     t.localPosition += new Vector3(0, -t.localPosition.y, 0);
                     t = x.transform.Find("knobLeft");
                     t.localPosition += new Vector3(0, -t.localPosition.y, 0);
-                    Traverse.Create(x).Field<int>("knobPriority").Value += 5;
+                    ((Block_Fence)x).knobPriority += 5;
                 }
             },
             new BlockItemCreation() {
@@ -611,11 +613,16 @@ namespace MoreBuilding
         public static Main instance;
         bool loaded = false;
         bool errored = false;
+#if !RDS
         void Start()
         {
             if (errored)
                 modlistEntry.modinfo.unloadBtn.GetComponent<Button>().onClick.Invoke();
+            var cached = Path.Combine(HLib.path_cacheFolder_mods, HCacheManager.GetCachedModFileName(modlistEntry));
+            if (File.Exists(cached))
+                File.Delete(cached);
         }
+#endif
         public void Awake()
         {
             if (SceneManager.GetActiveScene().name == Raft_Network.GameSceneName && ComponentManager<Raft_Network>.Value.remoteUsers.Count > 1)
@@ -634,6 +641,7 @@ namespace MoreBuilding
                 createdObjects.Add(prefabHolder.gameObject);
                 DontDestroyOnLoad(prefabHolder.gameObject);
 
+#if !RDS
                 var assetBundle = AssetBundle.LoadFromMemory(GetEmbeddedFileBytes("glasswalls.assets"));
                 createdObjects.Add(assetBundle);
                 Glass = Instantiate(assetBundle.LoadAsset<Material>("Glass_Mat"));
@@ -678,9 +686,14 @@ namespace MoreBuilding
                     Metal.SetTexture("_MetallicRPaintMaskGSmoothnessA", t2);
                     Metal.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f, 1));
                 }
-                StartCoroutine(UseScene("50#Landmark_Tangaroa#", () =>
+                StartCoroutine(UseScene("50#Landmark_Tangaroa#",
+                    x => $"sharedassets{x}.assets",
+                    (f, m) => f.file.GetAssetsOfType(AssetClassID.Texture2D)
+                        .Where(x => m.GetBaseField(f, x, AssetReadFlags.SkipMonoBehaviourFields)["m_Name"].AsString.StartsWith("TangaroaMortarBrickWall_"))
+                        .Select(x => x.PathId),
+                () =>
                 { // Fix texture proportions
-                    var brickBase = Resources.FindObjectsOfTypeAll<Texture2D>().Where(x => x.name.StartsWith("TangaroaMortarBrickWall_"));
+                    var brickBase = Resources.FindObjectsOfTypeAll<Texture2D>().Where(x => x.name.StartsWith("TangaroaMortarBrickWall_")).ToList();
                     Brick.SetTexture("_Normal", brickBase.First(x => x.name == "TangaroaMortarBrickWall_normal").GetAdjustedReadable());
                     var brickColor = brickBase.First(x => x.name == "TangaroaMortarBrickWall_basecolor").GetAdjustedReadable();
                     Brick.SetTexture("_Diffuse", brickColor);
@@ -701,7 +714,10 @@ namespace MoreBuilding
                     Brick.SetTexture("_MetallicRPaintMaskGSmoothnessA", t);
                     Brick.SetTextureScale("_MetallicRPaintMaskGSmoothnessA", new Vector2(0.5f, 1));
                     Destroy(brickMetallic);
-                }));
+                    Log("Brick has loaded");
+                }
+                ));
+#endif
 
 
                 foreach (var item in items)
@@ -715,7 +731,6 @@ namespace MoreBuilding
                     }
                 }
                 harmony.PatchAll();
-                ModUtils_ReloadBuildMenu();
                 Traverse.Create(typeof(LocalizationManager)).Field("OnLocalizeEvent").GetValue<LocalizationManager.OnLocalizeCallback>().Invoke();
                 Log("Mod has been loaded!");
             }
@@ -735,7 +750,6 @@ namespace MoreBuilding
         public void OnModUnload()
         {
             loaded = false;
-            ModUtils_ReloadBuildMenu();
             harmony?.UnpatchAll(harmony.Id);
             if (items != null)
             {
@@ -747,9 +761,9 @@ namespace MoreBuilding
                     indecies.Add(i.GetRealInstance().uniqueIndex);
                 }
                 foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
-                    Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
+                    q.acceptableBlockTypes.RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
                 foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockCollisionMask>())
-                    Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
+                    q.blockTypesToIgnore.RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
                 ItemManager.GetAllItems().RemoveAll(x => names.Contains(x.UniqueName) || indecies.Contains(x.UniqueIndex));
                 foreach (var b in GetPlacedBlocks())
                     if (b && b.buildableItem && (names.Contains(b.buildableItem.UniqueName) || indecies.Contains(b.buildableItem.UniqueIndex)))
@@ -774,6 +788,7 @@ namespace MoreBuilding
         {
             Logg($"[CreateItem] Creating {item.uniqueName}#{item.uniqueIndex}");
             item.item = item.baseItem.Clone(item.uniqueIndex, item.uniqueName);
+#if !RDS
             if (item.loadIcon)
             {
                 var t = LoadImage("icons/" + item.uniqueName + ".png", false);
@@ -792,6 +807,7 @@ namespace MoreBuilding
                 t.Apply(true);
                 item.item.settings_Inventory.Sprite = t.ToSprite();
             }
+#endif
             var up = new ItemInstance_Buildable.Upgrade();
             up.CopyFieldsOf(item.baseItem.settings_buildable.Upgrades);
             var fl = up.FindFieldsMatch<Item_Base>(x => !x);
@@ -803,7 +819,7 @@ namespace MoreBuilding
                         f3.SetValue(up, item.baseItem);
                         goto exitLoop;
                     }
-            exitLoop: Traverse.Create(item.item.settings_buildable).Field("upgrades").SetValue(up);
+            exitLoop: item.item.settings_buildable.upgrades=up;
             item.item.settings_Inventory.LocalizationTerm = "Item/"+item.item.UniqueName;
             if (item.cost != null)
                 item.item.settings_recipe.NewCost = item.cost;
@@ -823,6 +839,7 @@ namespace MoreBuilding
                     var me = blockCreation.mesh[i];
                     p[i] = Instantiate(p[i], prefabHolder, false);
                     p[i].name = item.item.UniqueName + ((p.Length == 1 || p[i].dpsType == DPS.Default) ? "" : $"_{p[i].dpsType}");
+#if !RDS
                     var r = p[i].GetComponentsInChildren<Renderer>(true);
                     Logg($"Found {r.Length} renderers on prefab {i}");
                     for (int j = 0; j < r.Length; j++)
@@ -838,25 +855,26 @@ namespace MoreBuilding
                         }
                     if (blockCreation.modelScales?.Length > i)
                         r[0].transform.localScale = blockCreation.modelScales[i];
+#endif
                     p[i].ReplaceValues(item.baseItem, item.item);
                     blockCreation.additionalEdits?.Invoke(p[i]);
                     var mirror = ItemManager.GetItemByIndex(blockCreation.mirroredItem);
                     if (mirror)
                     {
-                        Traverse.Create(item.item.settings_buildable).Field("mirroredVersion").SetValue(mirror);
-                        Traverse.Create(mirror.settings_buildable).Field("mirroredVersion").SetValue(item.item);
+                        item.item.settings_buildable.mirroredVersion=mirror;
+                        mirror.settings_buildable.mirroredVersion=item.item;
                     }
                     else
-                        Traverse.Create(item.item.settings_buildable).Field("mirroredVersion").SetValue(null);
+                        item.item.settings_buildable.mirroredVersion=null;
                 }
-                Traverse.Create(item.item.settings_buildable).Field("blockPrefabs").SetValue(p);
+                item.item.settings_buildable.blockPrefabs=p;
             }
             foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockQuadType>())
                 if (q.AcceptsBlock(item.baseItem))
-                    Traverse.Create(q).Field("acceptableBlockTypes").GetValue<List<Item_Base>>().Add(item.item);
+                    q.acceptableBlockTypes.Add(item.item);
             foreach (var q in Resources.FindObjectsOfTypeAll<SO_BlockCollisionMask>())
                 if (q.IgnoresBlock(item.baseItem))
-                    Traverse.Create(q).Field("blockTypesToIgnore").GetValue<List<Item_Base>>().Add(item.item);
+                    q.blockTypesToIgnore.Add(item.item);
 
             if (blockCreation != null && item.cost == null && item.baseItem.settings_recipe.NewCost.Length > 0)
             {
@@ -907,7 +925,7 @@ namespace MoreBuilding
             return t;
         }
 
-        IEnumerable<(Item_Base, Item_Base, bool)> ModUtils_BuildMenuItems()
+        public override IEnumerable<(Item_Base, Item_Base, bool)> BuildMenuItems()
         {
             if (!loaded) yield break;
             foreach (var i in items)
@@ -918,9 +936,6 @@ namespace MoreBuilding
             }
             yield break;
         }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        void ModUtils_ReloadBuildMenu() { }
 
         //[ConsoleCommand("loadMetal")]
         public static string Comm(string[] args)
@@ -996,35 +1011,149 @@ namespace MoreBuilding
 
         static FieldInfo _bp = typeof(BlockCreator).GetField("blockBreakParticlesStatic", ~BindingFlags.Default);
         public static ParticleSystem GetBreakParticles() => (ParticleSystem)_bp.GetValue(null);
-
-        IEnumerator UseScene(string sceneName, Action onComplete)
+        
+#if !RDS
+        IEnumerator UseScene(string sceneName, Action onComplete) =>
+            UseScene(sceneName, x => $"level{x}",
+                (f, m) => f.file.GetAssetsOfType(AssetClassID.Transform)
+                    .Where(x => m.GetBaseField(f, x, AssetReadFlags.SkipMonoBehaviourFields)["m_Father.m_PathID"].AsLong == 0)
+                    .Select(x => x.PathId),
+                onComplete);//
+         IEnumerator UseScene(string sceneName, Func<int,string> getAssetsFile, Func<AssetsFileInstance, AssetsManager, IEnumerable<long>> selectAssets, Action onComplete)
         {
             if (SceneManager.GetSceneByName(sceneName).isLoaded)
             {
+                Log("Initializing without using cache");
                 onComplete();
                 yield break;
             }
-            var async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            async.allowSceneActivation = false;
-            async.completed += delegate
+            var sceneInd = SceneUtility.GetBuildIndexByScenePath(sceneName);
+            if (sceneInd == -1)
+                throw new FileNotFoundException($"No scene called \"{sceneName}\" was found");
+            string assetFile = getAssetsFile(sceneInd);
+            AssetBundleCreateRequest req = null;
+            try
             {
-                harmony.Unpatch(typeof(RConsole).GetMethod("HandleUnityLog", BindingFlags.Instance | BindingFlags.NonPublic), HarmonyPatchType.Prefix, harmony.Id);
-                try { onComplete(); }
-                finally
+                if (File.Exists("Mods\\MoreBuildingCache\\target") && File.Exists("Mods\\MoreBuildingCache\\loader"))
                 {
-                    foreach (var g in SceneManager.GetSceneByName(sceneName).GetRootGameObjects())
-                        DestroyImmediate(g);
-                    SceneManager.UnloadSceneAsync(sceneName);
+                    var lines = File.ReadAllLines("Mods\\MoreBuildingCache\\target");
+                    if (lines?.Length == 2 && lines[0] == assetFile && long.TryParse(lines[1], out var time) && time == File.GetLastWriteTimeUtc("Raft_Data\\" + assetFile).Ticks)
+                        req = AssetBundle.LoadFromFileAsync("Mods\\MoreBuildingCache\\loader");
                 }
-            };
-            while (async.progress < 0.9f)
-                yield return null;
-            harmony.Patch(typeof(RConsole).GetMethod("HandleUnityLog", BindingFlags.Instance | BindingFlags.NonPublic), new HarmonyMethod(typeof(Patch_Log), nameof(Patch_Log.Prefix)));
-            async.allowSceneActivation = true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("An exception occured trying to fetch the level cache\n" + e);
+            }
+            if (req != null)
+            {
+                yield return req;
+                if (req.assetBundle)
+                {
+                    var sceneReq = req.assetBundle.LoadAllAssetsAsync();
+                    yield return sceneReq;
+                    _ = sceneReq.allAssets; // This is not required in 2019 unity, but is required in 2021 unity. Reason: unknown
+                    Log("Initializing using cache");
+                    try
+                    {
+                        onComplete();
+                    }
+                    finally
+                    {
+                        req.assetBundle.Unload(true);
+                    }
+                    yield break;
+                }
+            }
+            var task = CreateLoaderAsync(assetFile, selectAssets);
+            Log("Generated cache");
+            yield return new WaitUntil(() => task.IsCompleted);
+            req = AssetBundle.LoadFromFileAsync("Mods\\MoreBuildingCache\\loader");
+            yield return req;
+            if (!req.assetBundle)
+                yield break;
+            var sceneReq2 = req.assetBundle.LoadAllAssetsAsync();
+            yield return sceneReq2;
+            _ = sceneReq2.allAssets; // This is not required in 2019 unity, but is required in 2021 unity. Reason: unknown
+            Log("Initializing using new cache");
+            try
+            {
+                onComplete();
+            }
+            finally
+            {
+                req.assetBundle.Unload(false);
+            }
             yield break;
         }
-    }
 
+        Task CreateLoaderAsync(string assetsFile,Func<AssetsFileInstance, AssetsManager, IEnumerable<long>> selectAssets) => Task.Run(() => CreateLoader(assetsFile, selectAssets));
+        void CreateLoader(string assetsFile, Func<AssetsFileInstance, AssetsManager, IEnumerable<long>> selectAssets)
+        {
+            try
+            {
+                var manager = new AssetsManager();
+                using (var data = new MemoryStream(GetEmbeddedFileBytes("lz4.tpk"))) manager.LoadClassPackage(data);
+                AssetsFileInstance aFile;
+                IEnumerable<long> assets;
+                using (var sceneFile = File.OpenRead("Raft_Data\\" + assetsFile))
+                {
+                    aFile = manager.LoadAssetsFile(sceneFile, false);
+                    manager.LoadClassDatabaseFromPackage(aFile.file.Metadata.UnityVersion);
+                    assets = selectAssets(aFile, manager).ToList();
+                    manager.UnloadAllAssetsFiles();
+                }
+                BundleFileInstance bFile;
+                using (var mem = new MemoryStream(GetEmbeddedFileBytes("templatebundle")))
+                {
+                    var name = $"{assetsFile}loader{UnityEngine.Random.Range(0, ushort.MaxValue + 1):X4}";
+                    bFile = manager.LoadBundleFile(mem, name);
+                    bFile.file.BlockAndDirInfo.DirectoryInfos[0].Name = name;
+                    aFile = manager.LoadAssetsFileFromBundle(bFile, 0, false);
+                    aFile.file.Metadata.Externals[0].PathName = assetsFile;
+                    var bAsset = aFile.file.GetAssetsOfType(AssetClassID.AssetBundle)[0];
+                    var bField = manager.GetBaseField(aFile, bAsset, AssetReadFlags.SkipMonoBehaviourFields);
+                    bField["m_AssetBundleName"].AsString = bField["m_Name"].AsString = name;
+                    int i = 0;
+                    foreach (var p in assets)
+                    {
+                        if (i == bField["m_Container.Array"].Children.Count)
+                        {
+                            bField["m_Container.Array"].Children.Add(ValueBuilder.DefaultValueFieldFromArrayTemplate(bField["m_Container.Array"]));
+                            bField["m_PreloadTable.Array"].Children.Add(ValueBuilder.DefaultValueFieldFromArrayTemplate(bField["m_PreloadTable.Array"]));
+                        }
+                        bField["m_Container.Array"][i]["first"].AsString = $"asset{i}";
+                        bField["m_Container.Array"][i]["second.preloadIndex"].AsInt = i;
+                        bField["m_Container.Array"][i]["second.preloadSize"].AsInt = 1;
+                        bField["m_Container.Array"][i]["second.asset.m_FileID"].AsInt = 1;
+                        bField["m_Container.Array"][i]["second.asset.m_PathID"].AsLong = p;
+                        bField["m_PreloadTable.Array"][i]["m_FileID"].AsInt = 1;
+                        bField["m_PreloadTable.Array"][i]["m_PathID"].AsLong = p;
+                        i++;
+                    }
+                    bAsset.SetNewData(bField);
+                    bFile.file.BlockAndDirInfo.DirectoryInfos[0].SetNewData(aFile.file);
+                    if (!Directory.Exists("Mods\\MoreBuildingCache"))
+                        Directory.CreateDirectory("Mods\\MoreBuildingCache");
+                    if (File.Exists("Mods\\MoreBuildingCache\\loader"))
+                        File.Delete("Mods\\MoreBuildingCache\\loader");
+                    File.WriteAllLines("Mods\\MoreBuildingCache\\target", new[] {
+                        assetsFile,
+                        File.GetLastWriteTimeUtc("Raft_Data\\" + assetsFile).Ticks.ToString()
+                    });
+                    using (var file = File.Open("Mods\\MoreBuildingCache\\loader", FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (var writer = new AssetsFileWriter(file))
+                        bFile.file.Write(writer);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+#endif
+        
+    }
     [HarmonyPatch(typeof(ItemInstance_Buildable.Upgrade), "GetNewItemFromUpgradeItem")]
     static class Patch_GetUpgradeItem
     {
@@ -1171,12 +1300,14 @@ namespace MoreBuilding
         }
         static ParticleSystem ReplaceSystem(ParticleSystem original, Block block)
         {
+#if !RDS
             if (block.buildableItem)
             {
                 var c = instance.LookupCreation(block.buildableItem.UniqueIndex);
                 if (c is BlockItemCreation b && instance.upgradeCheck.TryGetValue(b.upgradeItem, out var t) && t.breakParticle?.Invoke())
                     return t.breakParticle();
             }
+#endif
             return original;
         }
     }
@@ -1276,6 +1407,12 @@ namespace MoreBuilding
             return code;
         }
         static bool IsAttackable(int blockIndex) => Block.IsBlockIndexFoundation(blockIndex) || Block.IsBlockIndexCollectionNet(blockIndex);
+    }
+
+    [HarmonyPatch(typeof(Block_Foundation), "set_Reinforced")]
+    static class Patch_ChangeReinforced
+    {
+        static bool Prefix(Block __instance) => !__instance.buildableItem.settings_buildable.GetBlockPrefab(__instance.dpsType).Reinforced;
     }
 
     class Patch_Log
